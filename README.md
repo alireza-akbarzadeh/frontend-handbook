@@ -157,29 +157,3 @@ You already know how to build UIs. This book helps you build them **better**.
 🗂 **What**: Machine-readable dates/times.
 📍 **Where**: Blog posts, event pages, timers.
 ✅ **Why**: Helps SEO and calendars.
-
-```html
-<time datetime="2025-07-18">July 18, 2025</time>
-```
-
----
-
-(✅ Let me know when you're ready — I’ll continue the next batch:
-
-* `<strong>`, `<em>`
-* `<blockquote>`, `<cite>`
-* `<code>`, `<pre>`, `<kbd>`, `<samp>`
-* `<details>`, `<summary>`
-* `<dl>`, `<dt>`, `<dd>`
-* `<fieldset>`, `<legend>`
-* Bonus: `<div>` vs. `<span>`)
-
-Also, I can help you **design a styled markdown/PDF template** to export this as a beautiful eBook later.
-
-Would you like:
-
-1. More visual emojis/icons added per element?
-2. Code samples per section?
-3. Navigation sidebar for the full book?
-
-Let’s make this ✨ stunning.
