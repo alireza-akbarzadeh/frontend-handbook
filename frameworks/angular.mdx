@@ -1,0 +1,763 @@
+---
+title: "Angular"
+description: "Learn about Angular, a platform and framework for building single-page client applications"
+---
+
+## What is Angular?
+
+Angular is a platform and framework for building single-page client applications using HTML and TypeScript. It's developed and maintained by Google and a community of individuals and corporations. Angular provides a comprehensive solution that includes everything from routing and forms to state management and testing utilities.
+
+<Note>
+  Angular (commonly referred to as "Angular 2+" or "Angular v2 and above") is a complete rewrite of AngularJS (Angular 1.x). While they share a name and some concepts, they are fundamentally different frameworks.
+</Note>
+
+## Why Use Angular?
+
+<CardGroup cols={2}>
+  <Card title="Complete Framework" icon="box">
+    Angular provides a comprehensive solution with built-in features for routing, forms, HTTP client, animations, and more.
+  </Card>
+  
+  <Card title="TypeScript Integration" icon="code">
+    Angular is built with TypeScript, providing strong typing, better tooling, and improved maintainability.
+  </Card>
+  
+  <Card title="Dependency Injection" icon="syringe">
+    Angular's powerful dependency injection system makes components more testable, reusable, and maintainable.
+  </Card>
+  
+  <Card title="RxJS Integration" icon="rotate">
+    Angular leverages RxJS for handling asynchronous operations and event handling with powerful operators.
+  </Card>
+  
+  <Card title="Enterprise Support" icon="building">
+    Angular is backed by Google and designed with large-scale applications in mind, making it suitable for enterprise projects.
+  </Card>
+  
+  <Card title="Consistent Updates" icon="calendar">
+    Angular follows a predictable release schedule with semantic versioning, making updates more manageable.
+  </Card>
+</CardGroup>
+
+## Getting Started with Angular
+
+### Setting Up an Angular Project
+
+The Angular CLI (Command Line Interface) is the recommended way to create, develop, and maintain Angular applications:
+
+```bash
+# Install the Angular CLI globally
+npm install -g @angular/cli
+
+# Create a new Angular project
+ng new my-angular-app
+
+# Navigate to the project directory
+cd my-angular-app
+
+# Start the development server
+ng serve
+```
+
+Your application will be available at `http://localhost:4200/`.
+
+### Angular Project Structure
+
+A typical Angular project created with the Angular CLI has the following structure:
+
+```
+my-angular-app/
+├── node_modules/           # Dependencies
+├── src/                    # Application source code
+│   ├── app/                # Application components, services, etc.
+│   │   ├── app.component.ts        # Root component (TypeScript)
+│   │   ├── app.component.html      # Root component template
+│   │   ├── app.component.css       # Root component styles
+│   │   ├── app.component.spec.ts   # Root component tests
+│   │   └── app.module.ts           # Root module
+│   ├── assets/             # Static assets
+│   ├── environments/       # Environment configuration
+│   ├── index.html          # Main HTML page
+│   ├── main.ts             # Entry point
+│   ├── polyfills.ts        # Polyfills for browser support
+│   └── styles.css          # Global styles
+├── angular.json            # Angular CLI configuration
+├── package.json            # Project metadata and dependencies
+├── tsconfig.json           # TypeScript configuration
+└── karma.conf.js           # Test runner configuration
+```
+
+## Core Concepts
+
+### Modules
+
+Angular applications are modular and have at least one module, the root module, conventionally named `AppModule`. Modules help organize an application into cohesive blocks of functionality.
+
+```typescript
+// app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [AppComponent],  // Components, directives, and pipes
+  imports: [BrowserModule],     // Other modules
+  providers: [],                // Services
+  bootstrap: [AppComponent]     // Root component
+})
+export class AppModule { }
+```
+
+### Components
+
+Components are the building blocks of Angular applications. Each component consists of:
+- A TypeScript class that defines behavior
+- An HTML template that defines the UI
+- CSS styles that define the appearance
+
+```typescript
+// hero.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-hero',  // HTML element tag
+  templateUrl: './hero.component.html',  // HTML template
+  styleUrls: ['./hero.component.css']    // CSS styles
+})
+export class HeroComponent {
+  hero = 'Windstorm';
+  
+  changeHero() {
+    this.hero = 'Stormwind';
+  }
+}
+```
+
+```html
+<!-- hero.component.html -->
+<div class="hero">
+  <h2>{{ hero }}</h2>
+  <button (click)="changeHero()">Change Hero</button>
+</div>
+```
+
+```css
+/* hero.component.css */
+.hero {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+```
+
+### Templates and Data Binding
+
+Angular templates combine HTML with Angular-specific syntax for data binding, event handling, and more:
+
+```html
+<div>
+  <!-- Interpolation -->
+  <h1>{{ title }}</h1>
+  
+  <!-- Property binding -->
+  <img [src]="imageUrl" [alt]="imageAlt">
+  
+  <!-- Event binding -->
+  <button (click)="handleClick()">Click me</button>
+  
+  <!-- Two-way binding (requires FormsModule) -->
+  <input [(ngModel)]="name">
+  <p>Hello, {{ name }}!</p>
+  
+  <!-- Conditional rendering -->
+  <div *ngIf="isVisible">This is conditionally visible</div>
+  
+  <!-- List rendering -->
+  <ul>
+    <li *ngFor="let item of items; let i = index">{{ i + 1 }}. {{ item }}</li>
+  </ul>
+  
+  <!-- Class binding -->
+  <div [class.active]="isActive">This div has the 'active' class when isActive is true</div>
+  
+  <!-- Style binding -->
+  <div [style.color]="textColor">This text has a dynamic color</div>
+</div>
+```
+
+### Services and Dependency Injection
+
+Services are a way to share functionality across components. Angular's dependency injection system makes it easy to provide and consume services:
+
+```typescript
+// data.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'  // Makes the service available throughout the app
+})
+export class DataService {
+  private apiUrl = 'https://api.example.com/data';
+  
+  constructor(private http: HttpClient) { }
+  
+  getData(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+}
+```
+
+Using the service in a component:
+
+```typescript
+// data.component.ts
+import { Component, OnInit } from '@angular/core';
+import { DataService } from '../data.service';
+
+@Component({
+  selector: 'app-data',
+  templateUrl: './data.component.html'
+})
+export class DataComponent implements OnInit {
+  data: any[] = [];
+  loading = false;
+  error: string | null = null;
+  
+  constructor(private dataService: DataService) { }
+  
+  ngOnInit() {
+    this.loadData();
+  }
+  
+  loadData() {
+    this.loading = true;
+    this.error = null;
+    
+    this.dataService.getData().subscribe({
+      next: (result) => {
+        this.data = result;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load data';
+        this.loading = false;
+        console.error(err);
+      }
+    });
+  }
+}
+```
+
+## Routing
+
+Angular Router enables navigation from one view to another as users perform tasks:
+
+```typescript
+// app-routing.module.ts
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { AboutComponent } from './about/about.component';
+import { ContactComponent } from './contact/contact.component';
+
+const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'about', component: AboutComponent },
+  { path: 'contact', component: ContactComponent },
+  // Lazy loading a module
+  { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
+  // Wildcard route for 404 page
+  { path: '**', component: PageNotFoundComponent }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+Using the router in templates:
+
+```html
+<!-- app.component.html -->
+<nav>
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+  <a routerLink="/about" routerLinkActive="active">About</a>
+  <a routerLink="/contact" routerLinkActive="active">Contact</a>
+</nav>
+
+<!-- Router outlet where components will be rendered -->
+<router-outlet></router-outlet>
+```
+
+## Forms
+
+Angular provides two approaches to handling forms: Template-driven forms and Reactive forms.
+
+### Template-driven Forms
+
+Template-driven forms use directives in the template to build the form:
+
+```typescript
+// app.module.ts
+import { FormsModule } from '@angular/forms';
+
+@NgModule({
+  imports: [FormsModule],
+  // ...
+})
+export class AppModule { }
+```
+
+```html
+<!-- contact-form.component.html -->
+<form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm.value)">
+  <div>
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" [(ngModel)]="contact.name" required #name="ngModel">
+    <div *ngIf="name.invalid && (name.dirty || name.touched)">
+      Name is required
+    </div>
+  </div>
+  
+  <div>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" [(ngModel)]="contact.email" required email #email="ngModel">
+    <div *ngIf="email.invalid && (email.dirty || email.touched)">
+      <div *ngIf="email.errors?.['required']">Email is required</div>
+      <div *ngIf="email.errors?.['email']">Invalid email format</div>
+    </div>
+  </div>
+  
+  <button type="submit" [disabled]="contactForm.invalid">Submit</button>
+</form>
+```
+
+```typescript
+// contact-form.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-contact-form',
+  templateUrl: './contact-form.component.html'
+})
+export class ContactFormComponent {
+  contact = {
+    name: '',
+    email: ''
+  };
+  
+  onSubmit(formValue: any) {
+    console.log('Form submitted', formValue);
+    // Process form data
+  }
+}
+```
+
+### Reactive Forms
+
+Reactive forms use a more explicit approach with form controls defined in the component class:
+
+```typescript
+// app.module.ts
+import { ReactiveFormsModule } from '@angular/forms';
+
+@NgModule({
+  imports: [ReactiveFormsModule],
+  // ...
+})
+export class AppModule { }
+```
+
+```typescript
+// signup-form.component.ts
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-signup-form',
+  templateUrl: './signup-form.component.html'
+})
+export class SignupFormComponent implements OnInit {
+  signupForm!: FormGroup;
+  
+  constructor(private fb: FormBuilder) { }
+  
+  ngOnInit() {
+    this.signupForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', Validators.required]
+    }, { validators: this.passwordMatchValidator });
+  }
+  
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password')?.value;
+    const confirmPassword = form.get('confirmPassword')?.value;
+    
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
+  
+  onSubmit() {
+    if (this.signupForm.valid) {
+      console.log('Form submitted', this.signupForm.value);
+      // Process form data
+    }
+  }
+}
+```
+
+```html
+<!-- signup-form.component.html -->
+<form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="name">Name</label>
+    <input type="text" id="name" formControlName="name">
+    <div *ngIf="signupForm.get('name')?.invalid && (signupForm.get('name')?.dirty || signupForm.get('name')?.touched)">
+      <div *ngIf="signupForm.get('name')?.errors?.['required']">Name is required</div>
+      <div *ngIf="signupForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters</div>
+    </div>
+  </div>
+  
+  <div>
+    <label for="email">Email</label>
+    <input type="email" id="email" formControlName="email">
+    <div *ngIf="signupForm.get('email')?.invalid && (signupForm.get('email')?.dirty || signupForm.get('email')?.touched)">
+      <div *ngIf="signupForm.get('email')?.errors?.['required']">Email is required</div>
+      <div *ngIf="signupForm.get('email')?.errors?.['email']">Invalid email format</div>
+    </div>
+  </div>
+  
+  <div>
+    <label for="password">Password</label>
+    <input type="password" id="password" formControlName="password">
+    <div *ngIf="signupForm.get('password')?.invalid && (signupForm.get('password')?.dirty || signupForm.get('password')?.touched)">
+      <div *ngIf="signupForm.get('password')?.errors?.['required']">Password is required</div>
+      <div *ngIf="signupForm.get('password')?.errors?.['minlength']">Password must be at least 8 characters</div>
+    </div>
+  </div>
+  
+  <div>
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="password" id="confirmPassword" formControlName="confirmPassword">
+    <div *ngIf="signupForm.get('confirmPassword')?.invalid && (signupForm.get('confirmPassword')?.dirty || signupForm.get('confirmPassword')?.touched)">
+      <div *ngIf="signupForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</div>
+    </div>
+    <div *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmPassword')?.touched">
+      Passwords do not match
+    </div>
+  </div>
+  
+  <button type="submit" [disabled]="signupForm.invalid">Sign Up</button>
+</form>
+```
+
+## HTTP Client
+
+Angular provides an HTTP client for making HTTP requests:
+
+```typescript
+// app.module.ts
+import { HttpClientModule } from '@angular/common/http';
+
+@NgModule({
+  imports: [HttpClientModule],
+  // ...
+})
+export class AppModule { }
+```
+
+```typescript
+// user.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
+import { User } from './user.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+  private apiUrl = 'https://api.example.com/users';
+  
+  constructor(private http: HttpClient) { }
+  
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+  
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+  
+  createUser(user: User): Observable<User> {
+    return this.http.post<User>(this.apiUrl, user, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+  
+  updateUser(user: User): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${user.id}`, user, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+  
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+  
+  private handleError(error: any) {
+    console.error('An error occurred', error);
+    return throwError(() => new Error('Something went wrong; please try again later.'));
+  }
+}
+```
+
+## State Management
+
+Angular applications can manage state in several ways:
+
+### Services for Simple State
+
+```typescript
+// counter.service.ts
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CounterService {
+  private count = new BehaviorSubject<number>(0);
+  count$ = this.count.asObservable();
+  
+  increment() {
+    this.count.next(this.count.value + 1);
+  }
+  
+  decrement() {
+    this.count.next(this.count.value - 1);
+  }
+  
+  reset() {
+    this.count.next(0);
+  }
+}
+```
+
+### NgRx for Complex State
+
+For larger applications, NgRx provides a Redux-inspired state management solution:
+
+```bash
+npm install @ngrx/store @ngrx/effects @ngrx/entity @ngrx/store-devtools
+```
+
+```typescript
+// counter.actions.ts
+import { createAction } from '@ngrx/store';
+
+export const increment = createAction('[Counter] Increment');
+export const decrement = createAction('[Counter] Decrement');
+export const reset = createAction('[Counter] Reset');
+```
+
+```typescript
+// counter.reducer.ts
+import { createReducer, on } from '@ngrx/store';
+import * as CounterActions from './counter.actions';
+
+export interface CounterState {
+  count: number;
+}
+
+export const initialState: CounterState = {
+  count: 0
+};
+
+export const counterReducer = createReducer(
+  initialState,
+  on(CounterActions.increment, state => ({ ...state, count: state.count + 1 })),
+  on(CounterActions.decrement, state => ({ ...state, count: state.count - 1 })),
+  on(CounterActions.reset, state => ({ ...state, count: 0 }))
+);
+```
+
+## Testing
+
+Angular provides tools for unit testing and end-to-end testing.
+
+### Unit Testing with Jasmine and Karma
+
+```typescript
+// hero.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HeroComponent } from './hero.component';
+
+describe('HeroComponent', () => {
+  let component: HeroComponent;
+  let fixture: ComponentFixture<HeroComponent>;
+  
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [HeroComponent]
+    }).compileComponents();
+    
+    fixture = TestBed.createComponent(HeroComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+  
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+  
+  it('should have default hero name', () => {
+    expect(component.hero).toEqual('Windstorm');
+  });
+  
+  it('should change hero name when changeHero is called', () => {
+    component.changeHero();
+    expect(component.hero).toEqual('Stormwind');
+  });
+  
+  it('should display hero name in the template', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h2')?.textContent).toContain('Windstorm');
+  });
+});
+```
+
+### End-to-End Testing with Protractor or Cypress
+
+```typescript
+// app.e2e-spec.ts (Protractor)
+describe('Angular App', () => {
+  it('should display welcome message', () => {
+    browser.get('/');
+    expect(element(by.css('h1')).getText()).toEqual('Welcome to My App!');
+  });
+});
+```
+
+## Angular CLI Commands
+
+The Angular CLI provides commands for various development tasks:
+
+```bash
+# Generate components, services, modules, etc.
+ng generate component my-component
+ng generate service my-service
+ng generate module my-module
+
+# Build the application
+ng build                # Development build
+ng build --prod         # Production build
+
+# Run tests
+ng test                 # Unit tests
+ng e2e                  # End-to-end tests
+
+# Update Angular
+ng update              # Check for updates
+ng update @angular/cli @angular/core  # Update Angular
+```
+
+## Best Practices
+
+### Component Organization
+
+- Keep components small and focused on a single responsibility
+- Use smart/container components for data fetching and state management
+- Use dumb/presentational components for UI rendering
+- Use OnPush change detection for better performance
+
+```typescript
+@Component({
+  selector: 'app-user-list',
+  templateUrl: './user-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class UserListComponent {
+  @Input() users: User[] = [];
+  @Output() userSelected = new EventEmitter<User>();
+  
+  selectUser(user: User) {
+    this.userSelected.emit(user);
+  }
+}
+```
+
+### Performance Optimization
+
+- Use trackBy with ngFor to improve rendering performance
+
+```html
+<div *ngFor="let item of items; trackBy: trackByFn">
+  {{ item.name }}
+</div>
+```
+
+```typescript
+trackByFn(index: number, item: any) {
+  return item.id; // Unique identifier
+}
+```
+
+- Lazy load modules for better initial load time
+
+```typescript
+const routes: Routes = [
+  { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) }
+];
+```
+
+### TypeScript Best Practices
+
+- Use strict mode in tsconfig.json
+- Define interfaces for data models
+- Use type guards for type narrowing
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+}
+
+function isAdmin(user: User): user is User & { role: 'admin' } {
+  return user.role === 'admin';
+}
+
+if (isAdmin(user)) {
+  // TypeScript knows user.role is 'admin' here
+  console.log('Admin user:', user.name);
+}
+```
+
+## Conclusion
+
+Angular is a robust, full-featured framework for building complex web applications. Its comprehensive approach provides everything developers need to create, test, and deploy applications at scale. While it has a steeper learning curve compared to some other frameworks, the structure and tools it provides can lead to more maintainable and scalable applications, especially for larger teams and enterprise projects.
+
+<Note>
+  Angular follows a predictable release schedule with a new major version approximately every 6 months. However, the team focuses on making updates as smooth as possible, with most changes being non-breaking and tooling to help with migrations.
+</Note>

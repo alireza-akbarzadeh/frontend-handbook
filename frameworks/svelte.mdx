@@ -1,0 +1,680 @@
+---
+title: "Svelte"
+description: "Learn about Svelte, a radical new approach to building user interfaces"
+---
+
+## What is Svelte?
+
+Svelte is a modern JavaScript framework for building user interfaces. Unlike traditional frameworks like React or Vue, Svelte shifts much of the work from runtime to compile time. Instead of using a virtual DOM, Svelte compiles your code into efficient JavaScript that surgically updates the DOM when your application's state changes.
+
+<Note>
+  Svelte is both a framework and a compiler. It takes your declarative components and converts them into highly optimized vanilla JavaScript that directly manipulates the DOM.
+</Note>
+
+## Why Use Svelte?
+
+<CardGroup cols={2}>
+  <Card title="No Virtual DOM" icon="bolt">
+    Svelte compiles your code to tiny, framework-less vanilla JavaScript, avoiding the overhead of runtime libraries and virtual DOM diffing.
+  </Card>
+  
+  <Card title="Truly Reactive" icon="rotate">
+    Svelte's reactivity is built into the language, automatically updating the DOM when your application state changes without requiring explicit render calls.
+  </Card>
+  
+  <Card title="Less Code" icon="code">
+    Svelte requires significantly less code than other frameworks to achieve the same results, leading to more maintainable applications.
+  </Card>
+  
+  <Card title="Built-in Transitions" icon="wand-magic-sparkles">
+    Svelte includes built-in transition and animation capabilities without requiring additional libraries.
+  </Card>
+  
+  <Card title="No Framework to Download" icon="download">
+    Since Svelte compiles to vanilla JavaScript, there's no framework code for users to download, resulting in smaller bundle sizes.
+  </Card>
+  
+  <Card title="Gentle Learning Curve" icon="graduation-cap">
+    Svelte builds on familiar web technologies (HTML, CSS, JavaScript) with minimal new syntax to learn.
+  </Card>
+</CardGroup>
+
+## Getting Started with Svelte
+
+### Setting Up a Svelte Project
+
+The easiest way to start a new Svelte project is using SvelteKit, the official application framework for Svelte, or a simple Svelte template:
+
+```bash
+# Using SvelteKit (recommended for full applications)
+npm create svelte@latest my-svelte-app
+
+# Or using a simple Svelte template
+npm create vite@latest my-svelte-app -- --template svelte
+
+# Navigate to the project directory
+cd my-svelte-app
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+### Svelte Project Structure
+
+A typical Svelte project has the following structure:
+
+```
+my-svelte-app/
+├── node_modules/       # Dependencies
+├── public/             # Static assets
+├── src/                # Application source code
+│   ├── lib/            # Shared components and utilities
+│   ├── routes/         # Page components (for SvelteKit)
+│   ├── app.html        # HTML template (SvelteKit)
+│   └── app.d.ts        # TypeScript declarations (SvelteKit)
+├── static/             # Static files that should be served as-is (SvelteKit)
+├── svelte.config.js    # Svelte configuration
+├── package.json        # Project metadata and dependencies
+└── vite.config.js      # Build configuration
+```
+
+For a simple Svelte project (not SvelteKit), the structure is typically:
+
+```
+my-svelte-app/
+├── node_modules/       # Dependencies
+├── public/             # Static assets
+├── src/                # Application source code
+│   ├── lib/            # Shared components and utilities
+│   ├── App.svelte      # Root component
+│   └── main.js         # Entry point
+├── package.json        # Project metadata and dependencies
+└── vite.config.js      # Build configuration
+```
+
+## Core Concepts
+
+### Svelte Components
+
+Svelte components are single-file components with a `.svelte` extension that contain HTML, CSS, and JavaScript:
+
+```svelte
+<!-- Greeting.svelte -->
+<script>
+  // JavaScript goes here
+  export let name = 'world'; // Props with default value
+  
+  let count = 0;
+  
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<!-- HTML goes here -->
+<div class="greeting">
+  <h1>Hello {name}!</h1>
+  <p>You clicked {count} times</p>
+  <button on:click={increment}>Increment</button>
+</div>
+
+<!-- CSS goes here -->
+<style>
+  .greeting {
+    font-family: sans-serif;
+    text-align: center;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+    background-color: #f9f9f9;
+  }
+  
+  h1 {
+    color: #ff3e00;
+  }
+</style>
+```
+
+### Reactivity
+
+Svelte's reactivity is based on assignments. When you assign to a variable that's used in your template, Svelte automatically updates the DOM:
+
+```svelte
+<script>
+  let count = 0;
+  
+  function increment() {
+    count += 1; // This assignment triggers a DOM update
+  }
+  
+  // Reactive declarations
+  $: doubled = count * 2;
+  $: if (count >= 10) {
+    alert('Count is now ' + count);
+  }
+</script>
+
+<button on:click={increment}>{count}</button>
+<p>Doubled: {doubled}</p>
+```
+
+<Tip>
+  The `$:` syntax is a JavaScript label that Svelte uses to mark a statement as reactive. Whenever the variables referenced in the statement change, the statement will be re-executed.
+</Tip>
+
+### Props
+
+Svelte uses the `export` keyword to define props:
+
+```svelte
+<!-- Button.svelte -->
+<script>
+  export let text = 'Click me'; // Default value
+  export let type = 'primary';
+  export let disabled = false;
+</script>
+
+<button 
+  class={type} 
+  disabled={disabled}
+>
+  {text}
+</button>
+
+<style>
+  button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  
+  button.primary {
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  button.secondary {
+    background-color: #e5e7eb;
+    color: #1f2937;
+  }
+  
+  button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>
+```
+
+Using the component:
+
+```svelte
+<script>
+  import Button from './Button.svelte';
+</script>
+
+<Button text="Save" />
+<Button text="Cancel" type="secondary" />
+<Button text="Delete" disabled={true} />
+```
+
+### Conditional Rendering
+
+Svelte uses `{#if}`, `{:else if}`, and `{:else}` blocks for conditional rendering:
+
+```svelte
+<script>
+  let user = { loggedIn: false };
+  
+  function toggle() {
+    user.loggedIn = !user.loggedIn;
+  }
+</script>
+
+{#if user.loggedIn}
+  <button on:click={toggle}>Log out</button>
+{:else}
+  <button on:click={toggle}>Log in</button>
+{/if}
+```
+
+### Loops
+
+Svelte uses `{#each}` blocks for list rendering:
+
+```svelte
+<script>
+  let fruits = ['apple', 'banana', 'orange', 'mango'];
+</script>
+
+<ul>
+  {#each fruits as fruit, index (fruit)}
+    <li>{index + 1}: {fruit}</li>
+  {/each}
+</ul>
+
+<!-- With a key for optimized updates -->
+<ul>
+  {#each fruits as fruit, index (fruit)}
+    <li>{index + 1}: {fruit}</li>
+  {/each}
+</ul>
+
+<!-- With an empty state -->
+<ul>
+  {#each fruits as fruit, index (fruit)}
+    <li>{index + 1}: {fruit}</li>
+  {:else}
+    <li>No fruits available</li>
+  {/each}
+</ul>
+```
+
+### Handling Events
+
+Svelte uses the `on:` directive for event handling:
+
+```svelte
+<script>
+  let count = 0;
+  
+  function increment() {
+    count += 1;
+  }
+  
+  function handleKeydown(event) {
+    if (event.key === 'Enter') {
+      alert('You pressed Enter!');
+    }
+  }
+</script>
+
+<button on:click={increment}>Clicked {count} times</button>
+
+<!-- Inline event handler -->
+<button on:click={() => count += 1}>Increment</button>
+
+<!-- Event modifiers -->
+<button on:click|once={increment}>Click me once</button>
+<button on:click|preventDefault={increment}>No default action</button>
+<input on:keydown={handleKeydown} />
+<input on:keydown|stopPropagation={handleKeydown} />
+```
+
+### Bindings
+
+Svelte provides two-way binding with the `bind:` directive:
+
+```svelte
+<script>
+  let name = '';
+  let checked = false;
+  let selectedColor = 'red';
+  let selectedFruits = [];
+  let count = 0;
+</script>
+
+<!-- Text input binding -->
+<input bind:value={name}>
+<p>Hello {name || 'stranger'}!</p>
+
+<!-- Checkbox binding -->
+<input type="checkbox" bind:checked={checked}>
+<p>Checked: {checked}</p>
+
+<!-- Select binding -->
+<select bind:value={selectedColor}>
+  <option value="red">Red</option>
+  <option value="green">Green</option>
+  <option value="blue">Blue</option>
+</select>
+<p>Selected color: {selectedColor}</p>
+
+<!-- Multiple select binding -->
+<select multiple bind:value={selectedFruits}>
+  <option value="apple">Apple</option>
+  <option value="banana">Banana</option>
+  <option value="orange">Orange</option>
+</select>
+<p>Selected fruits: {selectedFruits.join(', ')}</p>
+
+<!-- Number input binding -->
+<input type="number" bind:value={count}>
+<p>Count: {count}</p>
+```
+
+### Lifecycle
+
+Svelte provides lifecycle functions to run code at specific times:
+
+```svelte
+<script>
+  import { onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
+  
+  let count = 0;
+  let interval;
+  
+  onMount(() => {
+    // Runs when the component is mounted to the DOM
+    console.log('Component mounted');
+    interval = setInterval(() => count += 1, 1000);
+  });
+  
+  onDestroy(() => {
+    // Runs when the component is unmounted from the DOM
+    console.log('Component destroyed');
+    clearInterval(interval);
+  });
+  
+  beforeUpdate(() => {
+    // Runs before the DOM is updated
+    console.log('Before update, count is', count);
+  });
+  
+  afterUpdate(() => {
+    // Runs after the DOM is updated
+    console.log('After update, count is', count);
+  });
+</script>
+
+<p>Count: {count}</p>
+```
+
+## Stores
+
+Svelte provides a built-in store mechanism for managing application state outside of components:
+
+```svelte
+<!-- stores.js -->
+import { writable, readable, derived } from 'svelte/store';
+
+// Writable store (can be updated from anywhere)
+export const count = writable(0);
+
+// Readable store (can only be updated by the store itself)
+export const time = readable(new Date(), function start(set) {
+  const interval = setInterval(() => {
+    set(new Date());
+  }, 1000);
+  
+  return function stop() {
+    clearInterval(interval);
+  };
+});
+
+// Derived store (computed from other stores)
+export const elapsed = derived(
+  time,
+  $time => Math.round(($time - new Date(0)) / 1000)
+);
+```
+
+Using stores in components:
+
+```svelte
+<script>
+  import { count } from './stores.js';
+  
+  function increment() {
+    count.update(n => n + 1);
+  }
+  
+  function decrement() {
+    count.update(n => n - 1);
+  }
+  
+  function reset() {
+    count.set(0);
+  }
+</script>
+
+<h1>The count is {$count}</h1>
+
+<button on:click={increment}>+</button>
+<button on:click={decrement}>-</button>
+<button on:click={reset}>Reset</button>
+```
+
+<Tip>
+  The `$` prefix is a special syntax in Svelte that automatically subscribes to a store and unsubscribes when the component is destroyed.
+</Tip>
+
+## Transitions and Animations
+
+Svelte includes built-in transition and animation directives:
+
+```svelte
+<script>
+  import { fade, fly, slide, scale, draw, crossfade } from 'svelte/transition';
+  import { elasticOut } from 'svelte/easing';
+  
+  let visible = true;
+</script>
+
+<button on:click={() => visible = !visible}>
+  {visible ? 'Hide' : 'Show'}
+</button>
+
+{#if visible}
+  <div transition:fade={{ duration: 300 }}>
+    Fades in and out
+  </div>
+  
+  <div in:fly={{ y: 200, duration: 500 }} out:fade>
+    Flies in, fades out
+  </div>
+  
+  <div transition:slide={{ duration: 300 }}>
+    Slides in and out
+  </div>
+  
+  <div transition:scale={{ start: 0.5, duration: 500, easing: elasticOut }}>
+    Scales in and out with elastic easing
+  </div>
+{/if}
+```
+
+## Actions
+
+Actions are functions that run when an element is created and can return an object with lifecycle methods:
+
+```svelte
+<script>
+  function tooltip(node, text) {
+    const tooltip = document.createElement('div');
+    tooltip.textContent = text;
+    tooltip.className = 'tooltip';
+    
+    function position() {
+      const { top, right, bottom } = node.getBoundingClientRect();
+      tooltip.style.top = `${bottom + 5}px`;
+      tooltip.style.left = `${right - tooltip.offsetWidth}px`;
+    }
+    
+    function show() {
+      document.body.appendChild(tooltip);
+      position();
+    }
+    
+    function hide() {
+      tooltip.remove();
+    }
+    
+    node.addEventListener('mouseenter', show);
+    node.addEventListener('mouseleave', hide);
+    
+    return {
+      update(newText) {
+        tooltip.textContent = newText;
+      },
+      destroy() {
+        tooltip.remove();
+        node.removeEventListener('mouseenter', show);
+        node.removeEventListener('mouseleave', hide);
+      }
+    };
+  }
+</script>
+
+<button use:tooltip={"I'm a tooltip!"}>Hover me</button>
+
+<style>
+  .tooltip {
+    position: absolute;
+    background: #333;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    z-index: 100;
+  }
+</style>
+```
+
+## SvelteKit
+
+SvelteKit is the official application framework for Svelte, similar to Next.js for React or Nuxt for Vue. It provides features like:
+
+- Server-side rendering (SSR)
+- Static site generation (SSG)
+- API routes
+- File-based routing
+- Code splitting
+- Optimized production builds
+
+### Routing in SvelteKit
+
+SvelteKit uses a file-based routing system:
+
+```
+src/routes/
+├── +page.svelte         # Home page (/)  
+├── about/
+│   └── +page.svelte     # About page (/about)
+├── blog/
+│   ├── +page.svelte     # Blog index (/blog)
+│   └── [slug]/          # Dynamic route
+│       └── +page.svelte # Blog post (/blog/[slug])
+└── api/
+    └── data/
+        └── +server.js   # API endpoint (/api/data)
+```
+
+### Loading Data
+
+SvelteKit provides a `+page.js` or `+page.server.js` file for loading data:
+
+```javascript
+// src/routes/blog/[slug]/+page.server.js
+export async function load({ params }) {
+  const { slug } = params;
+  const post = await fetchBlogPost(slug);
+  
+  if (!post) {
+    throw error(404, 'Post not found');
+  }
+  
+  return { post };
+}
+```
+
+```svelte
+<!-- src/routes/blog/[slug]/+page.svelte -->
+<script>
+  export let data;
+  const { post } = data;
+</script>
+
+<article>
+  <h1>{post.title}</h1>
+  <p>Published on {new Date(post.date).toLocaleDateString()}</p>
+  <div>{@html post.content}</div>
+</article>
+```
+
+### API Routes
+
+SvelteKit allows you to create API endpoints using `+server.js` files:
+
+```javascript
+// src/routes/api/users/+server.js
+import { json } from '@sveltejs/kit';
+
+export async function GET() {
+  const users = await fetchUsers();
+  return json(users);
+}
+
+export async function POST({ request }) {
+  const data = await request.json();
+  const newUser = await createUser(data);
+  return json(newUser, { status: 201 });
+}
+```
+
+## TypeScript Support
+
+Svelte has excellent TypeScript support. To use TypeScript in a Svelte component, add the `lang="ts"` attribute to the script tag:
+
+```svelte
+<script lang="ts">
+  interface User {
+    id: number;
+    name: string;
+    email: string;
+  }
+  
+  export let user: User;
+  export let count: number = 0;
+  
+  function increment(): void {
+    count += 1;
+  }
+</script>
+
+<div>
+  <h2>{user.name}</h2>
+  <p>Email: {user.email}</p>
+  <p>Count: {count}</p>
+  <button on:click={increment}>Increment</button>
+</div>
+```
+
+## Best Practices
+
+### Component Organization
+
+- Keep components small and focused on a single responsibility
+- Use props for passing data down to child components
+- Use events for communication from child to parent components
+- Use stores for shared state across components
+
+### Performance Optimization
+
+- Use keyed `each` blocks for efficient updates
+- Avoid unnecessary reactivity with `const` for values that don't change
+- Use `{@html ...}` sparingly and only with trusted content
+
+### Accessibility
+
+Svelte encourages accessibility with built-in warnings for common issues:
+
+```svelte
+<!-- Svelte will warn about missing alt attribute -->
+<img src="image.jpg"> <!-- Warning! -->
+
+<!-- Correct usage -->
+<img src="image.jpg" alt="Description of image">
+```
+
+## Conclusion
+
+Svelte offers a refreshing approach to building user interfaces with its compile-time framework. By shifting work from the browser to the build step, Svelte creates highly optimized applications with less code and better performance. Its intuitive syntax, built-in features like transitions and stores, and growing ecosystem make it an excellent choice for modern web development.
+
+With SvelteKit, you get a full-featured application framework that handles routing, server-side rendering, and more, making Svelte suitable for projects of all sizes.
+
+<Note>
+  Svelte is still evolving, with Svelte 4 being the current stable version and Svelte 5 in development. The Svelte ecosystem is growing rapidly, with more libraries, tools, and resources becoming available as its popularity increases.
+</Note>

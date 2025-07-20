@@ -1,0 +1,532 @@
+---
+title: "Vue.js"
+description: "Learn about Vue.js, a progressive JavaScript framework for building user interfaces"
+---
+
+## What is Vue.js?
+
+Vue.js (commonly referred to as Vue) is a progressive JavaScript framework for building user interfaces and single-page applications. Unlike other monolithic frameworks, Vue is designed to be incrementally adoptable, allowing you to use as much or as little of the framework as you need.
+
+<Note>
+  Vue combines the best aspects of other frameworks like React and Angular, offering reactivity and component-based architecture with a gentler learning curve and more flexibility in integration.
+</Note>
+
+## Why Use Vue?
+
+<CardGroup cols={2}>
+  <Card title="Progressive Framework" icon="layer-group">
+    Vue can be adopted incrementally, from enhancing static HTML to powering sophisticated single-page applications.
+  </Card>
+  
+  <Card title="Reactive Data Binding" icon="rotate">
+    Vue provides reactive and composable data binding, automatically updating the DOM when the underlying data changes.
+  </Card>
+  
+  <Card title="Component System" icon="puzzle-piece">
+    Vue's component-based architecture promotes reusable, maintainable code organization.
+  </Card>
+  
+  <Card title="Gentle Learning Curve" icon="graduation-cap">
+    Vue is known for being approachable for beginners while offering advanced features for experienced developers.
+  </Card>
+  
+  <Card title="Versatile Integration" icon="plug">
+    Vue can be integrated into existing projects or used to build new applications from scratch.
+  </Card>
+  
+  <Card title="Comprehensive Tooling" icon="screwdriver-wrench">
+    Vue offers official tools for development, state management, routing, and more.
+  </Card>
+</CardGroup>
+
+## Getting Started with Vue
+
+### Setting Up a Vue Project
+
+The easiest way to start a new Vue project is using the Vue CLI or the newer create-vue utility, which is based on Vite:
+
+```bash
+# Using Vue CLI
+npm install -g @vue/cli
+vue create my-vue-app
+
+# Or using create-vue (recommended for Vue 3)
+npm init vue@latest
+
+# Navigate to the project directory
+cd my-vue-app
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+### Vue Project Structure
+
+A typical Vue project created with the Vue CLI or create-vue has the following structure:
+
+```
+my-vue-app/
+├── node_modules/       # Dependencies
+├── public/             # Static assets that won't be processed by build tools
+│   └── index.html      # HTML template
+├── src/                # Application source code
+│   ├── assets/         # Assets that will be processed by build tools
+│   ├── components/     # Vue components
+│   ├── views/          # Page components (for router)
+│   ├── App.vue         # Root component
+│   └── main.js         # Entry point
+├── package.json        # Project metadata and dependencies
+└── vite.config.js      # Build configuration (or vue.config.js for Vue CLI)
+```
+
+## Core Concepts
+
+### Vue Components
+
+Components are the building blocks of Vue applications. A Vue component consists of three parts: template (HTML), script (JavaScript), and style (CSS).
+
+```vue
+<template>
+  <div class="greeting">
+    <h1>{{ message }}</h1>
+    <button @click="changeMessage">Change Message</button>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      message: 'Hello Vue!'
+    }
+  },
+  methods: {
+    changeMessage() {
+      this.message = 'Message changed!'
+    }
+  }
+}
+</script>
+
+<style scoped>
+.greeting {
+  text-align: center;
+  margin-top: 2rem;
+}
+</style>
+```
+
+### Vue 3 Composition API
+
+Vue 3 introduced the Composition API, which provides a more flexible way to organize component logic:
+
+```vue
+<template>
+  <div class="greeting">
+    <h1>{{ message }}</h1>
+    <button @click="changeMessage">Change Message</button>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const message = ref('Hello Vue!')
+
+function changeMessage() {
+  message.value = 'Message changed!'
+}
+</script>
+
+<style scoped>
+.greeting {
+  text-align: center;
+  margin-top: 2rem;
+}
+</style>
+```
+
+<Tip>
+  The `<script setup>` syntax is a compile-time syntactic sugar for using the Composition API in Single-File Components. It's more concise and performs better than the Options API in most cases.
+</Tip>
+
+### Reactive Data
+
+Vue's reactivity system automatically updates the DOM when the underlying data changes:
+
+```vue
+<template>
+  <div>
+    <p>Count: {{ count }}</p>
+    <button @click="increment">Increment</button>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const count = ref(0)
+
+function increment() {
+  count.value++
+}
+</script>
+```
+
+### Directives
+
+Vue provides built-in directives to apply special reactive behavior to the DOM:
+
+```vue
+<template>
+  <div>
+    <!-- Conditional rendering -->
+    <p v-if="showMessage">This message is visible</p>
+    <p v-else>Alternative message</p>
+    
+    <!-- List rendering -->
+    <ul>
+      <li v-for="(item, index) in items" :key="index">{{ item }}</li>
+    </ul>
+    
+    <!-- Event handling -->
+    <button v-on:click="handleClick">Click me</button>
+    <!-- Shorthand for v-on -->
+    <button @click="handleClick">Click me</button>
+    
+    <!-- Two-way binding -->
+    <input v-model="inputText">
+    <p>You typed: {{ inputText }}</p>
+    
+    <!-- Binding attributes -->
+    <img v-bind:src="imageUrl" alt="Dynamic image">
+    <!-- Shorthand for v-bind -->
+    <img :src="imageUrl" alt="Dynamic image">
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const showMessage = ref(true)
+const items = ref(['Apple', 'Banana', 'Cherry'])
+const inputText = ref('')
+const imageUrl = ref('https://example.com/image.jpg')
+
+function handleClick() {
+  showMessage.value = !showMessage.value
+}
+</script>
+```
+
+## State Management
+
+### Pinia (Recommended for Vue 3)
+
+Pinia is the official state management library for Vue 3:
+
+```bash
+npm install pinia
+```
+
+Setting up Pinia:
+
+```js
+// main.js
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+
+const app = createApp(App)
+app.use(createPinia())
+app.mount('#app')
+```
+
+Creating a store:
+
+```js
+// stores/counter.js
+import { defineStore } from 'pinia'
+
+export const useCounterStore = defineStore('counter', {
+  state: () => ({
+    count: 0,
+    name: 'Counter'
+  }),
+  getters: {
+    doubleCount: (state) => state.count * 2
+  },
+  actions: {
+    increment() {
+      this.count++
+    }
+  }
+})
+```
+
+Using the store in a component:
+
+```vue
+<template>
+  <div>
+    <p>Count: {{ counter.count }}</p>
+    <p>Double count: {{ counter.doubleCount }}</p>
+    <button @click="counter.increment">Increment</button>
+  </div>
+</template>
+
+<script setup>
+import { useCounterStore } from '../stores/counter'
+
+const counter = useCounterStore()
+</script>
+```
+
+### Vuex (Vue 2 and early Vue 3)
+
+Vuex is the original state management pattern and library for Vue:
+
+```bash
+npm install vuex
+```
+
+Setting up Vuex:
+
+```js
+// store/index.js
+import { createStore } from 'vuex'
+
+export default createStore({
+  state: {
+    count: 0
+  },
+  getters: {
+    doubleCount: state => state.count * 2
+  },
+  mutations: {
+    increment(state) {
+      state.count++
+    }
+  },
+  actions: {
+    incrementAsync({ commit }) {
+      setTimeout(() => {
+        commit('increment')
+      }, 1000)
+    }
+  }
+})
+```
+
+## Routing
+
+Vue Router is the official router for Vue.js:
+
+```bash
+npm install vue-router
+```
+
+Setting up Vue Router:
+
+```js
+// router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import Home from '../views/Home.vue'
+import About from '../views/About.vue'
+
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: Home
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+export default router
+```
+
+Using the router in your app:
+
+```js
+// main.js
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+
+const app = createApp(App)
+app.use(router)
+app.mount('#app')
+```
+
+Router components in your template:
+
+```vue
+<template>
+  <div>
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </nav>
+    
+    <!-- Route components are rendered here -->
+    <router-view />
+  </div>
+</template>
+```
+
+## Composition API vs Options API
+
+Vue 3 supports two styles of writing components: the Options API (traditional) and the Composition API (new in Vue 3).
+
+<CardGroup cols={2}>
+  <Card title="Options API" icon="list-check">
+    Organizes code by option types (data, methods, computed, etc.). Familiar to Vue 2 developers and often easier for beginners.
+  </Card>
+  
+  <Card title="Composition API" icon="puzzle-piece">
+    Organizes code by logical concerns. More flexible, better TypeScript integration, and better performance for complex components.
+  </Card>
+</CardGroup>
+
+### Options API Example
+
+```vue
+<script>
+export default {
+  data() {
+    return {
+      firstName: 'John',
+      lastName: 'Doe'
+    }
+  },
+  computed: {
+    fullName() {
+      return `${this.firstName} ${this.lastName}`
+    }
+  },
+  methods: {
+    updateName(newFirstName) {
+      this.firstName = newFirstName
+    }
+  }
+}
+</script>
+```
+
+### Composition API Example
+
+```vue
+<script setup>
+import { ref, computed } from 'vue'
+
+const firstName = ref('John')
+const lastName = ref('Doe')
+
+const fullName = computed(() => {
+  return `${firstName.value} ${lastName.value}`
+})
+
+function updateName(newFirstName) {
+  firstName.value = newFirstName
+}
+</script>
+```
+
+## Vue Ecosystem
+
+<CardGroup cols={3}>
+  <Card title="Vue Router" icon="route">
+    Official router for Vue.js applications
+  </Card>
+  
+  <Card title="Pinia/Vuex" icon="database">
+    State management for Vue applications
+  </Card>
+  
+  <Card title="Nuxt.js" icon="rocket">
+    Framework for creating Vue.js applications with server-side rendering, static site generation, and more
+  </Card>
+  
+  <Card title="Vite" icon="bolt">
+    Next-generation frontend tooling with instant server start and hot module replacement
+  </Card>
+  
+  <Card title="Vue Test Utils" icon="vial">
+    Official testing utility library for Vue.js
+  </Card>
+  
+  <Card title="Vue DevTools" icon="bug">
+    Browser extension for debugging Vue applications
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+### Component Organization
+
+- Keep components small and focused on a single responsibility
+- Use props for passing data down to child components
+- Use events for communication from child to parent components
+- Use slots for flexible component composition
+
+### Performance Optimization
+
+- Use `v-show` instead of `v-if` for elements that toggle frequently
+- Use `key` with `v-for` to help Vue optimize rendering
+- Avoid expensive operations in computed properties
+- Use async components for code-splitting
+
+```js
+// Async component registration
+const AsyncComponent = defineAsyncComponent(() =>
+  import('./components/AsyncComponent.vue')
+)
+```
+
+### TypeScript Integration
+
+Vue 3 has excellent TypeScript support, especially with the Composition API:
+
+```vue
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
+const user = ref<User | null>(null)
+
+const userName = computed(() => {
+  return user.value ? user.value.name : 'Guest'
+})
+
+async function fetchUser(id: number): Promise<void> {
+  const response = await fetch(`/api/users/${id}`)
+  user.value = await response.json()
+}
+</script>
+```
+
+## Conclusion
+
+Vue.js offers a progressive approach to building user interfaces, making it suitable for projects of all sizes. Its gentle learning curve, combined with powerful features, has made it one of the most popular frontend frameworks. Whether you're enhancing static HTML pages or building complex single-page applications, Vue provides the tools and patterns to make development efficient and enjoyable.
+
+<Note>
+  Vue 3 is the current stable version and is recommended for all new projects. If you're working with Vue 2, consider migrating to Vue 3 to take advantage of its improved performance, Composition API, and better TypeScript support.
+</Note>
