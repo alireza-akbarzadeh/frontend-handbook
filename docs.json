@@ -25,19 +25,19 @@
           {
             "group": "Fundamentals",
             "pages": [
-              "html/introduction",
-              "html/elements",
-              "html/attributes",
-              "html/structure"
+              "src/html/introduction",
+              "src/html/elements",
+              "src/html/attributes",
+              "src/html/structure"
             ]
           },
           {
             "group": "Advanced",
             "pages": [
-              "html/semantic",
-              "html/accessibility",
-              "html/forms",
-              "html/best-practices"
+              "src/html/semantic",
+              "src/html/accessibility",
+              "src/html/forms",
+              "src/html/best-practices"
             ]
           }
         ]
@@ -48,28 +48,28 @@
           {
             "group": "Basics",
             "pages": [
-              "css/introduction",
-              "css/selectors",
-              "css/box-model",
-              "css/typography"
+              "src/css/introduction",
+              "src/css/selectors",
+              "src/css/box-model",
+              "src/css/typography"
             ]
           },
           {
             "group": "Layout",
             "pages": [
-              "css/flexbox",
-              "css/grid",
-              "css/responsive-design",
-              "css/positioning"
+              "src/css/flexbox",
+              "src/css/grid",
+              "src/css/responsive-design",
+              "src/css/positioning"
             ]
           },
           {
             "group": "Advanced",
             "pages": [
-              "css/animations",
-              "css/variables",
-              "css/preprocessors",
-              "css/frameworks"
+              "src/css/animations",
+              "src/css/variables",
+              "src/css/preprocessors",
+              "src/css/frameworks"
             ]
           }
         ]
@@ -80,29 +80,29 @@
           {
             "group": "Fundamentals",
             "pages": [
-              "javascript/introduction",
-              "javascript/syntax",
-              "javascript/variables",
-              "javascript/functions",
-              "javascript/objects",
-              "javascript/arrays"
+              "src/javascript/introduction",
+              "src/javascript/syntax",
+              "src/javascript/variables",
+              "src/javascript/functions",
+              "src/javascript/objects",
+              "src/javascript/arrays"
             ]
           },
           {
             "group": "DOM",
             "pages": [
-              "javascript/dom-manipulation",
-              "javascript/events",
-              "javascript/forms"
+              "src/javascript/dom-manipulation",
+              "src/javascript/events",
+              "src/javascript/forms"
             ]
           },
           {
             "group": "Advanced",
             "pages": [
-              "javascript/async",
-              "javascript/fetch-api",
-              "javascript/modules",
-              "javascript/es6-features"
+              "src/javascript/async",
+              "src/javascript/fetch-api",
+              "src/javascript/modules",
+              "src/javascript/es6-features"
             ]
           }
         ]
@@ -113,19 +113,19 @@
           {
             "group": "Development Tools",
             "pages": [
-              "tools/git",
-              "tools/package-managers",
-              "tools/bundlers",
-              "tools/devtools"
+              "src/tools/git",
+              "src/tools/package-managers",
+              "src/tools/bundlers",
+              "src/tools/devtools"
             ]
           },
           {
             "group": "Frameworks",
             "pages": [
-              "frameworks/react",
-              "frameworks/vue",
-              "frameworks/angular",
-              "frameworks/svelte"
+              "src/frameworks/react",
+              "src/frameworks/vue",
+              "src/frameworks/angular",
+              "src/frameworks/svelte"
             ]
           }
         ]
@@ -136,22 +136,22 @@
           {
             "group": "Code Quality",
             "pages": [
-              "best-practices/clean-code",
-              "best-practices/performance",
-              "best-practices/accessibility",
-              "best-practices/frontend-security",
-              "best-practices/security",
-              "best-practices/state-management",
-              "best-practices/testing"
+              "src/best-practices/clean-code",
+              "src/best-practices/performance",
+              "src/best-practices/accessibility",
+              "src/best-practices/frontend-security",
+              "src/best-practices/security",
+              "src/best-practices/state-management",
+              "src/best-practices/testing"
             ]
           },
           {
             "group": "Workflow",
             "pages": [
-              "best-practices/testing",
-              "best-practices/deployment",
-              "best-practices/documentation",
-              "best-practices/collaboration"
+              "src/best-practices/testing",
+              "src/best-practices/deployment",
+              "src/best-practices/documentation",
+              "src/best-practices/collaboration"
             ]
           }
         ]
