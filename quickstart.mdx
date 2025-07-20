@@ -1,97 +1,111 @@
 ---
-title: 'Quickstart'
-description: 'Start building awesome documentation in under 5 minutes'
+title: "Quickstart"
+description: "Start using the Frontend Handbook in under 5 minutes"
 ---
 
-## Setup your development
+## Set up your environment
 
-Learn how to update your docs locally and deploy them to the public.
+Learn how to get started with your Frontend Handbook locally and customize it to your needs.
 
-### Edit and preview
+### Clone and run locally
 
 <AccordionGroup>
-  <Accordion icon="github" title="Clone your docs locally">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
+  <Accordion icon="github" title="Clone the project">
+    First, clone the repository containing your handbook files. Run the following in your terminal:
+
+    ```bash
+    git clone https://github.com/alireza-akbarzadeh/frontend-handbook
+    cd frontend-handbook
+    ```
+
+    Make sure you have Node.js installed. You can download it from [nodejs.org](https://nodejs.org).
+
   </Accordion>
-  <Accordion icon="rectangle-terminal" title="Preview changes">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally. 
-    1. Install the
-    [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-    documentation changes locally with this command: ``` npm i -g mintlify ```
-    2. Run the following command at the root of your documentation (where
-    `docs.json` is): ``` mintlify dev ```
-    <Note>
-      If you’re currently using the legacy ```mint.json``` configuration file, please update the Mintlify CLI:
 
+  <Accordion icon="rectangle-terminal" title="Install dependencies and start development server">
+    Install the dependencies and start the development server using the following commands:
 
-      ```npm i -g mintlify@latest```
-      And run the new upgrade command in your docs repository:
+    ```bash
+    npm install -g mintlify
+    mintlify dev
+    ```
 
-      ```mintlify upgrade```
-      You should now be using the new ```docs.json``` configuration file. Feel free to delete the ```mint.json``` file from your repository.
-    </Note>
+    This will launch your handbook locally at `http://localhost:3000` (or another port depending on your setup).
+
   </Accordion>
 </AccordionGroup>
 
-### Deploy your changes
+### Customize and preview
 
 <AccordionGroup>
+  <Accordion icon="pen-to-square" title="Edit your content">
+    Edit the `.mdx` files inside the `html/`, `css/`, `javascript/`, or `git/` folders to update or add new topics.
 
-<Accordion icon="message-bot" title="Install our Github app">
-  Our Github app automatically deploys your changes to your docs site, so you
-  don't need to manage deployments yourself. You can find the link to install on
-  your [dashboard](https://dashboard.mintlify.com). Once the bot has been
-  successfully installed, there should be a check mark next to the commit hash
-  of the repo.
-</Accordion>
-<Accordion icon="rocket" title="Push your changes">
-  [Commit and push your changes to
-  Git](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push)
-  for your changes to update in your docs site. If you push and don't see that
-  the Github app successfully deployed your changes, you can also manually
-  update your docs through our [dashboard](https://dashboard.mintlify.com).
-</Accordion>
+    For example:
+    - `html/introduction.mdx`
+    - `css/flexbox.mdx`
 
+    Use Markdown with React components to build interactive content.
+
+  </Accordion>
+
+  <Accordion icon="eye" title="Preview your changes">
+    Your changes will be hot-reloaded in the browser. Just refresh or navigate to the page you're editing to see updates instantly.
+  </Accordion>
 </AccordionGroup>
 
-## Update your docs
+## Deploy your handbook
 
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
+<AccordionGroup>
+  <Accordion icon="rocket" title="Deploy using GitHub Pages / Vercel / Netlify">
+    You can deploy your handbook using a static site hosting provider:
+
+    - **GitHub Pages** – via GitHub Actions
+    - **Vercel** – automatic deploy on push (recommended for Next.js)
+    - **Netlify** – drag and drop or connect your repo
+
+    Most setups just require pushing your code to GitHub.
+
+  </Accordion>
+
+  <Accordion icon="upload" title="Push your changes to GitHub">
+    Commit and push your changes:
+
+    ```bash
+    git add .
+    git commit -m "Update handbook content"
+    git push origin main
+    ```
+
+    Your deployment provider will detect the change and redeploy your site.
+
+  </Accordion>
+</AccordionGroup>
+
+## Update your handbook
+
+You can add new content using MDX syntax and even integrate your own custom components to enrich the learning experience.
 
 <CardGroup>
 
-<Card title="Add Content With MDX" icon="file" href="/essentials/markdown">
-  Add content to your docs with MDX syntax.
+<Card title="Write with MDX" icon="file" href="/essentials/markdown">
+  Create pages using Markdown extended with React components.
+</Card>
+
+<Card title="Add Code Snippets" icon="square-code" href="/essentials/code">
+  Use syntax-highlighted code blocks to explain concepts clearly.
+</Card>
+
+<Card title="Insert Images" icon="image" href="/essentials/images">
+  Include diagrams, screenshots, or illustrations to support your text.
 </Card>
 
 <Card
-  title="Add Code Blocks"
-  icon="square-code"
-  href="/essentials/code"
->
-  Add code directly to your docs with syntax highlighting.
-</Card>
-
-<Card
-  title="Add Images"
-  icon="image"
-  href="/essentials/images"
->
-  Add images to your docs to make them more engaging.
-</Card>
-
-<Card
-  title="Add Custom Components"
+  title="Use Custom Components"
   icon="puzzle-piece"
   href="/essentials/reusable-snippets"
 >
-  Add templates to your docs to make them more reusable.
+  Build reusable components like notes, tips, or callouts across pages.
 </Card>
 
 </CardGroup>

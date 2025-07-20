@@ -1,7 +1,7 @@
 ---
-title: 'Navigation'
-description: 'The navigation field in docs.json defines the pages that go in the navigation menu'
-icon: 'map'
+title: "Navigation"
+description: "The navigation field in docs.json defines the pages that go in the navigation menu"
+icon: "map"
 ---
 
 The navigation menu is the list of links on every website.
@@ -18,11 +18,23 @@ Our navigation syntax is recursive which means you can make nested navigation gr
 "navigation": {
   "tabs": [
     {
-      "tab": "Docs",
+      "tab": "Frontend Handbook",
       "groups": [
         {
-          "group": "Getting Started",
-          "pages": ["quickstart"]
+          "group": "HTML",
+          "pages": ["introduction", "elements", "forms", "media"]
+        },
+        {
+          "group": "CSS",
+          "pages": ["syntax", "selectors", "box-model", "flexbox", "grid"]
+        },
+        {
+          "group": "JavaScript",
+          "pages": ["basics", "dom", "events", "es6", "fetch-api"]
+        },
+        {
+          "group": "Git",
+          "pages": ["overview", "installation", "commands", "branching", "workflow"]
         }
       ]
     }
@@ -34,15 +46,25 @@ Our navigation syntax is recursive which means you can make nested navigation gr
 "navigation": {
   "tabs": [
     {
-      "tab": "Docs",
+      "tab": "Frontend Handbook",
       "groups": [
         {
-          "group": "Getting Started",
+          "group": "CSS",
           "pages": [
-            "quickstart",
+            "syntax",
             {
-              "group": "Nested Reference Pages",
-              "pages": ["nested-reference-page"]
+              "group": "Layouts",
+              "pages": ["flexbox", "grid"]
+            }
+          ]
+        },
+        {
+          "group": "JavaScript",
+          "pages": [
+            "basics",
+            {
+              "group": "Advanced Topics",
+              "pages": ["es6", "fetch-api", "promises"]
             }
           ]
         }
