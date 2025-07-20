@@ -1,0 +1,1332 @@
+---
+title: "CSS Layouts: From Basics to Advanced"
+description: "A comprehensive guide to CSS layout techniques including Flexbox, Grid, and responsive design patterns"
+---
+
+## Introduction to CSS Layouts
+
+CSS layouts are the foundation of web design, allowing you to position and arrange elements on a webpage. Over the years, CSS layout techniques have evolved from table-based layouts to modern approaches like Flexbox and Grid.
+
+This guide covers the full spectrum of CSS layout techniques, from basic positioning to advanced responsive layouts.
+
+## The Box Model
+
+Before diving into layouts, it's essential to understand the CSS box model, which is the foundation of element sizing and spacing.
+
+<img src="/images/box-model.png" alt="CSS Box Model" width="500" />
+
+Every element in HTML is represented as a rectangular box with:
+
+- **Content**: The actual content of the element (text, images, etc.)
+- **Padding**: Space between the content and the border
+- **Border**: A line around the padding
+- **Margin**: Space outside the border
+
+```css
+.box {
+  /* Content dimensions */
+  width: 300px;
+  height: 200px;
+  
+  /* Padding */
+  padding-top: 20px;
+  padding-right: 15px;
+  padding-bottom: 20px;
+  padding-left: 15px;
+  /* Shorthand: padding: 20px 15px 20px 15px; */
+  /* Further shorthand: padding: 20px 15px; (top/bottom, left/right) */
+  
+  /* Border */
+  border-width: 2px;
+  border-style: solid;
+  border-color: #333;
+  /* Shorthand: border: 2px solid #333; */
+  
+  /* Margin */
+  margin-top: 10px;
+  margin-right: 5px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  /* Shorthand: margin: 10px 5px 10px 5px; */
+  /* Further shorthand: margin: 10px 5px; (top/bottom, left/right) */
+}
+```
+
+### Box-Sizing Property
+
+The `box-sizing` property changes how the width and height of elements are calculated:
+
+```css
+/* Default behavior: width/height only applies to content area */
+.content-box {
+  box-sizing: content-box;
+  width: 300px; /* Total width will be 300px + padding + border */
+}
+
+/* Alternative behavior: width/height includes content, padding, and border */
+.border-box {
+  box-sizing: border-box;
+  width: 300px; /* Total width will be exactly 300px */
+}
+```
+
+Most modern CSS frameworks and developers use `border-box` for more intuitive sizing:
+
+```css
+/* Apply border-box to all elements */
+* {
+  box-sizing: border-box;
+}
+```
+
+## Basic Layout Techniques
+
+### Display Property
+
+The `display` property is fundamental to CSS layouts, determining how an element behaves in the flow of the document.
+
+<CardGroup cols={2}>
+  <Card title="Block" icon="square">
+    - Takes up the full width available
+    - Creates a new line before and after
+    - Examples: `<div>`, `<p>`, `<h1>`-`<h6>`, `<section>`
+  </Card>
+  
+  <Card title="Inline" icon="arrow-right">
+    - Takes only as much width as needed
+    - Does not create new lines
+    - Ignores width/height properties
+    - Examples: `<span>`, `<a>`, `<strong>`, `<em>`
+  </Card>
+  
+  <Card title="Inline-Block" icon="square-arrow-right">
+    - Flows like inline elements
+    - Respects width/height properties
+    - Examples: `<img>`, `<button>`, `<input>`
+  </Card>
+  
+  <Card title="None" icon="eye-slash">
+    - Removes the element from the document flow
+    - Element is not displayed and takes no space
+    - Different from `visibility: hidden` which hides but preserves space
+  </Card>
+</CardGroup>
+
+```css
+.block {
+  display: block;
+  width: 200px; /* Will be respected */
+  height: 100px; /* Will be respected */
+}
+
+.inline {
+  display: inline;
+  width: 200px; /* Will be ignored */
+  height: 100px; /* Will be ignored */
+}
+
+.inline-block {
+  display: inline-block;
+  width: 200px; /* Will be respected */
+  height: 100px; /* Will be respected */
+}
+
+.hidden {
+  display: none; /* Element disappears completely */
+}
+
+.invisible {
+  visibility: hidden; /* Element is hidden but space is preserved */
+}
+```
+
+### Positioning
+
+The `position` property determines how an element is positioned in the document.
+
+<CardGroup cols={2}>
+  <Card title="Static" icon="thumbtack">
+    - Default positioning
+    - Elements follow normal document flow
+    - `top`, `right`, `bottom`, `left` properties have no effect
+  </Card>
+  
+  <Card title="Relative" icon="arrows">
+    - Positioned relative to its normal position
+    - Still takes up space in normal flow
+    - Can be moved using `top`, `right`, `bottom`, `left`
+  </Card>
+  
+  <Card title="Absolute" icon="location-crosshairs">
+    - Positioned relative to nearest positioned ancestor
+    - Removed from normal document flow
+    - No space is created for the element
+  </Card>
+  
+  <Card title="Fixed" icon="thumbtack">
+    - Positioned relative to the viewport
+    - Stays in place during scrolling
+    - Removed from normal document flow
+  </Card>
+  
+  <Card title="Sticky" icon="note-sticky">
+    - Hybrid of relative and fixed
+    - Acts as relative until scroll threshold
+    - Then acts as fixed
+  </Card>
+</CardGroup>
+
+```css
+.static {
+  position: static;
+  /* top, right, bottom, left have no effect */
+}
+
+.relative {
+  position: relative;
+  top: 20px;
+  left: 30px; /* Moved 20px down and 30px right from normal position */
+}
+
+.absolute {
+  position: absolute;
+  top: 20px;
+  right: 30px; /* Positioned 20px from top and 30px from right of positioned parent */
+}
+
+.fixed {
+  position: fixed;
+  bottom: 20px;
+  right: 20px; /* Fixed 20px from bottom and 20px from right of viewport */
+}
+
+.sticky {
+  position: sticky;
+  top: 0; /* Sticks to top when scrolled to this position */
+}
+```
+
+### Floats
+
+Floats were one of the earliest layout techniques in CSS, allowing elements to be pushed to the left or right.
+
+```css
+.float-left {
+  float: left; /* Element floats to the left */
+}
+
+.float-right {
+  float: right; /* Element floats to the right */
+}
+
+.clear {
+  clear: both; /* Prevents elements from floating around this element */
+}
+
+/* Clearfix hack to contain floats */
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+```
+
+<Note>
+Floats are now considered somewhat outdated for main layout purposes, with Flexbox and Grid being preferred. However, they're still useful for specific cases like wrapping text around images.
+</Note>
+
+## Modern Layout Techniques
+
+### Flexbox
+
+Flexbox (Flexible Box Layout) is designed for one-dimensional layouts - either rows or columns.
+
+<img src="/images/flexbox-diagram.png" alt="Flexbox Diagram" width="600" />
+
+#### Basic Flexbox Container Properties
+
+```css
+.flex-container {
+  display: flex; /* or inline-flex */
+  
+  /* Main axis direction */
+  flex-direction: row; /* default: left to right */
+  /* Alternatives: row-reverse, column, column-reverse */
+  
+  /* Wrapping behavior */
+  flex-wrap: nowrap; /* default: single-line */
+  /* Alternatives: wrap, wrap-reverse */
+  
+  /* Shorthand for direction and wrap */
+  flex-flow: row nowrap;
+  
+  /* Alignment along main axis */
+  justify-content: flex-start; /* default: items at start */
+  /* Alternatives: flex-end, center, space-between, space-around, space-evenly */
+  
+  /* Alignment along cross axis */
+  align-items: stretch; /* default: stretch to fill container */
+  /* Alternatives: flex-start, flex-end, center, baseline */
+  
+  /* Alignment of multiple lines along cross axis */
+  align-content: stretch; /* default: lines stretch to fill container */
+  /* Alternatives: flex-start, flex-end, center, space-between, space-around */
+}
+```
+
+#### Flexbox Item Properties
+
+```css
+.flex-item {
+  /* Order (default is 0) */
+  order: 1; /* Higher numbers appear later */
+  
+  /* Ability to grow if space is available */
+  flex-grow: 0; /* default: don't grow */
+  
+  /* Ability to shrink if needed */
+  flex-shrink: 1; /* default: can shrink */
+  
+  /* Default size before growing/shrinking */
+  flex-basis: auto; /* default: size based on content */
+  
+  /* Shorthand for grow, shrink, and basis */
+  flex: 0 1 auto; /* default */
+  
+  /* Common shorthands */
+  flex: 1; /* equivalent to flex: 1 1 0% - can grow and shrink, 0% basis */
+  flex: auto; /* equivalent to flex: 1 1 auto - can grow and shrink, auto basis */
+  flex: none; /* equivalent to flex: 0 0 auto - cannot grow or shrink */
+  
+  /* Individual alignment (overrides container's align-items) */
+  align-self: auto; /* default: use container's align-items value */
+  /* Alternatives: flex-start, flex-end, center, baseline, stretch */
+}
+```
+
+#### Common Flexbox Patterns
+
+<AccordionGroup>
+  <Accordion title="Centering Content">
+    ```css
+    .center-content {
+      display: flex;
+      justify-content: center; /* Horizontal centering */
+      align-items: center; /* Vertical centering */
+      height: 300px; /* Container needs height for vertical centering */
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Navigation Bar">
+    ```css
+    .navbar {
+      display: flex;
+      justify-content: space-between; /* Logo on left, links on right */
+      align-items: center;
+      padding: 1rem;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1rem; /* Space between links */
+    }
+    ```
+    
+    ```html
+    <nav class="navbar">
+      <div class="logo">Brand</div>
+      <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Contact</a>
+      </div>
+    </nav>
+    ```
+  </Accordion>
+  
+  <Accordion title="Card Layout">
+    ```css
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .card {
+      flex: 1 1 300px; /* Grow, shrink, basis */
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    .card-content {
+      flex-grow: 1; /* Takes up available space */
+    }
+    
+    .card-footer {
+      margin-top: auto; /* Pushes footer to bottom */
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Holy Grail Layout">
+    ```css
+    .holy-grail {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    header, footer {
+      padding: 1rem;
+    }
+    
+    .holy-grail-body {
+      display: flex;
+      flex: 1; /* Takes remaining space */
+    }
+    
+    .holy-grail-content {
+      flex: 1; /* Takes remaining space */
+      padding: 1rem;
+    }
+    
+    .holy-grail-nav, .holy-grail-ads {
+      flex: 0 0 200px; /* Don't grow, don't shrink, 200px width */
+      padding: 1rem;
+    }
+    
+    /* For mobile */
+    @media (max-width: 768px) {
+      .holy-grail-body {
+        flex-direction: column;
+      }
+      
+      .holy-grail-nav, .holy-grail-ads {
+        flex: 0 0 auto; /* Auto height */
+      }
+    }
+    ```
+    
+    ```html
+    <div class="holy-grail">
+      <header>Header</header>
+      <div class="holy-grail-body">
+        <nav class="holy-grail-nav">Navigation</nav>
+        <main class="holy-grail-content">Main Content</main>
+        <aside class="holy-grail-ads">Sidebar</aside>
+      </div>
+      <footer>Footer</footer>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### CSS Grid
+
+CSS Grid is designed for two-dimensional layouts - rows and columns together.
+
+<img src="/images/css-grid-diagram.png" alt="CSS Grid Diagram" width="600" />
+
+#### Basic Grid Container Properties
+
+```css
+.grid-container {
+  display: grid; /* or inline-grid */
+  
+  /* Define columns */
+  grid-template-columns: 200px 1fr 2fr; /* 3 columns */
+  
+  /* Define rows */
+  grid-template-rows: 100px auto 100px; /* 3 rows */
+  
+  /* Gap between items */
+  gap: 20px; /* row-gap and column-gap combined */
+  row-gap: 20px;
+  column-gap: 20px;
+  
+  /* Named grid areas */
+  grid-template-areas: 
+    "header header header"
+    "sidebar content content"
+    "footer footer footer";
+  
+  /* Alignment of all items along row axis */
+  justify-items: stretch; /* default: stretch to fill cell */
+  /* Alternatives: start, end, center */
+  
+  /* Alignment of all items along column axis */
+  align-items: stretch; /* default: stretch to fill cell */
+  /* Alternatives: start, end, center */
+  
+  /* Alignment of grid tracks within container (row axis) */
+  justify-content: start; /* default: start of container */
+  /* Alternatives: end, center, space-between, space-around, space-evenly */
+  
+  /* Alignment of grid tracks within container (column axis) */
+  align-content: start; /* default: start of container */
+  /* Alternatives: end, center, space-between, space-around, space-evenly */
+}
+```
+
+#### Grid Item Properties
+
+```css
+.grid-item {
+  /* Placement by grid lines */
+  grid-column-start: 1;
+  grid-column-end: 3; /* or span 2 */
+  grid-row-start: 1;
+  grid-row-end: 2; /* or span 1 */
+  
+  /* Shorthand for column placement */
+  grid-column: 1 / 3; /* or 1 / span 2 */
+  
+  /* Shorthand for row placement */
+  grid-row: 1 / 2; /* or 1 / span 1 */
+  
+  /* Placement by named area */
+  grid-area: header;
+  
+  /* Individual alignment (overrides container's justify/align-items) */
+  justify-self: stretch; /* default: use container's justify-items value */
+  /* Alternatives: start, end, center */
+  
+  align-self: stretch; /* default: use container's align-items value */
+  /* Alternatives: start, end, center */
+}
+```
+
+#### Useful Grid Functions and Keywords
+
+```css
+.grid-container {
+  /* repeat() function */
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  
+  /* minmax() function */
+  grid-template-columns: repeat(3, minmax(100px, 1fr)); /* Min 100px, max 1fr */
+  
+  /* auto-fill and auto-fit */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* As many as fit */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Expand to fill */
+  
+  /* Named lines */
+  grid-template-columns: [start] 1fr [content-start] 2fr [content-end] 1fr [end];
+  
+  /* The fr unit */
+  grid-template-columns: 1fr 2fr 1fr; /* Proportional distribution */
+}
+
+.grid-item {
+  /* Using named lines */
+  grid-column: content-start / content-end;
+}
+```
+
+#### Common Grid Patterns
+
+<AccordionGroup>
+  <Accordion title="Basic 12-Column Grid">
+    ```css
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+    
+    .span-12 { grid-column: span 12; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    .span-3 { grid-column: span 3; }
+    .span-2 { grid-column: span 2; }
+    .span-1 { grid-column: span 1; }
+    ```
+  </Accordion>
+  
+  <Accordion title="Responsive Grid Layout">
+    ```css
+    .responsive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    ```
+    
+    This creates a grid where each item is at least 300px wide, and as many fit in a row as possible. As the screen gets narrower, items will automatically reflow.
+  </Accordion>
+  
+  <Accordion title="Magazine Layout">
+    ```css
+    .magazine-layout {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: auto;
+      gap: 20px;
+      grid-template-areas:
+        "header header header header"
+        "main   main   main   sidebar"
+        "feat1  feat2  feat3  sidebar"
+        "footer footer footer footer";
+    }
+    
+    .header { grid-area: header; }
+    .main-article { grid-area: main; }
+    .sidebar { grid-area: sidebar; }
+    .feature-1 { grid-area: feat1; }
+    .feature-2 { grid-area: feat2; }
+    .feature-3 { grid-area: feat3; }
+    .footer { grid-area: footer; }
+    
+    /* Responsive adjustment */
+    @media (max-width: 768px) {
+      .magazine-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "header"
+          "main"
+          "feat1"
+          "feat2"
+          "feat3"
+          "sidebar"
+          "footer";
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Image Gallery">
+    ```css
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-auto-rows: 200px;
+      gap: 10px;
+    }
+    
+    .gallery-item {
+      overflow: hidden;
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-item img:hover {
+      transform: scale(1.05);
+    }
+    
+    /* Featured items */
+    .gallery-item.featured-horizontal {
+      grid-column: span 2;
+    }
+    
+    .gallery-item.featured-vertical {
+      grid-row: span 2;
+    }
+    
+    .gallery-item.featured-large {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Comparing Flexbox and Grid
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Flexbox</th>
+      <th>Grid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Dimension</td>
+      <td>One-dimensional (row OR column)</td>
+      <td>Two-dimensional (rows AND columns)</td>
+    </tr>
+    <tr>
+      <td>Direction</td>
+      <td>Works from content out</td>
+      <td>Works from layout in</td>
+    </tr>
+    <tr>
+      <td>Alignment</td>
+      <td>Great for aligning items within a container</td>
+      <td>Great for precise placement on a defined grid</td>
+    </tr>
+    <tr>
+      <td>Item sizing</td>
+      <td>Content-based sizing</td>
+      <td>Layout-based sizing</td>
+    </tr>
+    <tr>
+      <td>Overlapping</td>
+      <td>Not easily possible</td>
+      <td>Simple with grid-row/column positioning</td>
+    </tr>
+    <tr>
+      <td>Best for</td>
+      <td>Navigation, card layouts, centering, distributing space</td>
+      <td>Page layouts, complex grid systems, image galleries</td>
+    </tr>
+  </tbody>
+</table>
+
+<Note>
+Flexbox and Grid are complementary, not competitive. Many modern layouts use Grid for the overall page structure and Flexbox for component-level layouts.
+</Note>
+
+## Responsive Layouts
+
+### Media Queries
+
+Media queries allow you to apply different styles based on device characteristics, primarily screen width.
+
+```css
+/* Base styles for all devices */
+.container {
+  padding: 20px;
+}
+
+/* Styles for tablets and larger */
+@media (min-width: 768px) {
+  .container {
+    padding: 40px;
+  }
+}
+
+/* Styles for desktops and larger */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+}
+```
+
+### Common Breakpoints
+
+While you should design for your specific content, these are common breakpoints:
+
+```css
+/* Small devices (phones) */
+@media (min-width: 576px) { ... }
+
+/* Medium devices (tablets) */
+@media (min-width: 768px) { ... }
+
+/* Large devices (desktops) */
+@media (min-width: 992px) { ... }
+
+/* Extra large devices (large desktops) */
+@media (min-width: 1200px) { ... }
+```
+
+### Mobile-First Approach
+
+Mobile-first means writing your base CSS for mobile devices, then using media queries to enhance the layout for larger screens.
+
+```css
+/* Base styles for mobile */
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  order: 1; /* Appears below main content on mobile */
+}
+
+.main-content {
+  order: 0; /* Appears above sidebar on mobile */
+}
+
+/* Adjust layout for larger screens */
+@media (min-width: 768px) {
+  .container {
+    flex-direction: row;
+  }
+  
+  .sidebar {
+    flex: 0 0 300px; /* Fixed width sidebar */
+    order: 0; /* Restore normal document order */
+  }
+  
+  .main-content {
+    flex: 1; /* Take remaining space */
+    order: 1; /* Restore normal document order */
+  }
+}
+```
+
+### Responsive Typography
+
+```css
+/* Base font size (16px is typical browser default) */
+html {
+  font-size: 16px;
+}
+
+/* Using relative units for typography */
+h1 {
+  font-size: 2rem; /* 32px if base is 16px */
+}
+
+p {
+  font-size: 1rem; /* 16px if base is 16px */
+  line-height: 1.5;
+}
+
+/* Fluid typography using calc() */
+h2 {
+  font-size: calc(1.5rem + 1vw); /* Scales with viewport width */
+}
+
+/* Adjust base font size for different screen sizes */
+@media (min-width: 768px) {
+  html {
+    font-size: 18px;
+  }
+}
+```
+
+### Responsive Images
+
+```css
+/* Basic responsive image */
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Object-fit for maintaining aspect ratio */
+.cover-img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover; /* Covers the container while maintaining aspect ratio */
+}
+
+.contain-img {
+  width: 100%;
+  height: 300px;
+  object-fit: contain; /* Contained within the container while maintaining aspect ratio */
+}
+```
+
+HTML for responsive images with different resolutions:
+
+```html
+<img 
+  srcset="image-320w.jpg 320w,
+          image-480w.jpg 480w,
+          image-800w.jpg 800w"
+  sizes="(max-width: 320px) 280px,
+         (max-width: 480px) 440px,
+         800px"
+  src="image-800w.jpg" 
+  alt="Responsive image"
+/>
+```
+
+Using the `<picture>` element for art direction:
+
+```html
+<picture>
+  <source media="(max-width: 799px)" srcset="image-mobile.jpg">
+  <source media="(min-width: 800px)" srcset="image-desktop.jpg">
+  <img src="image-desktop.jpg" alt="Responsive image with art direction">
+</picture>
+```
+
+## Advanced Layout Techniques
+
+### Multi-Column Layout
+
+CSS Multi-column Layout allows content to flow into multiple columns, similar to newspaper layouts.
+
+```css
+.multi-column {
+  column-count: 3; /* Number of columns */
+  column-gap: 2rem; /* Gap between columns */
+  column-rule: 1px solid #ddd; /* Line between columns */
+}
+
+/* For responsive design */
+@media (max-width: 768px) {
+  .multi-column {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .multi-column {
+    column-count: 1;
+  }
+}
+
+/* Spanning across all columns */
+.column-span-all {
+  column-span: all;
+}
+```
+
+### CSS Shapes
+
+CSS Shapes allows content to flow around non-rectangular shapes.
+
+```css
+.circle-shape {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  float: left;
+  shape-outside: circle(50%);
+  margin-right: 20px;
+}
+
+.custom-shape {
+  float: left;
+  shape-outside: polygon(0 0, 100% 0, 100% 100%, 30% 100%);
+  width: 300px;
+  height: 200px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 30% 100%);
+  background-color: #f0f0f0;
+  margin-right: 20px;
+}
+```
+
+### CSS Subgrid
+
+Subgrid allows a grid item that is also a grid container to inherit grid tracks from its parent.
+
+```css
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 10px;
+}
+
+.nested-grid {
+  grid-column: 2 / 8;
+  display: grid;
+  grid-template-columns: subgrid; /* Inherit parent's column tracks */
+  grid-template-rows: subgrid; /* Inherit parent's row tracks */
+}
+```
+
+<Note>
+Subgrid is a newer feature and may not be supported in all browsers. Check compatibility before using in production.
+</Note>
+
+### Container Queries
+
+Container queries allow you to style elements based on the size of their container, not just the viewport.
+
+```css
+/* Define a container */
+.card-container {
+  container-type: inline-size;
+  container-name: card;
+}
+
+/* Apply styles based on container width */
+@container card (min-width: 400px) {
+  .card-title {
+    font-size: 1.5rem;
+  }
+  
+  .card-layout {
+    display: flex;
+  }
+}
+
+@container card (max-width: 399px) {
+  .card-title {
+    font-size: 1.2rem;
+  }
+  
+  .card-layout {
+    display: block;
+  }
+}
+```
+
+<Note>
+Container queries are a newer feature and may not be supported in all browsers. Check compatibility before using in production.
+</Note>
+
+## Layout Patterns and Best Practices
+
+### Common Layout Patterns
+
+<AccordionGroup>
+  <Accordion title="Sticky Header">
+    ```css
+    header {
+      position: sticky;
+      top: 0;
+      background-color: white;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Sidebar Layout">
+    ```css
+    .sidebar-layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      background-color: #f5f5f5;
+      padding: 1rem;
+    }
+    
+    .content {
+      padding: 1rem;
+    }
+    
+    /* Responsive adjustment */
+    @media (max-width: 768px) {
+      .sidebar-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        display: none; /* Or implement a mobile menu */
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Card Grid">
+    ```css
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+    
+    .card-content {
+      flex-grow: 1;
+    }
+    
+    .card-footer {
+      margin-top: auto;
+      padding-top: 1rem;
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Hero Section">
+    ```css
+    .hero {
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 1rem;
+      background-size: cover;
+      background-position: center;
+      color: white;
+    }
+    
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 4rem);
+      margin-bottom: 1rem;
+    }
+    
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Masonry Layout">
+    ```css
+    /* Using CSS Grid to approximate masonry */
+    .masonry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-auto-rows: 10px;
+      grid-gap: 15px;
+    }
+    
+    .masonry-item {
+      /* JS will set this inline: grid-row-end: span (height / 10); */
+    }
+    ```
+    
+    ```javascript
+    // JavaScript to calculate and set the grid-row-end
+    function resizeMasonryItems() {
+      const grid = document.querySelector('.masonry-grid');
+      const items = document.querySelectorAll('.masonry-item');
+      const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
+      const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
+      
+      items.forEach(item => {
+        const rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+        item.style.gridRowEnd = `span ${rowSpan}`;
+      });
+    }
+    
+    window.addEventListener('load', resizeMasonryItems);
+    window.addEventListener('resize', resizeMasonryItems);
+    ```
+    
+    <Note>
+    True masonry layouts are now possible with CSS using `grid-template-rows: masonry` in Firefox with a flag enabled. For production, consider using a JavaScript library like Masonry.js.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+### Layout Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Relative Units" icon="ruler">
+    Prefer relative units (`rem`, `em`, `%`, `vh`, `vw`) over absolute units (`px`) for better responsiveness and accessibility.
+  </Card>
+  
+  <Card title="Mobile-First Approach" icon="mobile">
+    Start with styles for small screens and progressively enhance for larger screens using `min-width` media queries.
+  </Card>
+  
+  <Card title="Semantic HTML" icon="code">
+    Use appropriate HTML elements (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>`) for better accessibility and SEO.
+  </Card>
+  
+  <Card title="Avoid Fixed Heights" icon="arrows-up-down">
+    Let content determine height when possible to accommodate varying content lengths and font sizes.
+  </Card>
+  
+  <Card title="Test Across Devices" icon="laptop-mobile">
+    Test layouts on various devices, screen sizes, and browsers to ensure consistent experiences.
+  </Card>
+  
+  <Card title="Consider Content Flow" icon="text-size">
+    Design layouts that work well with different content lengths and maintain readability.
+  </Card>
+  
+  <Card title="Optimize for Performance" icon="gauge-high">
+    Minimize layout shifts, avoid complex selectors, and be mindful of animations that trigger layout recalculations.
+  </Card>
+  
+  <Card title="Progressive Enhancement" icon="layer-group">
+    Ensure basic functionality works without advanced CSS features, then enhance for browsers that support them.
+  </Card>
+</CardGroup>
+
+## Debugging Layout Issues
+
+### Common Layout Problems and Solutions
+
+<AccordionGroup>
+  <Accordion title="Unexpected Margins and Padding">
+    **Problem**: Elements have unexpected spacing.
+    
+    **Solutions**:
+    - Use a CSS reset or normalize.css
+    - Check for inherited margins/padding
+    - Use browser DevTools to inspect the box model
+    - Consider using `* { box-sizing: border-box; }`
+  </Accordion>
+  
+  <Accordion title="Elements Overlapping">
+    **Problem**: Elements overlap when they should be stacked vertically.
+    
+    **Solutions**:
+    - Check for absolute positioning
+    - Ensure proper clearing of floats
+    - Check for negative margins
+    - Verify z-index values
+    - Ensure parent containers have sufficient height
+  </Accordion>
+  
+  <Accordion title="Flexbox Items Not Wrapping">
+    **Problem**: Flex items overflow their container instead of wrapping.
+    
+    **Solutions**:
+    - Add `flex-wrap: wrap;` to the container
+    - Check if items have a fixed width that's too large
+    - Ensure the container has sufficient width
+    - Use `flex-basis` with appropriate values
+  </Accordion>
+  
+  <Accordion title="Grid Items Not Aligning as Expected">
+    **Problem**: Grid items don't align to the grid as intended.
+    
+    **Solutions**:
+    - Verify grid-template-columns/rows definitions
+    - Check for conflicting positioning properties
+    - Ensure grid items are direct children of the grid container
+    - Check for implicit grid creation with grid-auto-rows/columns
+  </Accordion>
+  
+  <Accordion title="Responsive Design Breaking">
+    **Problem**: Layout breaks at certain screen sizes.
+    
+    **Solutions**:
+    - Test with browser DevTools at various widths
+    - Check for hardcoded widths that prevent resizing
+    - Verify media query breakpoints
+    - Use relative units instead of fixed units
+    - Add intermediate breakpoints where needed
+  </Accordion>
+</AccordionGroup>
+
+### Using Browser DevTools
+
+Browser DevTools are essential for debugging layout issues:
+
+1. **Element Inspector**: Select elements to see their box model, applied CSS, and DOM position
+2. **Styles Panel**: View and modify CSS properties in real-time
+3. **Computed Tab**: See the final computed values of all CSS properties
+4. **Layout Panel**: Visualize grid and flexbox containers
+5. **Responsive Design Mode**: Test different screen sizes
+6. **Device Emulation**: Test on simulated mobile devices
+
+<img src="/images/devtools-layout.png" alt="Browser DevTools Layout Panel" width="600" />
+
+## Performance Considerations
+
+### Layout Thrashing
+
+Layout thrashing occurs when JavaScript repeatedly reads and writes to the DOM, forcing the browser to recalculate layout multiple times.
+
+```javascript
+// Bad: Causes multiple layout recalculations
+for (let i = 0; i < 100; i++) {
+  const height = element.offsetHeight; // Read (forces layout calculation)
+  element.style.height = (height + 10) + 'px'; // Write (invalidates layout)
+}
+
+// Better: Batch reads and writes
+const heights = [];
+// Read phase
+for (let i = 0; i < 100; i++) {
+  heights.push(elements[i].offsetHeight);
+}
+// Write phase
+for (let i = 0; i < 100; i++) {
+  elements[i].style.height = (heights[i] + 10) + 'px';
+}
+```
+
+### Reducing Layout Shifts
+
+Layout shifts create poor user experience and affect performance metrics like Cumulative Layout Shift (CLS).
+
+```css
+/* Prevent layout shifts for images and other media */
+img, video, iframe {
+  aspect-ratio: 16 / 9; /* Set appropriate aspect ratio */
+  width: 100%;
+  height: auto;
+}
+
+/* Use content-visibility for off-screen content */
+.offscreen-content {
+  content-visibility: auto;
+  contain-intrinsic-size: 1000px; /* Approximate size placeholder */
+}
+
+/* Reserve space for dynamic content */
+.dynamic-content {
+  min-height: 200px; /* Reserve space based on expected content */
+}
+```
+
+### Will-Change Property
+
+The `will-change` property hints to browsers about elements that will change, allowing for optimizations.
+
+```css
+/* Use sparingly and only for elements that actually change */
+.animated-element {
+  will-change: transform, opacity;
+}
+
+/* Remove when animation is complete */
+.animated-element.animation-done {
+  will-change: auto;
+}
+```
+
+<Warning>
+Overusing `will-change` can cause performance problems. Only use it for elements that will actually change frequently, and remove it when no longer needed.
+</Warning>
+
+## Conclusion
+
+CSS layouts have evolved dramatically from the early days of web development. Modern techniques like Flexbox and Grid provide powerful tools for creating complex, responsive layouts with less code and fewer hacks.
+
+When approaching a new layout:
+
+1. **Start with semantic HTML** that properly structures your content
+2. **Choose the appropriate layout technique** based on your needs:
+   - Flexbox for one-dimensional layouts and component alignment
+   - Grid for two-dimensional page layouts and complex alignment
+   - Multi-column for text-heavy content
+   - Positioning for specific UI elements that need to break out of flow
+3. **Build responsively** from the start, using mobile-first principles
+4. **Test across devices** and browsers to ensure consistent experiences
+5. **Optimize for performance** by minimizing layout shifts and recalculations
+
+By mastering these layout techniques, you'll be able to implement virtually any design with clean, maintainable CSS.
+
+## Resources
+
+### Tools
+
+- [Flexbox Froggy](https://flexboxfroggy.com/) - Learn Flexbox through a game
+- [Grid Garden](https://cssgridgarden.com/) - Learn Grid through a game
+- [CSS Grid Generator](https://cssgrid-generator.netlify.app/) - Visual tool for creating CSS Grid layouts
+- [Flexbox Playground](https://flexbox.tech/) - Interactive Flexbox demo
+
+### Further Reading
+
+- [MDN Web Docs: CSS Layout](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout)
+- [A Complete Guide to Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/)
+- [A Complete Guide to Grid](https://css-tricks.com/snippets/css/complete-guide-grid/)
+- [Every Layout](https://every-layout.dev/) - Reusable layout patterns

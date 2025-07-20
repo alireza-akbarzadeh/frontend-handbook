@@ -1,6 +1,6 @@
 ---
-title: "Introduction to HTML"
-description: "Learn the fundamentals of HTML, the backbone of all web pages"
+title: 'Introduction to HTML'
+description: 'Learn the fundamentals of HTML, the backbone of all web pages'
 ---
 
 ## What is HTML?
@@ -8,29 +8,60 @@ description: "Learn the fundamentals of HTML, the backbone of all web pages"
 HTML (HyperText Markup Language) is the standard markup language used to create web pages. It defines the structure and content of a webpage, telling browsers how to display text, images, and other media. HTML uses a series of elements, represented by tags, to mark up different parts of content.
 
 <Note>
-HTML is not a programming language; it's a markup language that defines the structure of your content.
+  HTML is not a programming language; it's a markup language that defines the
+  structure of your content.
 </Note>
 
 ## How HTML Works
 
 HTML documents are plain text files with a `.html` extension. They consist of elements that are defined by tags. Browsers read HTML documents and render them into visible or audible web pages.
 
-<Frame caption="Basic structure of an HTML document">
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My First HTML Page</title>
-</head>
-<body>
-  <h1>Hello, World!</h1>
-  <p>This is my first HTML page.</p>
-</body>
-</html>
+```javascript
+// Create an observer
+const observer = new IntersectionObserver(
+  (entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        // Element is in view
+        console.log('Element is now visible');
+        entry.target.classList.add('visible');
+
+        // Stop observing if needed
+        // observer.unobserve(entry.target);
+      } else {
+        // Element is out of view
+        console.log('Element is now hidden');
+        entry.target.classList.remove('visible');
+      }
+    });
+  },
+  {
+    root: null, // viewport
+    rootMargin: '0px', // margin around root
+    threshold: 0.1, // percentage of element visible
+  }
+);
+
+// Start observing elements
+const elements = document.querySelectorAll('.lazy-load');
+elements.forEach((element) => {
+  observer.observe(element);
+});
 ```
-</Frame>
+
+Common use cases:
+
+- Lazy loading images
+- Infinite scrolling
+- Animation triggers
+- Visibility tracking for analytics
+
+### Mutation Observer
+
+The Mutation Observer API provides a way to watch for changes being made to the DOM tree.
+
+````html
+
 
 ## HTML Document Structure
 
@@ -63,14 +94,17 @@ HTML offers six levels of headings, from `<h1>` (most important) to `<h6>` (leas
 <h1>This is a Heading 1</h1>
 <h2>This is a Heading 2</h2>
 <h3>This is a Heading 3</h3>
-```
+````
 
 ### Paragraphs
 
 The `<p>` element defines a paragraph of text.
 
 ```html
-<p>This is a paragraph of text. HTML will automatically wrap the text and adjust it to the screen size.</p>
+<p>
+  This is a paragraph of text. HTML will automatically wrap the text and adjust
+  it to the screen size.
+</p>
 ```
 
 ### Links
@@ -86,11 +120,12 @@ The `<a>` (anchor) element creates hyperlinks to other web pages or resources.
 The `<img>` element embeds images in your webpage.
 
 ```html
-<img src="image.jpg" alt="Description of the image">
+<img src="image.jpg" alt="Description of the image" />
 ```
 
 <Warning>
-Always include the `alt` attribute in your image tags. It provides a text description for screen readers and displays if the image fails to load.
+  Always include the `alt` attribute in your image tags. It provides a text
+  description for screen readers and displays if the image fails to load.
 </Warning>
 
 ### Lists

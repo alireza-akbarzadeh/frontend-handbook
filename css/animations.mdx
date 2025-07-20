@@ -1,0 +1,1144 @@
+---
+title: "CSS Animations and Transitions"
+description: "Learn how to create smooth, engaging animations and transitions using CSS"
+---
+
+## Introduction to CSS Animations
+
+Animations and transitions bring life to web pages, enhancing user experience by providing visual feedback, guiding attention, and creating engaging interfaces. CSS offers powerful, performant ways to animate elements without JavaScript.
+
+<CardGroup cols={2}>
+  <Card title="Transitions" icon="arrow-right-arrow-left">
+    Simple animations between two states, triggered by changes like hover or class toggles.
+  </Card>
+  
+  <Card title="Keyframe Animations" icon="film">
+    Complex, multi-step animations with precise control over the animation sequence.
+  </Card>
+</CardGroup>
+
+### Why Use CSS for Animations?
+
+<CardGroup cols={2}>
+  <Card title="Performance" icon="gauge-high">
+    CSS animations are optimized by browsers and often hardware-accelerated, making them more performant than JavaScript animations for many use cases.
+  </Card>
+  
+  <Card title="Simplicity" icon="code">
+    CSS animations require less code than JavaScript alternatives and are easier to implement for common animation patterns.
+  </Card>
+  
+  <Card title="Declarative" icon="list-check">
+    CSS animations are declarative, meaning you describe what should happen rather than how it should happen, making them easier to understand and maintain.
+  </Card>
+  
+  <Card title="Progressive Enhancement" icon="layer-group">
+    CSS animations can be added as an enhancement without breaking functionality for users with animations disabled or unsupported browsers.
+  </Card>
+</CardGroup>
+
+## CSS Transitions
+
+Transitions provide a way to control animation speed when changing CSS properties. Instead of having property changes take effect immediately, you can cause the changes to take place over a period of time.
+
+### Basic Syntax
+
+```css
+.element {
+  /* Initial state */
+  opacity: 0.5;
+  transform: scale(1);
+  
+  /* Transition definition */
+  transition-property: opacity, transform;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+  transition-delay: 0s;
+  
+  /* Shorthand */
+  /* transition: property duration timing-function delay; */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.element:hover {
+  /* Target state */
+  opacity: 1;
+  transform: scale(1.1);
+}
+```
+
+### Transition Properties
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+      <th>Example Values</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>transition-property</code></td>
+      <td>Specifies which CSS properties should be animated</td>
+      <td><code>all</code>, <code>opacity</code>, <code>transform</code>, <code>width, height</code></td>
+    </tr>
+    <tr>
+      <td><code>transition-duration</code></td>
+      <td>Defines how long the transition takes to complete</td>
+      <td><code>0.3s</code>, <code>300ms</code>, <code>2s</code></td>
+    </tr>
+    <tr>
+      <td><code>transition-timing-function</code></td>
+      <td>Specifies the speed curve of the transition</td>
+      <td><code>ease</code>, <code>linear</code>, <code>ease-in</code>, <code>ease-out</code>, <code>ease-in-out</code>, <code>cubic-bezier(0.1, 0.7, 1.0, 0.1)</code></td>
+    </tr>
+    <tr>
+      <td><code>transition-delay</code></td>
+      <td>Defines when the transition will start</td>
+      <td><code>0s</code>, <code>0.5s</code>, <code>500ms</code></td>
+    </tr>
+    <tr>
+      <td><code>transition</code> (shorthand)</td>
+      <td>Combines all transition properties into one declaration</td>
+      <td><code>all 0.3s ease 0s</code>, <code>opacity 0.5s linear</code></td>
+    </tr>
+  </tbody>
+</table>
+
+### Animatable Properties
+
+Not all CSS properties can be transitioned. Here are some commonly animated properties:
+
+<AccordionGroup>
+  <Accordion title="Layout Properties">
+    - `width`, `height`
+    - `margin`, `padding`
+    - `top`, `right`, `bottom`, `left`
+    - `border-width`
+    
+    <Note>
+    Animating layout properties can trigger browser reflow, which can be expensive for performance. Prefer using `transform` when possible.
+    </Note>
+  </Accordion>
+  
+  <Accordion title="Visual Properties">
+    - `opacity`
+    - `color`, `background-color`
+    - `box-shadow`, `text-shadow`
+    - `border-color`, `outline-color`
+    - `visibility`
+  </Accordion>
+  
+  <Accordion title="Transform Properties">
+    - `transform: translate()`
+    - `transform: scale()`
+    - `transform: rotate()`
+    - `transform: skew()`
+    
+    <Note>
+    Transforms are highly optimized by browsers and are the preferred way to animate position, size, and rotation.
+    </Note>
+  </Accordion>
+  
+  <Accordion title="Filter Properties">
+    - `filter: blur()`
+    - `filter: brightness()`
+    - `filter: contrast()`
+    - `filter: grayscale()`
+    - `filter: hue-rotate()`
+    - `filter: invert()`
+    - `filter: opacity()`
+    - `filter: saturate()`
+    - `filter: sepia()`
+  </Accordion>
+</AccordionGroup>
+
+### Timing Functions
+
+Timing functions control the pace of the animation, making it more natural and engaging.
+
+<img src="/images/timing-functions.png" alt="CSS Timing Functions Visualization" width="600" />
+
+```css
+/* Predefined timing functions */
+transition-timing-function: ease;        /* Default: slow start, fast middle, slow end */
+transition-timing-function: linear;      /* Constant speed throughout */
+transition-timing-function: ease-in;     /* Slow start, fast end */
+transition-timing-function: ease-out;    /* Fast start, slow end */
+transition-timing-function: ease-in-out; /* Slow start and end, fast middle */
+
+/* Custom cubic bezier curve */
+transition-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Custom bounce effect */
+
+/* Steps function for frame-by-frame animation */
+transition-timing-function: steps(5, end); /* 5 discrete steps */
+```
+
+<Note>
+You can visualize and create custom cubic-bezier curves using tools like [cubic-bezier.com](https://cubic-bezier.com).
+</Note>
+
+### Practical Examples
+
+#### Button Hover Effect
+
+```css
+.button {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+```
+
+#### Card Expansion
+
+```css
+.card {
+  width: 300px;
+  height: 200px;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: height 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  height: 300px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-content {
+  opacity: 0;
+  max-height: 0;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.card:hover .card-content {
+  opacity: 1;
+  max-height: 100px;
+}
+```
+
+#### Navigation Menu
+
+```css
+.nav-link {
+  position: relative;
+  color: #333;
+  text-decoration: none;
+  padding: 5px 0;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #3498db;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+```
+
+## CSS Keyframe Animations
+
+Keyframe animations provide more control than transitions, allowing you to define multiple states throughout the animation sequence.
+
+### Basic Syntax
+
+```css
+/* Define the animation */
+@keyframes slide-in {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Apply the animation */
+.element {
+  animation-name: slide-in;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+  
+  /* Shorthand */
+  /* animation: name duration timing-function delay iteration-count direction fill-mode play-state; */
+  animation: slide-in 1s ease-out 0s 1 normal forwards running;
+}
+```
+
+### Animation Properties
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+      <th>Example Values</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>animation-name</code></td>
+      <td>Specifies the name of the @keyframes rule</td>
+      <td><code>slide-in</code>, <code>fade-out</code>, <code>pulse</code></td>
+    </tr>
+    <tr>
+      <td><code>animation-duration</code></td>
+      <td>Defines how long the animation takes to complete one cycle</td>
+      <td><code>1s</code>, <code>500ms</code>, <code>2.5s</code></td>
+    </tr>
+    <tr>
+      <td><code>animation-timing-function</code></td>
+      <td>Specifies the speed curve of the animation</td>
+      <td><code>ease</code>, <code>linear</code>, <code>ease-in</code>, <code>ease-out</code>, <code>ease-in-out</code>, <code>cubic-bezier(0.1, 0.7, 1.0, 0.1)</code></td>
+    </tr>
+    <tr>
+      <td><code>animation-delay</code></td>
+      <td>Defines when the animation will start</td>
+      <td><code>0s</code>, <code>1s</code>, <code>-0.5s</code> (negative values start the animation partway through)</td>
+    </tr>
+    <tr>
+      <td><code>animation-iteration-count</code></td>
+      <td>Specifies how many times the animation should run</td>
+      <td><code>1</code>, <code>3</code>, <code>infinite</code></td>
+    </tr>
+    <tr>
+      <td><code>animation-direction</code></td>
+      <td>Defines whether the animation should play forward, backward, or alternate</td>
+      <td><code>normal</code>, <code>reverse</code>, <code>alternate</code>, <code>alternate-reverse</code></td>
+    </tr>
+    <tr>
+      <td><code>animation-fill-mode</code></td>
+      <td>Specifies what values are applied before/after the animation</td>
+      <td><code>none</code>, <code>forwards</code>, <code>backwards</code>, <code>both</code></td>
+    </tr>
+    <tr>
+      <td><code>animation-play-state</code></td>
+      <td>Specifies whether the animation is running or paused</td>
+      <td><code>running</code>, <code>paused</code></td>
+    </tr>
+    <tr>
+      <td><code>animation</code> (shorthand)</td>
+      <td>Combines all animation properties into one declaration</td>
+      <td><code>slide-in 1s ease-out 0s 1 normal forwards</code></td>
+    </tr>
+  </tbody>
+</table>
+
+### Keyframe Syntax
+
+Keyframes define the stages and styles of the animation sequence.
+
+```css
+/* Using percentages (recommended for most cases) */
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Using from and to (only for simple start/end animations) */
+@keyframes grow {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+```
+
+<Note>
+You can define as many keyframe stages as needed, and you don't need to include every property in every stage. CSS will interpolate between defined keyframes.
+</Note>
+
+### Animation Fill Mode
+
+The `animation-fill-mode` property determines what happens before the animation starts and after it ends.
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Before Animation</th>
+      <th>After Animation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>none</code> (default)</td>
+      <td>Element displays in its normal state</td>
+      <td>Element returns to its normal state</td>
+    </tr>
+    <tr>
+      <td><code>forwards</code></td>
+      <td>Element displays in its normal state</td>
+      <td>Element retains the computed values set by the last keyframe</td>
+    </tr>
+    <tr>
+      <td><code>backwards</code></td>
+      <td>Element displays the computed values set by the first keyframe</td>
+      <td>Element returns to its normal state</td>
+    </tr>
+    <tr>
+      <td><code>both</code></td>
+      <td>Element displays the computed values set by the first keyframe</td>
+      <td>Element retains the computed values set by the last keyframe</td>
+    </tr>
+  </tbody>
+</table>
+
+### Practical Examples
+
+#### Loading Spinner
+
+```css
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s linear infinite;
+}
+```
+
+#### Pulsing Effect
+
+```css
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.notification-badge {
+  display: inline-block;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 5px 10px;
+  animation: pulse 2s ease infinite;
+}
+```
+
+#### Staggered Animation
+
+```css
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-item {
+  opacity: 0;
+  animation: fade-in 0.5s ease forwards;
+}
+
+.list-item:nth-child(1) { animation-delay: 0.1s; }
+.list-item:nth-child(2) { animation-delay: 0.2s; }
+.list-item:nth-child(3) { animation-delay: 0.3s; }
+.list-item:nth-child(4) { animation-delay: 0.4s; }
+.list-item:nth-child(5) { animation-delay: 0.5s; }
+```
+
+## Advanced Animation Techniques
+
+### Multiple Animations
+
+You can apply multiple animations to a single element by separating them with commas.
+
+```css
+.element {
+  animation: 
+    fade-in 1s ease forwards,
+    slide-up 1.2s ease-out forwards,
+    pulse 2s ease 1s infinite;
+}
+```
+
+### Animating Along a Path
+
+With CSS `offset-path` (part of the Motion Path Module), you can animate elements along a defined path.
+
+```css
+@keyframes move-along-path {
+  0% {
+    offset-distance: 0%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.element {
+  offset-path: path('M 0 0 C 50 -50 50 50 100 0');
+  offset-rotate: auto;
+  animation: move-along-path 3s linear infinite;
+}
+```
+
+### Scroll-Triggered Animations
+
+You can trigger animations when elements enter the viewport using the Intersection Observer API with JavaScript.
+
+```html
+<div class="animate-on-scroll fade-in">This will animate when scrolled into view</div>
+```
+
+```css
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+```
+
+```javascript
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.animate-on-scroll').forEach(element => {
+  observer.observe(element);
+});
+```
+
+### CSS Variables for Dynamic Animations
+
+CSS Custom Properties (variables) can make animations more dynamic and configurable.
+
+```css
+:root {
+  --animation-duration: 1s;
+  --animation-easing: ease-in-out;
+  --animation-distance: 20px;
+  --primary-color: #3498db;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--animation-distance));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.element {
+  animation: slide-in var(--animation-duration) var(--animation-easing) forwards;
+  color: var(--primary-color);
+}
+
+/* Adjust variables for specific elements or states */
+.element.slow {
+  --animation-duration: 2s;
+  --animation-distance: 50px;
+}
+```
+
+### Animating SVG
+
+SVG elements can be animated with CSS, offering unique possibilities for graphics animation.
+
+```html
+<svg width="200" height="200" viewBox="0 0 200 200">
+  <circle class="circle" cx="100" cy="100" r="50" fill="none" stroke="#3498db" stroke-width="4" />
+</svg>
+```
+
+```css
+@keyframes draw-circle {
+  0% {
+    stroke-dasharray: 0 314;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dasharray: 314 314;
+    stroke-dashoffset: 0;
+  }
+}
+
+.circle {
+  animation: draw-circle 2s ease forwards;
+}
+```
+
+## Performance Optimization
+
+Animations can impact performance if not implemented carefully. Here are some best practices:
+
+### Use Hardware-Accelerated Properties
+
+Some CSS properties are optimized for animation and can be hardware-accelerated:
+
+- `transform`
+- `opacity`
+- `filter`
+
+These properties don't trigger layout or paint operations, making them ideal for animations.
+
+```css
+/* Good - uses hardware acceleration */
+.element {
+  transform: translateX(100px);
+  opacity: 0.5;
+}
+
+/* Avoid - triggers layout recalculation */
+.element {
+  left: 100px;
+  height: 50%;
+}
+```
+
+### Promote Elements to Their Own Layer
+
+You can force an element onto its own GPU layer with `will-change` or `transform: translateZ(0)`.
+
+```css
+.element {
+  will-change: transform, opacity;
+  /* Or */
+  transform: translateZ(0);
+}
+```
+
+<Warning>
+Use `will-change` sparingly and only for elements that will actually change. Overuse can cause memory issues.
+</Warning>
+
+### Reduce Paint Areas
+
+Limit the size of animated elements and use `contain: paint` to isolate their paint areas.
+
+```css
+.animated-element {
+  contain: paint;
+  animation: slide 1s ease;
+}
+```
+
+### Avoid Animating Expensive Properties
+
+Some properties are particularly expensive to animate because they trigger layout recalculations:
+
+- `width`, `height`
+- `top`, `right`, `bottom`, `left`
+- `margin`, `padding`
+- `font-size`
+- `position`
+
+When possible, use `transform` equivalents:
+
+```css
+/* Instead of */
+.element {
+  animation: grow 1s ease;
+}
+@keyframes grow {
+  from { width: 100px; height: 100px; }
+  to { width: 200px; height: 200px; }
+}
+
+/* Use */
+.element {
+  width: 100px;
+  height: 100px;
+  animation: grow 1s ease;
+}
+@keyframes grow {
+  from { transform: scale(1); }
+  to { transform: scale(2); }
+}
+```
+
+## Animation Accessibility
+
+Animations can enhance user experience but may cause issues for some users, particularly those with vestibular disorders or motion sensitivity.
+
+### Respect User Preferences
+
+The `prefers-reduced-motion` media query allows you to provide alternative animations or disable them based on user system preferences.
+
+```css
+.element {
+  animation: bounce 1s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .element {
+    /* Disable the animation */
+    animation: none;
+    
+    /* Or provide a subtle alternative */
+    transition: opacity 0.5s ease;
+  }
+}
+```
+
+### Avoid Flashing Content
+
+Rapid flashing or strobing effects can trigger seizures in people with photosensitive epilepsy. Avoid animations with:
+
+- Flashing more than 3 times per second
+- Large areas of flashing content
+- High contrast flashing
+
+### Provide Controls
+
+For significant animations, provide users with controls to pause, stop, or disable animations.
+
+```html
+<button id="toggle-animations">Pause Animations</button>
+```
+
+```javascript
+const toggleButton = document.getElementById('toggle-animations');
+let animationsEnabled = true;
+
+toggleButton.addEventListener('click', () => {
+  animationsEnabled = !animationsEnabled;
+  document.body.classList.toggle('animations-disabled', !animationsEnabled);
+  toggleButton.textContent = animationsEnabled ? 'Pause Animations' : 'Enable Animations';
+});
+```
+
+```css
+.animations-disabled * {
+  animation: none !important;
+  transition: none !important;
+}
+```
+
+## Browser Compatibility
+
+Modern browsers have good support for CSS animations and transitions, but there are some considerations for older browsers.
+
+### Vendor Prefixes
+
+For older browsers, you might need vendor prefixes. However, most modern browsers no longer require them for animations.
+
+```css
+.element {
+  -webkit-animation: fade 1s ease;
+  animation: fade 1s ease;
+}
+
+@-webkit-keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+```
+
+<Note>
+Consider using a tool like Autoprefixer to automatically add necessary vendor prefixes based on your browser support requirements.
+</Note>
+
+### Feature Detection
+
+You can use feature detection to provide fallbacks for browsers that don't support certain animation features.
+
+```javascript
+if ('animation' in document.documentElement.style) {
+  // Animations are supported
+  document.body.classList.add('animations-enabled');
+} else {
+  // Animations are not supported
+  document.body.classList.add('animations-disabled');
+}
+```
+
+## Common Animation Patterns
+
+Here are some reusable animation patterns for common UI elements:
+
+### Fade In
+
+```css
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fade-in 0.5s ease forwards;
+}
+```
+
+### Slide In
+
+```css
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-in-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slide-in-down {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+.slide-in-left {
+  animation: slide-in-left 0.5s ease forwards;
+}
+
+.slide-in-right {
+  animation: slide-in-right 0.5s ease forwards;
+}
+
+.slide-in-up {
+  animation: slide-in-up 0.5s ease forwards;
+}
+
+.slide-in-down {
+  animation: slide-in-down 0.5s ease forwards;
+}
+```
+
+### Bounce
+
+```css
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
+
+.bounce {
+  animation: bounce 1s ease;
+}
+```
+
+### Pulse
+
+```css
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation: pulse 1.5s ease infinite;
+}
+```
+
+### Shake
+
+```css
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-10px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(10px);
+  }
+}
+
+.shake {
+  animation: shake 0.8s ease;
+}
+```
+
+### Rotate
+
+```css
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate {
+  animation: rotate 2s linear infinite;
+}
+```
+
+### Flip
+
+```css
+@keyframes flip {
+  0% {
+    transform: perspective(400px) rotateY(0);
+  }
+  100% {
+    transform: perspective(400px) rotateY(360deg);
+  }
+}
+
+.flip {
+  animation: flip 1s ease;
+  backface-visibility: visible;
+}
+```
+
+## Animation Libraries
+
+While CSS animations are powerful, animation libraries can provide additional features and simplify complex animations.
+
+### Popular CSS Animation Libraries
+
+<CardGroup cols={2}>
+  <Card title="Animate.css" icon="css3">
+    A library of ready-to-use, cross-browser animations for use in your web projects.
+    
+    ```html
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <div class="animate__animated animate__bounce">Bouncing element</div>
+    ```
+    
+    [Animate.css Documentation](https://animate.style/)
+  </Card>
+  
+  <Card title="Magic Animations" icon="hat-wizard">
+    CSS3 animations with special effects.
+    
+    ```html
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magic/1.1.0/magic.min.css">
+    <div class="magictime vanishIn">Appearing element</div>
+    ```
+    
+    [Magic Animations on GitHub](https://github.com/miniMAC/magic)
+  </Card>
+  
+  <Card title="Hover.css" icon="hand-pointer">
+    A collection of CSS3 powered hover effects.
+    
+    ```html
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+    <button class="hvr-grow">Grow on Hover</button>
+    ```
+    
+    [Hover.css Documentation](https://ianlunn.github.io/Hover/)
+  </Card>
+  
+  <Card title="CSShake" icon="hand-back-fist">
+    CSS classes to move your DOM with shake effects.
+    
+    ```html
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/csshake/1.5.3/csshake.min.css">
+    <div class="shake">Shake me</div>
+    ```
+    
+    [CSShake Documentation](https://elrumordelaluz.github.io/csshake/)
+  </Card>
+</CardGroup>
+
+### JavaScript Animation Libraries
+
+For more complex animations or when you need programmatic control, JavaScript libraries can be helpful:
+
+<CardGroup cols={2}>
+  <Card title="GSAP (GreenSock Animation Platform)" icon="bolt">
+    Professional-grade animation for the modern web.
+    
+    ```html
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script>
+      gsap.to(".element", {
+        duration: 1,
+        x: 100,
+        y: 50,
+        rotation: 360,
+        ease: "elastic"
+      });
+    </script>
+    ```
+    
+    [GSAP Documentation](https://greensock.com/docs/)
+  </Card>
+  
+  <Card title="Anime.js" icon="wand-magic-sparkles">
+    A lightweight JavaScript animation library.
+    
+    ```html
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+      anime({
+        targets: '.element',
+        translateX: 250,
+        rotate: '1turn',
+        duration: 800,
+        easing: 'easeInOutQuad'
+      });
+    </script>
+    ```
+    
+    [Anime.js Documentation](https://animejs.com/documentation/)
+  </Card>
+  
+  <Card title="Motion One" icon="gauge-high">
+    A new animation library, built on the Web Animations API for high performance.
+    
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/motion@10.15.5/dist/motion.min.js"></script>
+    <script>
+      import { animate } from "motion";
+      animate(".element", { x: 100, opacity: 0 }, { duration: 1 });
+    </script>
+    ```
+    
+    [Motion One Documentation](https://motion.dev/)
+  </Card>
+  
+  <Card title="Lottie" icon="film">
+    Render After Effects animations natively in the browser.
+    
+    ```html
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.4/lottie.min.js"></script>
+    <div id="animation-container"></div>
+    <script>
+      lottie.loadAnimation({
+        container: document.getElementById('animation-container'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'animation.json'
+      });
+    </script>
+    ```
+    
+    [Lottie Documentation](https://airbnb.io/lottie/)
+  </Card>
+</CardGroup>
+
+## Conclusion
+
+CSS animations and transitions provide powerful tools for creating engaging, interactive web experiences. By understanding the fundamentals and following best practices, you can create smooth, performant animations that enhance your user interface without sacrificing accessibility or performance.
+
+Key takeaways:
+
+1. Use transitions for simple state changes and keyframe animations for more complex sequences
+2. Prefer animating `transform` and `opacity` for better performance
+3. Consider accessibility with `prefers-reduced-motion` and animation controls
+4. Optimize animations for performance by minimizing repaints and reflows
+5. Use animation libraries when you need more complex effects or better browser support
+
+## Resources
+
+### Documentation
+
+- [MDN Web Docs: CSS Animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Animations)
+- [MDN Web Docs: CSS Transitions](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions)
+- [CSS-Tricks: Animation Guide](https://css-tricks.com/almanac/properties/a/animation/)
+
+### Tools
+
+- [Cubic Bezier Generator](https://cubic-bezier.com/)
+- [Keyframes.app](https://keyframes.app/)
+- [Animista](https://animista.net/)
+- [CSS Animation Kit](https://cssanimation.io/)
+
+### Further Learning
+
+- [CSS Animation Rocks](https://cssanimation.rocks/)
+- [Web Animation Workshops](https://webanimationworkshops.com/)
+- [Animation at Work](https://abookapart.com/products/animation-at-work) by Rachel Nabors

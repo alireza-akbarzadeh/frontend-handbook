@@ -1,0 +1,1397 @@
+---
+title: "JavaScript Events"
+description: "Master event handling in JavaScript to create interactive web applications"
+---
+
+## Introduction to JavaScript Events
+
+Events are actions or occurrences that happen in the browser, which can be detected and responded to with JavaScript. They are the foundation of interactivity on the web, allowing your applications to respond to user actions, browser changes, and other triggers.
+
+### Why Events Matter
+
+<CardGroup cols={2}>
+  <Card title="User Interaction" icon="hand-pointer">
+    Events allow your application to respond to clicks, keypresses, form submissions, and other user actions.
+  </Card>
+  
+  <Card title="Asynchronous Programming" icon="clock">
+    Events enable non-blocking code execution, allowing your application to remain responsive while waiting for operations to complete.
+  </Card>
+  
+  <Card title="Real-time Updates" icon="bolt">
+    Events facilitate real-time features like notifications, live updates, and dynamic content changes.
+  </Card>
+  
+  <Card title="Decoupled Architecture" icon="puzzle-piece">
+    Event-driven programming promotes loose coupling between components, making code more maintainable and modular.
+  </Card>
+</CardGroup>
+
+## The Event Model
+
+### Event Types
+
+JavaScript events can be categorized into several groups:
+
+<AccordionGroup>
+  <Accordion title="User Interface Events">
+    Events triggered by user interaction with the browser interface.
+    
+    - `load`: Fires when a resource and its dependencies have finished loading
+    - `unload`: Fires when a page is being unloaded
+    - `resize`: Fires when the document view is resized
+    - `scroll`: Fires when the document or an element is scrolled
+    - `error`: Fires when a resource failed to load
+  </Accordion>
+  
+  <Accordion title="Mouse Events">
+    Events triggered by mouse actions.
+    
+    - `click`: Fires when an element is clicked
+    - `dblclick`: Fires when an element is double-clicked
+    - `mousedown`: Fires when a mouse button is pressed on an element
+    - `mouseup`: Fires when a mouse button is released over an element
+    - `mousemove`: Fires when the mouse is moved over an element
+    - `mouseover`: Fires when the mouse enters an element
+    - `mouseout`: Fires when the mouse leaves an element
+    - `mouseenter`: Similar to mouseover but doesn't bubble (doesn't trigger on child elements)
+    - `mouseleave`: Similar to mouseout but doesn't bubble
+    - `contextmenu`: Fires when the right mouse button is clicked
+  </Accordion>
+  
+  <Accordion title="Keyboard Events">
+    Events triggered by keyboard actions.
+    
+    - `keydown`: Fires when a key is pressed
+    - `keyup`: Fires when a key is released
+    - `keypress`: Fires when a key that produces a character is pressed (deprecated)
+  </Accordion>
+  
+  <Accordion title="Form Events">
+    Events related to HTML forms.
+    
+    - `submit`: Fires when a form is submitted
+    - `reset`: Fires when a form is reset
+    - `change`: Fires when the value of an input element changes and loses focus
+    - `input`: Fires when the value of an input element changes (immediately)
+    - `focus`: Fires when an element receives focus
+    - `blur`: Fires when an element loses focus
+    - `select`: Fires when text is selected in an input field
+  </Accordion>
+  
+  <Accordion title="Touch Events">
+    Events for touch-enabled devices.
+    
+    - `touchstart`: Fires when a touch point is placed on the touch surface
+    - `touchend`: Fires when a touch point is removed from the touch surface
+    - `touchmove`: Fires when a touch point is moved along the touch surface
+    - `touchcancel`: Fires when a touch point has been disrupted
+  </Accordion>
+  
+  <Accordion title="Drag and Drop Events">
+    Events for drag and drop operations.
+    
+    - `dragstart`: Fires when the user starts dragging an element
+    - `drag`: Fires when an element is being dragged
+    - `dragenter`: Fires when a dragged element enters a valid drop target
+    - `dragleave`: Fires when a dragged element leaves a valid drop target
+    - `dragover`: Fires when a dragged element is over a valid drop target
+    - `drop`: Fires when a dragged element is dropped on a valid drop target
+    - `dragend`: Fires when the drag operation ends
+  </Accordion>
+  
+  <Accordion title="Media Events">
+    Events for audio and video elements.
+    
+    - `play`: Fires when media playback has begun
+    - `pause`: Fires when media playback is paused
+    - `ended`: Fires when media playback has reached the end
+    - `volumechange`: Fires when the volume has changed
+    - `timeupdate`: Fires when the current playback position has changed
+  </Accordion>
+  
+  <Accordion title="Custom Events">
+    Developer-defined events for component communication.
+    
+    ```javascript
+    // Creating a custom event
+    const productAddedEvent = new CustomEvent('productAdded', {
+      detail: { productId: 123, name: 'Keyboard', price: 59.99 },
+      bubbles: true,
+      cancelable: true
+    });
+    
+    // Dispatching the event
+    document.dispatchEvent(productAddedEvent);
+    
+    // Listening for the custom event
+    document.addEventListener('productAdded', (event) => {
+      console.log(`Product added: ${event.detail.name}`);
+      updateCart(event.detail);
+    });
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Event Flow
+
+When an event occurs on an element that has parent elements, modern browsers run three different phases:
+
+1. **Capturing Phase**: The event starts from the `window` and travels down to the target element
+2. **Target Phase**: The event reaches the target element
+3. **Bubbling Phase**: The event bubbles up from the target element to the `window`
+
+<img src="/images/event-flow.png" alt="Event Flow Diagram" width="600" />
+
+```html
+<div id="outer">
+  <div id="inner">
+    <button id="button">Click me</button>
+  </div>
+</div>
+```
+
+```javascript
+const outer = document.getElementById('outer');
+const inner = document.getElementById('inner');
+const button = document.getElementById('button');
+
+// Capturing phase (third parameter set to true)
+outer.addEventListener('click', () => {
+  console.log('Outer - Capture');
+}, true);
+
+inner.addEventListener('click', () => {
+  console.log('Inner - Capture');
+}, true);
+
+button.addEventListener('click', () => {
+  console.log('Button - Capture');
+}, true);
+
+// Bubbling phase (default, third parameter false or omitted)
+outer.addEventListener('click', () => {
+  console.log('Outer - Bubble');
+});
+
+inner.addEventListener('click', () => {
+  console.log('Inner - Bubble');
+});
+
+button.addEventListener('click', () => {
+  console.log('Button - Bubble');
+});
+
+// When button is clicked, the console output will be:
+// 1. Outer - Capture (capturing phase, top-down)
+// 2. Inner - Capture (capturing phase, top-down)
+// 3. Button - Capture (target phase)
+// 4. Button - Bubble (target phase)
+// 5. Inner - Bubble (bubbling phase, bottom-up)
+// 6. Outer - Bubble (bubbling phase, bottom-up)
+```
+
+<Note>
+Most event handlers are registered for the bubbling phase, which is the default when the third parameter to `addEventListener` is omitted or set to `false`. Capturing phase handlers are less common but useful in specific scenarios.
+</Note>
+
+## Event Handling
+
+### Adding Event Listeners
+
+There are three main ways to attach event handlers to elements:
+
+#### 1. HTML Attribute (Inline)
+
+```html
+<button onclick="alert('Button clicked!')">Click Me</button>
+```
+
+<Warning>
+Inline event handlers are generally discouraged because they:
+- Mix HTML and JavaScript, violating separation of concerns
+- Can't add multiple handlers for the same event
+- Have limited access to event properties
+- Can create security risks (potential injection vectors)
+</Warning>
+
+#### 2. DOM Property
+
+```javascript
+const button = document.getElementById('myButton');
+button.onclick = function() {
+  alert('Button clicked!');
+};
+```
+
+Limitations:
+- Can only assign one handler per event type per element
+- Can't control event phase (always bubbling)
+- Can't remove handlers easily without keeping a reference
+
+#### 3. addEventListener() Method (Recommended)
+
+```javascript
+const button = document.getElementById('myButton');
+
+button.addEventListener('click', function() {
+  alert('First handler');
+});
+
+button.addEventListener('click', function() {
+  alert('Second handler');
+});
+```
+
+Advantages:
+- Can add multiple handlers for the same event
+- Can specify capturing or bubbling phase
+- More control over event handling
+- Cleaner separation of concerns
+
+### Removing Event Listeners
+
+```javascript
+function handleClick() {
+  alert('Button clicked!');
+  
+  // Remove the event listener after first click
+  button.removeEventListener('click', handleClick);
+}
+
+const button = document.getElementById('myButton');
+button.addEventListener('click', handleClick);
+```
+
+<Note>
+To remove an event listener, you must provide the same function reference that was used to add it. Anonymous functions can't be removed this way.
+</Note>
+
+### The Event Object
+
+When an event occurs, the browser creates an event object with details about the event and passes it to the event handler.
+
+```javascript
+document.getElementById('myButton').addEventListener('click', function(event) {
+  console.log('Event type:', event.type); // "click"
+  console.log('Target element:', event.target); // The button element
+  console.log('Current target:', event.currentTarget); // Also the button element
+  console.log('Mouse coordinates:', event.clientX, event.clientY); // x, y coordinates
+  
+  // Prevent default behavior (e.g., form submission)
+  event.preventDefault();
+  
+  // Stop event propagation (bubbling)
+  event.stopPropagation();
+});
+```
+
+#### Common Event Object Properties
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>type</code></td>
+      <td>The event type (e.g., "click", "keydown")</td>
+    </tr>
+    <tr>
+      <td><code>target</code></td>
+      <td>The element that triggered the event</td>
+    </tr>
+    <tr>
+      <td><code>currentTarget</code></td>
+      <td>The element that the event handler is attached to</td>
+    </tr>
+    <tr>
+      <td><code>timeStamp</code></td>
+      <td>The time when the event was created</td>
+    </tr>
+    <tr>
+      <td><code>bubbles</code></td>
+      <td>Whether the event bubbles up through the DOM</td>
+    </tr>
+    <tr>
+      <td><code>cancelable</code></td>
+      <td>Whether the event can be canceled</td>
+    </tr>
+    <tr>
+      <td><code>defaultPrevented</code></td>
+      <td>Whether preventDefault() was called on the event</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Event-Specific Properties
+
+<AccordionGroup>
+  <Accordion title="Mouse Event Properties">
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>clientX</code>, <code>clientY</code></td>
+          <td>Coordinates relative to the viewport</td>
+        </tr>
+        <tr>
+          <td><code>pageX</code>, <code>pageY</code></td>
+          <td>Coordinates relative to the document (includes scrolling)</td>
+        </tr>
+        <tr>
+          <td><code>screenX</code>, <code>screenY</code></td>
+          <td>Coordinates relative to the screen</td>
+        </tr>
+        <tr>
+          <td><code>offsetX</code>, <code>offsetY</code></td>
+          <td>Coordinates relative to the target element</td>
+        </tr>
+        <tr>
+          <td><code>button</code></td>
+          <td>Which mouse button was pressed (0: left, 1: middle, 2: right)</td>
+        </tr>
+        <tr>
+          <td><code>buttons</code></td>
+          <td>Bitmask of buttons pressed during the event</td>
+        </tr>
+        <tr>
+          <td><code>altKey</code>, <code>ctrlKey</code>, <code>shiftKey</code>, <code>metaKey</code></td>
+          <td>Whether modifier keys were pressed during the event</td>
+        </tr>
+      </tbody>
+    </table>
+  </Accordion>
+  
+  <Accordion title="Keyboard Event Properties">
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>key</code></td>
+          <td>The key value (e.g., "a", "Enter", "ArrowUp")</td>
+        </tr>
+        <tr>
+          <td><code>code</code></td>
+          <td>The physical key code (e.g., "KeyA", "Enter", "ArrowUp")</td>
+        </tr>
+        <tr>
+          <td><code>keyCode</code>, <code>which</code></td>
+          <td>Legacy key codes (deprecated)</td>
+        </tr>
+        <tr>
+          <td><code>location</code></td>
+          <td>The location of the key on the keyboard (0: standard, 1: left, 2: right, 3: numpad)</td>
+        </tr>
+        <tr>
+          <td><code>repeat</code></td>
+          <td>Whether the key is being held down</td>
+        </tr>
+        <tr>
+          <td><code>altKey</code>, <code>ctrlKey</code>, <code>shiftKey</code>, <code>metaKey</code></td>
+          <td>Whether modifier keys were pressed during the event</td>
+        </tr>
+      </tbody>
+    </table>
+  </Accordion>
+  
+  <Accordion title="Form Event Properties">
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>target.value</code></td>
+          <td>The current value of the form element</td>
+        </tr>
+        <tr>
+          <td><code>target.checked</code></td>
+          <td>The checked state of checkboxes and radio buttons</td>
+        </tr>
+        <tr>
+          <td><code>target.selected</code></td>
+          <td>The selected state of option elements</td>
+        </tr>
+        <tr>
+          <td><code>target.files</code></td>
+          <td>FileList object for file inputs</td>
+        </tr>
+      </tbody>
+    </table>
+  </Accordion>
+  
+  <Accordion title="Touch Event Properties">
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>touches</code></td>
+          <td>List of all current touch points on the screen</td>
+        </tr>
+        <tr>
+          <td><code>targetTouches</code></td>
+          <td>List of touch points on the target element</td>
+        </tr>
+        <tr>
+          <td><code>changedTouches</code></td>
+          <td>List of touch points that changed in this event</td>
+        </tr>
+        <tr>
+          <td><code>touches[0].identifier</code></td>
+          <td>Unique identifier for a touch point</td>
+        </tr>
+        <tr>
+          <td><code>touches[0].clientX</code>, <code>touches[0].clientY</code></td>
+          <td>Coordinates of the touch point relative to the viewport</td>
+        </tr>
+        <tr>
+          <td><code>touches[0].pageX</code>, <code>touches[0].pageY</code></td>
+          <td>Coordinates of the touch point relative to the document</td>
+        </tr>
+        <tr>
+          <td><code>touches[0].screenX</code>, <code>touches[0].screenY</code></td>
+          <td>Coordinates of the touch point relative to the screen</td>
+        </tr>
+      </tbody>
+    </table>
+  </Accordion>
+</AccordionGroup>
+
+### Event Methods
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>preventDefault()</code></td>
+      <td>Prevents the default action associated with the event</td>
+    </tr>
+    <tr>
+      <td><code>stopPropagation()</code></td>
+      <td>Stops the event from bubbling up to parent elements</td>
+    </tr>
+    <tr>
+      <td><code>stopImmediatePropagation()</code></td>
+      <td>Stops the event from bubbling and prevents other handlers on the same element</td>
+    </tr>
+  </tbody>
+</table>
+
+## Advanced Event Handling Techniques
+
+### Event Delegation
+
+Event delegation is a technique where you attach a single event listener to a parent element instead of multiple listeners on child elements. It leverages event bubbling to handle events for multiple elements with a single handler.
+
+```html
+<ul id="todo-list">
+  <li><span>Buy groceries</span> <button class="delete">Delete</button></li>
+  <li><span>Clean house</span> <button class="delete">Delete</button></li>
+  <li><span>Pay bills</span> <button class="delete">Delete</button></li>
+</ul>
+```
+
+```javascript
+// Without event delegation (inefficient)
+const deleteButtons = document.querySelectorAll('.delete');
+deleteButtons.forEach(button => {
+  button.addEventListener('click', function() {
+    this.parentElement.remove();
+  });
+});
+
+// With event delegation (efficient)
+document.getElementById('todo-list').addEventListener('click', function(event) {
+  if (event.target.classList.contains('delete')) {
+    event.target.parentElement.remove();
+  }
+});
+```
+
+Benefits of event delegation:
+
+1. **Memory efficiency**: Fewer event listeners means less memory usage
+2. **Dynamic elements**: Works for elements added to the DOM after the initial page load
+3. **Less code**: Simpler implementation for large numbers of similar elements
+4. **Performance**: Faster initialization and lower overhead
+
+### Debouncing and Throttling
+
+Debouncing and throttling are techniques to control how many times a function is executed over time.
+
+#### Debouncing
+
+Debouncing ensures that a function is only executed after a certain amount of time has passed since it was last invoked. This is useful for events that fire rapidly, like window resizing or scrolling.
+
+```javascript
+function debounce(func, delay) {
+  let timeoutId;
+  
+  return function(...args) {
+    const context = this;
+    
+    clearTimeout(timeoutId);
+    
+    timeoutId = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
+// Usage
+const handleResize = () => {
+  console.log('Window resized');
+  // Expensive operation like recalculating layout
+};
+
+// Only execute handleResize 300ms after the user stops resizing
+window.addEventListener('resize', debounce(handleResize, 300));
+```
+
+#### Throttling
+
+Throttling ensures that a function is executed at most once in a specified time period. This is useful for limiting the rate at which a function is called.
+
+```javascript
+function throttle(func, limit) {
+  let inThrottle;
+  
+  return function(...args) {
+    const context = this;
+    
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    }
+  };
+}
+
+// Usage
+const handleScroll = () => {
+  console.log('Window scrolled');
+  // Track scroll position or load more content
+};
+
+// Execute handleScroll at most once every 100ms
+window.addEventListener('scroll', throttle(handleScroll, 100));
+```
+
+<Note>
+Debouncing and throttling are essential techniques for performance optimization, especially for events that can fire at high frequencies.
+</Note>
+
+### Passive Event Listeners
+
+Passive event listeners improve scrolling performance by telling the browser that the event handler will not call `preventDefault()`. This allows the browser to start scrolling immediately without waiting for JavaScript execution.
+
+```javascript
+document.addEventListener('touchstart', function(event) {
+  // Handler code (cannot call preventDefault)
+}, { passive: true });
+```
+
+<Warning>
+When using `{ passive: true }`, calling `preventDefault()` in the event handler will have no effect and will generate a console warning.
+</Warning>
+
+## Practical Event Handling Examples
+
+### Form Validation
+
+```html
+<form id="registration-form">
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+    <div class="error-message"></div>
+  </div>
+  
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+    <div class="error-message"></div>
+  </div>
+  
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+    <div class="error-message"></div>
+  </div>
+  
+  <div class="form-group">
+    <label for="confirm-password">Confirm Password</label>
+    <input type="password" id="confirm-password" name="confirmPassword" required>
+    <div class="error-message"></div>
+  </div>
+  
+  <button type="submit">Register</button>
+</form>
+```
+
+```javascript
+const form = document.getElementById('registration-form');
+const fields = ['username', 'email', 'password', 'confirm-password'];
+
+// Real-time validation
+fields.forEach(fieldId => {
+  const field = document.getElementById(fieldId);
+  
+  field.addEventListener('input', function() {
+    validateField(field);
+  });
+  
+  field.addEventListener('blur', function() {
+    validateField(field);
+  });
+});
+
+// Form submission
+form.addEventListener('submit', function(event) {
+  let isValid = true;
+  
+  // Validate all fields
+  fields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (!validateField(field)) {
+      isValid = false;
+    }
+  });
+  
+  // Check if passwords match
+  const password = document.getElementById('password');
+  const confirmPassword = document.getElementById('confirm-password');
+  
+  if (password.value !== confirmPassword.value) {
+    showError(confirmPassword, 'Passwords do not match');
+    isValid = false;
+  }
+  
+  if (!isValid) {
+    event.preventDefault();
+  }
+});
+
+function validateField(field) {
+  const fieldName = field.getAttribute('name');
+  const value = field.value.trim();
+  
+  clearError(field);
+  
+  // Required field validation
+  if (value === '') {
+    showError(field, `${fieldName} is required`);
+    return false;
+  }
+  
+  // Field-specific validation
+  switch (field.id) {
+    case 'username':
+      if (value.length < 3) {
+        showError(field, 'Username must be at least 3 characters');
+        return false;
+      }
+      break;
+      
+    case 'email':
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        showError(field, 'Please enter a valid email address');
+        return false;
+      }
+      break;
+      
+    case 'password':
+      if (value.length < 8) {
+        showError(field, 'Password must be at least 8 characters');
+        return false;
+      }
+      break;
+  }
+  
+  return true;
+}
+
+function showError(field, message) {
+  const errorElement = field.parentElement.querySelector('.error-message');
+  errorElement.textContent = message;
+  field.classList.add('invalid');
+}
+
+function clearError(field) {
+  const errorElement = field.parentElement.querySelector('.error-message');
+  errorElement.textContent = '';
+  field.classList.remove('invalid');
+}
+```
+
+### Drag and Drop
+
+```html
+<div class="container">
+  <div class="draggable-container">
+    <div class="draggable" draggable="true" data-id="1">Item 1</div>
+    <div class="draggable" draggable="true" data-id="2">Item 2</div>
+    <div class="draggable" draggable="true" data-id="3">Item 3</div>
+  </div>
+  
+  <div class="drop-zone">Drop Zone</div>
+</div>
+```
+
+```javascript
+// Get elements
+const draggables = document.querySelectorAll('.draggable');
+const dropZone = document.querySelector('.drop-zone');
+
+// Track the currently dragged item
+let draggedItem = null;
+
+// Add event listeners to draggable items
+draggables.forEach(draggable => {
+  // When drag starts
+  draggable.addEventListener('dragstart', function(event) {
+    draggedItem = this;
+    this.classList.add('dragging');
+    
+    // Set data to be transferred
+    event.dataTransfer.setData('text/plain', this.dataset.id);
+    
+    // Set drag effect
+    event.dataTransfer.effectAllowed = 'move';
+    
+    // For Firefox compatibility
+    setTimeout(() => {
+      this.style.opacity = '0.4';
+    }, 0);
+  });
+  
+  // When drag ends
+  draggable.addEventListener('dragend', function() {
+    this.classList.remove('dragging');
+    this.style.opacity = '1';
+    draggedItem = null;
+  });
+});
+
+// Add event listeners to drop zone
+dropZone.addEventListener('dragover', function(event) {
+  // Prevent default to allow drop
+  event.preventDefault();
+  
+  // Set the dropEffect to move
+  event.dataTransfer.dropEffect = 'move';
+  
+  this.classList.add('drag-over');
+});
+
+dropZone.addEventListener('dragleave', function() {
+  this.classList.remove('drag-over');
+});
+
+dropZone.addEventListener('drop', function(event) {
+  // Prevent default action
+  event.preventDefault();
+  
+  // Remove the drag-over class
+  this.classList.remove('drag-over');
+  
+  // Get the dragged item's ID
+  const itemId = event.dataTransfer.getData('text/plain');
+  
+  // Move the item to the drop zone
+  if (draggedItem) {
+    this.appendChild(draggedItem);
+    
+    // Notify about the successful drop
+    console.log(`Item ${itemId} was dropped into the drop zone`);
+    
+    // You could also send this information to a server
+    // updateItemPosition(itemId, 'drop-zone');
+  }
+});
+```
+
+### Infinite Scroll
+
+```html
+<div id="content-container">
+  <div id="posts"></div>
+  <div id="loading-indicator" style="display: none;">Loading...</div>
+</div>
+```
+
+```javascript
+const postsContainer = document.getElementById('posts');
+const loadingIndicator = document.getElementById('loading-indicator');
+
+let page = 1;
+let isLoading = false;
+let hasMorePosts = true;
+
+// Initial load
+loadPosts();
+
+// Add scroll event listener with throttling
+window.addEventListener('scroll', throttle(handleScroll, 200));
+
+function handleScroll() {
+  // Calculate distance from bottom of page
+  const distanceFromBottom = document.documentElement.scrollHeight - 
+                             (window.innerHeight + document.documentElement.scrollTop);
+  
+  // Load more posts when near the bottom and not already loading
+  if (distanceFromBottom < 200 && !isLoading && hasMorePosts) {
+    loadPosts();
+  }
+}
+
+function loadPosts() {
+  isLoading = true;
+  loadingIndicator.style.display = 'block';
+  
+  // Simulate API call with setTimeout
+  setTimeout(() => {
+    fetch(`https://api.example.com/posts?page=${page}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.posts.length === 0) {
+          hasMorePosts = false;
+          loadingIndicator.textContent = 'No more posts to load';
+          return;
+        }
+        
+        // Render posts
+        data.posts.forEach(post => {
+          const postElement = createPostElement(post);
+          postsContainer.appendChild(postElement);
+        });
+        
+        page++;
+        isLoading = false;
+        loadingIndicator.style.display = 'none';
+      })
+      .catch(error => {
+        console.error('Error loading posts:', error);
+        isLoading = false;
+        loadingIndicator.textContent = 'Error loading posts. Try again.';
+      });
+  }, 1000); // Simulate network delay
+}
+
+function createPostElement(post) {
+  const postElement = document.createElement('div');
+  postElement.className = 'post';
+  
+  const title = document.createElement('h2');
+  title.textContent = post.title;
+  
+  const content = document.createElement('p');
+  content.textContent = post.content;
+  
+  postElement.appendChild(title);
+  postElement.appendChild(content);
+  
+  return postElement;
+}
+
+// Throttle function (defined earlier)
+function throttle(func, limit) {
+  let inThrottle;
+  return function() {
+    const args = arguments;
+    const context = this;
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+```
+
+## Event-Driven Architecture
+
+Event-driven architecture is a design pattern where components communicate through events. This promotes loose coupling and makes systems more maintainable and scalable.
+
+### Publish-Subscribe Pattern
+
+The publish-subscribe (pub-sub) pattern allows components to communicate without direct dependencies. Publishers emit events, and subscribers listen for them.
+
+```javascript
+class EventBus {
+  constructor() {
+    this.subscribers = {};
+  }
+  
+  subscribe(event, callback) {
+    if (!this.subscribers[event]) {
+      this.subscribers[event] = [];
+    }
+    
+    this.subscribers[event].push(callback);
+    
+    // Return unsubscribe function
+    return () => {
+      this.subscribers[event] = this.subscribers[event].filter(
+        cb => cb !== callback
+      );
+    };
+  }
+  
+  publish(event, data) {
+    if (!this.subscribers[event]) {
+      return;
+    }
+    
+    this.subscribers[event].forEach(callback => {
+      callback(data);
+    });
+  }
+}
+
+// Create a global event bus
+const eventBus = new EventBus();
+
+// Shopping cart component
+class ShoppingCart {
+  constructor() {
+    this.items = [];
+    
+    // Subscribe to product-added event
+    eventBus.subscribe('product-added', this.addItem.bind(this));
+  }
+  
+  addItem(product) {
+    this.items.push(product);
+    console.log(`Added ${product.name} to cart. Cart now has ${this.items.length} items.`);
+    
+    // Publish cart-updated event
+    eventBus.publish('cart-updated', { items: this.items, total: this.getTotal() });
+  }
+  
+  getTotal() {
+    return this.items.reduce((total, item) => total + item.price, 0);
+  }
+}
+
+// Product catalog component
+class ProductCatalog {
+  constructor() {
+    this.products = [
+      { id: 1, name: 'Keyboard', price: 59.99 },
+      { id: 2, name: 'Mouse', price: 29.99 },
+      { id: 3, name: 'Monitor', price: 199.99 }
+    ];
+    
+    // Set up UI event handlers
+    document.querySelectorAll('.add-to-cart-button').forEach(button => {
+      button.addEventListener('click', this.handleAddToCart.bind(this));
+    });
+  }
+  
+  handleAddToCart(event) {
+    const productId = parseInt(event.target.dataset.productId);
+    const product = this.products.find(p => p.id === productId);
+    
+    if (product) {
+      // Publish product-added event
+      eventBus.publish('product-added', product);
+    }
+  }
+}
+
+// Cart summary component
+class CartSummary {
+  constructor() {
+    this.element = document.getElementById('cart-summary');
+    
+    // Subscribe to cart-updated event
+    eventBus.subscribe('cart-updated', this.updateDisplay.bind(this));
+  }
+  
+  updateDisplay(cartData) {
+    this.element.textContent = `Cart: ${cartData.items.length} items - $${cartData.total.toFixed(2)}`;
+  }
+}
+
+// Initialize components
+const cart = new ShoppingCart();
+const catalog = new ProductCatalog();
+const summary = new CartSummary();
+```
+
+### Benefits of Event-Driven Architecture
+
+<CardGroup cols={2}>
+  <Card title="Loose Coupling" icon="link-slash">
+    Components don't need direct references to each other, making the system more modular and easier to maintain.
+  </Card>
+  
+  <Card title="Scalability" icon="arrows-up-down-left-right">
+    New components can be added without modifying existing ones, as long as they follow the established event protocol.
+  </Card>
+  
+  <Card title="Testability" icon="vial">
+    Components can be tested in isolation by simulating events, making unit testing easier.
+  </Card>
+  
+  <Card title="Flexibility" icon="wand-magic-sparkles">
+    The system can evolve over time with minimal disruption, as components only depend on events, not on each other.
+  </Card>
+</CardGroup>
+
+## Browser Events vs. Custom Events
+
+### Browser Events
+
+Browser events are predefined events triggered by the browser in response to user actions or other occurrences. Examples include `click`, `load`, `submit`, etc.
+
+### Custom Events
+
+Custom events are developer-defined events that can be created, dispatched, and listened for just like browser events. They're useful for component communication and creating custom APIs.
+
+```javascript
+// Creating a custom event
+const productEvent = new CustomEvent('productAdded', {
+  bubbles: true, // Event bubbles up through the DOM
+  cancelable: true, // Event can be canceled
+  detail: { // Custom data
+    id: 123,
+    name: 'Wireless Headphones',
+    price: 79.99
+  }
+});
+
+// Dispatching the event
+document.getElementById('product-list').dispatchEvent(productEvent);
+
+// Listening for the custom event
+document.addEventListener('productAdded', function(event) {
+  console.log('Product added:', event.detail);
+  updateCart(event.detail);
+});
+```
+
+### Creating Custom Event Systems
+
+For more complex applications, you might want to create a custom event system that doesn't rely on the DOM:
+
+```javascript
+class EventEmitter {
+  constructor() {
+    this.events = {};
+  }
+  
+  on(event, listener) {
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    
+    this.events[event].push(listener);
+    return this;
+  }
+  
+  off(event, listener) {
+    if (!this.events[event]) return this;
+    
+    this.events[event] = this.events[event].filter(l => l !== listener);
+    return this;
+  }
+  
+  emit(event, ...args) {
+    if (!this.events[event]) return false;
+    
+    this.events[event].forEach(listener => {
+      listener.apply(this, args);
+    });
+    
+    return true;
+  }
+  
+  once(event, listener) {
+    const onceWrapper = (...args) => {
+      listener.apply(this, args);
+      this.off(event, onceWrapper);
+    };
+    
+    this.on(event, onceWrapper);
+    return this;
+  }
+}
+
+// Usage
+class UserService extends EventEmitter {
+  constructor() {
+    super();
+    this.user = null;
+  }
+  
+  login(username, password) {
+    // Simulate API call
+    setTimeout(() => {
+      // Success case
+      this.user = { id: 1, username, name: 'John Doe' };
+      this.emit('login', this.user);
+      this.emit('statusChange', 'online');
+    }, 1000);
+  }
+  
+  logout() {
+    this.user = null;
+    this.emit('logout');
+    this.emit('statusChange', 'offline');
+  }
+}
+
+const userService = new UserService();
+
+// Listen for events
+userService.on('login', user => {
+  console.log('User logged in:', user);
+  updateUI(user);
+});
+
+userService.on('logout', () => {
+  console.log('User logged out');
+  clearUserData();
+});
+
+userService.on('statusChange', status => {
+  console.log('Status changed to:', status);
+  updateStatusIndicator(status);
+});
+
+// One-time event listener
+userService.once('login', () => {
+  showWelcomeMessage(); // Only shown on first login
+});
+
+// Trigger events
+document.getElementById('login-form').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const username = this.elements.username.value;
+  const password = this.elements.password.value;
+  userService.login(username, password);
+});
+
+document.getElementById('logout-button').addEventListener('click', function() {
+  userService.logout();
+});
+```
+
+## Browser Compatibility and Polyfills
+
+Modern browsers have good support for event handling, but there are some differences and limitations in older browsers.
+
+### Feature Detection
+
+Always use feature detection instead of browser detection:
+
+```javascript
+// Check if addEventListener is supported
+if (document.addEventListener) {
+  // Modern browsers
+  element.addEventListener('click', handleClick, false);
+} else if (document.attachEvent) {
+  // IE8 and earlier
+  element.attachEvent('onclick', handleClick);
+} else {
+  // Very old browsers
+  element.onclick = handleClick;
+}
+```
+
+### Event Listener Polyfill
+
+For older browsers that don't support `addEventListener` and `removeEventListener`:
+
+```javascript
+// Polyfill for addEventListener/removeEventListener
+(function() {
+  if (!Element.prototype.addEventListener) {
+    const eventListeners = [];
+    
+    function findListener(element, type, callback) {
+      return eventListeners.find(item => {
+        return item.element === element && 
+               item.type === type && 
+               item.callback === callback;
+      });
+    }
+    
+    Element.prototype.addEventListener = function(type, callback) {
+      if (findListener(this, type, callback)) {
+        return;
+      }
+      
+      const self = this;
+      const wrapper = function(e) {
+        e.target = e.srcElement;
+        e.currentTarget = self;
+        
+        // Add preventDefault method
+        if (!e.preventDefault) {
+          e.preventDefault = function() {
+            e.returnValue = false;
+          };
+        }
+        
+        // Add stopPropagation method
+        if (!e.stopPropagation) {
+          e.stopPropagation = function() {
+            e.cancelBubble = true;
+          };
+        }
+        
+        callback.call(self, e);
+      };
+      
+      this.attachEvent('on' + type, wrapper);
+      
+      eventListeners.push({
+        element: this,
+        type: type,
+        callback: callback,
+        wrapper: wrapper
+      });
+    };
+    
+    Element.prototype.removeEventListener = function(type, callback) {
+      const listener = findListener(this, type, callback);
+      
+      if (!listener) {
+        return;
+      }
+      
+      this.detachEvent('on' + type, listener.wrapper);
+      eventListeners.splice(eventListeners.indexOf(listener), 1);
+    };
+  }
+})();
+```
+
+### Custom Event Polyfill
+
+For browsers that don't support the CustomEvent constructor:
+
+```javascript
+(function() {
+  if (typeof window.CustomEvent === 'function') return false;
+  
+  function CustomEvent(event, params) {
+    params = params || { bubbles: false, cancelable: false, detail: null };
+    const evt = document.createEvent('CustomEvent');
+    evt.initCustomEvent(
+      event, 
+      params.bubbles, 
+      params.cancelable, 
+      params.detail
+    );
+    return evt;
+  }
+  
+  window.CustomEvent = CustomEvent;
+})();
+```
+
+## Best Practices for Event Handling
+
+<CardGroup cols={2}>
+  <Card title="Use Event Delegation" icon="sitemap">
+    Attach event listeners to parent elements instead of multiple child elements to improve performance and handle dynamically added elements.
+  </Card>
+  
+  <Card title="Remove Unused Listeners" icon="broom">
+    Always remove event listeners when they're no longer needed, especially for elements that will be removed from the DOM, to prevent memory leaks.
+  </Card>
+  
+  <Card title="Debounce/Throttle High-Frequency Events" icon="gauge-high">
+    Use debouncing or throttling for events that fire frequently, like scroll, resize, or mousemove, to improve performance.
+  </Card>
+  
+  <Card title="Use Passive Listeners" icon="bolt">
+    Add `{ passive: true }` to event listeners for touch and wheel events that don't call preventDefault() to improve scrolling performance.
+  </Card>
+  
+  <Card title="Prefer addEventListener" icon="plus">
+    Use `addEventListener` instead of on-properties (`onclick`, etc.) to attach multiple handlers and have more control over event handling.
+  </Card>
+  
+  <Card title="Keep Handlers Small" icon="minimize">
+    Keep event handlers small and focused. Delegate complex logic to separate functions for better maintainability and testability.
+  </Card>
+  
+  <Card title="Use Custom Events for Component Communication" icon="comments">
+    Use custom events to communicate between components instead of direct function calls to maintain loose coupling.
+  </Card>
+  
+  <Card title="Handle Errors" icon="triangle-exclamation">
+    Wrap event handler code in try-catch blocks to prevent unhandled exceptions from breaking your application.
+  </Card>
+</CardGroup>
+
+## Conclusion
+
+Event handling is a fundamental aspect of JavaScript programming that enables interactive and responsive web applications. By understanding the event model, mastering event handling techniques, and following best practices, you can create applications that provide excellent user experiences while maintaining clean, maintainable code.
+
+Key takeaways:
+
+1. Events are actions or occurrences that happen in the browser, which can be detected and responded to with JavaScript
+2. The event flow consists of three phases: capturing, target, and bubbling
+3. Modern event handling uses `addEventListener` to attach event handlers
+4. The event object contains information about the event and provides methods to control event behavior
+5. Event delegation improves performance by leveraging event bubbling
+6. Debouncing and throttling control how frequently event handlers execute
+7. Custom events and event-driven architecture promote loose coupling between components
+8. Following best practices ensures efficient and maintainable event handling code
+
+## Resources
+
+### Documentation
+
+- [MDN Web Docs: Introduction to events](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events)
+- [MDN Web Docs: Event reference](https://developer.mozilla.org/en-US/docs/Web/Events)
+- [MDN Web Docs: EventTarget.addEventListener()](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
+
+### Tools and Libraries
+
+- [Lodash: debounce and throttle functions](https://lodash.com/docs)
+- [RxJS: Reactive Extensions for JavaScript](https://rxjs.dev/)
+- [Mitt: Tiny 200b functional event emitter/pubsub](https://github.com/developit/mitt)
+
+### Further Learning
+
+- [JavaScript.info: Introduction to browser events](https://javascript.info/introduction-browser-events)
+- [JavaScript.info: Event delegation](https://javascript.info/event-delegation)
+- [CSS-Tricks: Debouncing and Throttling Explained](https://css-tricks.com/debouncing-throttling-explained-examples/)

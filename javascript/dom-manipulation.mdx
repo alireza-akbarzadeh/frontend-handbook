@@ -1,0 +1,1259 @@
+---
+title: "DOM Manipulation with JavaScript"
+description: "Learn how to interact with and modify the Document Object Model (DOM) using JavaScript"
+---
+
+## Introduction to the DOM
+
+The Document Object Model (DOM) is a programming interface for web documents. It represents the page as a tree of nodes that JavaScript can interact with, allowing you to create dynamic and interactive web pages.
+
+<img src="/images/dom-tree.png" alt="DOM Tree Structure" width="600" />
+
+### What is the DOM?
+
+The DOM is not part of JavaScript; it's a Web API provided by browsers. It represents an HTML document as a hierarchical tree structure where:
+
+- The document is the root node
+- Each HTML element is a node
+- Text within elements are text nodes
+- Attributes are attribute nodes
+- Comments are comment nodes
+
+### Why is DOM Manipulation Important?
+
+<CardGroup cols={2}>
+  <Card title="Dynamic Content" icon="wand-magic-sparkles">
+    Update page content without reloading the entire page
+  </Card>
+  
+  <Card title="User Interaction" icon="hand-pointer">
+    Respond to user actions like clicks, form submissions, and keyboard input
+  </Card>
+  
+  <Card title="Visual Feedback" icon="eye">
+    Provide immediate visual feedback for user actions
+  </Card>
+  
+  <Card title="Form Validation" icon="check-double">
+    Validate user input before submission
+  </Card>
+  
+  <Card title="Data Visualization" icon="chart-line">
+    Create and update charts, graphs, and other data visualizations
+  </Card>
+  
+  <Card title="Single Page Applications" icon="browser">
+    Build modern web applications that update content without page reloads
+  </Card>
+</CardGroup>
+
+## Accessing DOM Elements
+
+Before you can manipulate elements, you need to select them. JavaScript provides several methods to access DOM elements.
+
+### By ID
+
+```javascript
+// Returns a single element with the specified ID
+const header = document.getElementById('header');
+```
+
+### By Class Name
+
+```javascript
+// Returns an HTMLCollection of elements with the specified class
+const buttons = document.getElementsByClassName('btn');
+
+// HTMLCollection is array-like but not an array
+// You can loop through it like this:
+for (let i = 0; i < buttons.length; i++) {
+  buttons[i].style.backgroundColor = 'blue';
+}
+
+// Or convert to a real array:
+Array.from(buttons).forEach(button => {
+  button.style.backgroundColor = 'blue';
+});
+```
+
+### By Tag Name
+
+```javascript
+// Returns an HTMLCollection of elements with the specified tag
+const paragraphs = document.getElementsByTagName('p');
+```
+
+### By CSS Selector
+
+```javascript
+// Returns the first element that matches the selector
+const firstButton = document.querySelector('.btn');
+
+// Returns all elements that match the selector (as a NodeList)
+const allButtons = document.querySelectorAll('.btn');
+
+// NodeList is also array-like but not an array
+// Modern NodeList supports forEach
+allButtons.forEach(button => {
+  button.classList.add('hover-effect');
+});
+```
+
+### Traversing the DOM
+
+Once you have an element, you can navigate to related elements:
+
+```javascript
+const parent = element.parentNode; // or parentElement
+const children = element.children; // HTMLCollection of child elements
+const firstChild = element.firstElementChild;
+const lastChild = element.lastElementChild;
+const nextSibling = element.nextElementSibling;
+const previousSibling = element.previousElementSibling;
+```
+
+<Note>
+There's a distinction between nodes and elements in the DOM. Nodes include elements, text, comments, etc. Elements are specifically HTML element nodes. Methods like `childNodes` include all nodes, while `children` only includes element nodes.
+</Note>
+
+## Manipulating DOM Elements
+
+### Creating Elements
+
+```javascript
+// Create a new element
+const newDiv = document.createElement('div');
+
+// Create a text node
+const newText = document.createTextNode('Hello, world!');
+
+// Add the text node to the div
+newDiv.appendChild(newText);
+
+// Alternative: set innerHTML or textContent
+newDiv.textContent = 'Hello, world!'; // Safer, treats content as text
+newDiv.innerHTML = '<span>Hello, world!</span>'; // Parses HTML, potential security risk
+```
+
+### Adding Elements to the DOM
+
+```javascript
+// Append to the end of parent's children
+parentElement.appendChild(newElement);
+
+// Insert before a specific child
+parentElement.insertBefore(newElement, referenceElement);
+
+// Modern insertion methods
+parentElement.append(newElement); // Like appendChild, but accepts multiple nodes and text
+parentElement.prepend(newElement); // Insert at the beginning of parent's children
+referenceElement.before(newElement); // Insert before reference element
+referenceElement.after(newElement); // Insert after reference element
+```
+
+### Removing Elements
+
+```javascript
+// Remove a child element
+parentElement.removeChild(childElement);
+
+// Modern method: remove element directly
+element.remove();
+```
+
+### Replacing Elements
+
+```javascript
+// Replace a child element
+parentElement.replaceChild(newElement, oldElement);
+
+// Modern method
+oldElement.replaceWith(newElement);
+```
+
+### Cloning Elements
+
+```javascript
+// Clone an element (false = don't clone children, true = clone children)
+const clone = element.cloneNode(false); // Shallow clone
+const deepClone = element.cloneNode(true); // Deep clone with all descendants
+```
+
+## Modifying Element Content and Attributes
+
+### Changing Text Content
+
+```javascript
+// Set text content (safer, treats content as text)
+element.textContent = 'New text content';
+
+// Alternative (older, normalizes whitespace differently)
+element.innerText = 'New text content';
+```
+
+### Changing HTML Content
+
+```javascript
+// Set HTML content (parses HTML, potential security risk with user input)
+element.innerHTML = '<span>New HTML content</span>';
+
+// Safer alternative using DOM methods
+element.textContent = ''; // Clear existing content
+const span = document.createElement('span');
+span.textContent = 'New HTML content';
+element.appendChild(span);
+```
+
+<Warning>
+Using `innerHTML` with user-provided content can lead to Cross-Site Scripting (XSS) vulnerabilities. Always sanitize user input or use safer alternatives like `textContent` and DOM methods.
+</Warning>
+
+### Working with Attributes
+
+```javascript
+// Get attribute value
+const href = element.getAttribute('href');
+
+// Set attribute value
+element.setAttribute('href', 'https://example.com');
+
+// Check if attribute exists
+const hasAttribute = element.hasAttribute('disabled');
+
+// Remove attribute
+element.removeAttribute('disabled');
+
+// Direct property access for common attributes
+element.id = 'new-id';
+element.href = 'https://example.com';
+element.disabled = true;
+```
+
+### Data Attributes
+
+HTML5 data attributes provide a way to store custom data:
+
+```html
+<div id="user" data-id="123" data-user-name="John" data-role="admin"></div>
+```
+
+```javascript
+const user = document.getElementById('user');
+
+// Get data attributes
+const userId = user.dataset.id; // "123"
+const userName = user.dataset.userName; // "John" (camelCase in JS)
+
+// Set data attributes
+user.dataset.status = 'active';
+user.dataset.lastLogin = '2023-04-01';
+```
+
+## Styling Elements
+
+### Inline Styles
+
+```javascript
+// Set individual style properties
+element.style.color = 'blue';
+element.style.backgroundColor = 'yellow'; // Note camelCase for CSS properties
+element.style.fontSize = '16px';
+
+// Set multiple styles at once
+Object.assign(element.style, {
+  color: 'blue',
+  backgroundColor: 'yellow',
+  fontSize: '16px'
+});
+
+// Get computed style (actual rendered style after CSS is applied)
+const computedStyle = window.getComputedStyle(element);
+const color = computedStyle.color;
+```
+
+### CSS Classes
+
+```javascript
+// Add class
+element.classList.add('highlight');
+
+// Remove class
+element.classList.remove('hidden');
+
+// Toggle class (add if not present, remove if present)
+element.classList.toggle('active');
+
+// Check if element has a class
+const hasClass = element.classList.contains('highlight');
+
+// Replace one class with another
+element.classList.replace('old-class', 'new-class');
+
+// Older method (not recommended)
+element.className = 'btn primary'; // Overwrites all existing classes
+```
+
+## Event Handling
+
+Events allow you to respond to user interactions and other occurrences.
+
+### Adding Event Listeners
+
+```javascript
+// Basic syntax
+element.addEventListener('click', function(event) {
+  console.log('Element clicked!');
+});
+
+// With an arrow function
+element.addEventListener('click', (event) => {
+  console.log('Element clicked!');
+});
+
+// With a named function
+function handleClick(event) {
+  console.log('Element clicked!');
+}
+
+element.addEventListener('click', handleClick);
+```
+
+### Removing Event Listeners
+
+```javascript
+// You must use the same function reference to remove
+element.removeEventListener('click', handleClick);
+
+// Anonymous functions can't be removed this way
+// This won't work:
+element.addEventListener('click', function() { /* ... */ });
+element.removeEventListener('click', function() { /* ... */ }); // Different function reference
+```
+
+### Common Events
+
+<AccordionGroup>
+  <Accordion title="Mouse Events">
+    ```javascript
+    element.addEventListener('click', handleClick);
+    element.addEventListener('dblclick', handleDoubleClick);
+    element.addEventListener('mousedown', handleMouseDown);
+    element.addEventListener('mouseup', handleMouseUp);
+    element.addEventListener('mousemove', handleMouseMove);
+    element.addEventListener('mouseover', handleMouseOver);
+    element.addEventListener('mouseout', handleMouseOut);
+    element.addEventListener('mouseenter', handleMouseEnter); // Doesn't bubble
+    element.addEventListener('mouseleave', handleMouseLeave); // Doesn't bubble
+    ```
+  </Accordion>
+  
+  <Accordion title="Keyboard Events">
+    ```javascript
+    element.addEventListener('keydown', handleKeyDown);
+    element.addEventListener('keyup', handleKeyUp);
+    element.addEventListener('keypress', handleKeyPress); // Deprecated
+    
+    function handleKeyDown(event) {
+      console.log(`Key pressed: ${event.key}`);
+      console.log(`Key code: ${event.code}`);
+      
+      // Check for specific keys
+      if (event.key === 'Enter') {
+        // Handle Enter key
+      }
+      
+      // Check for modifier keys
+      if (event.ctrlKey && event.key === 's') {
+        // Handle Ctrl+S
+        event.preventDefault(); // Prevent browser's save dialog
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Form Events">
+    ```javascript
+    const form = document.querySelector('form');
+    const input = document.querySelector('input');
+    
+    form.addEventListener('submit', handleSubmit);
+    input.addEventListener('focus', handleFocus);
+    input.addEventListener('blur', handleBlur);
+    input.addEventListener('input', handleInput); // Real-time input changes
+    input.addEventListener('change', handleChange); // After input loses focus
+    
+    function handleSubmit(event) {
+      event.preventDefault(); // Prevent form submission
+      // Process form data
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Document and Window Events">
+    ```javascript
+    // Document loaded (DOM ready)
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM fully loaded');
+    });
+    
+    // Window loaded (including all resources)
+    window.addEventListener('load', () => {
+      console.log('Page fully loaded');
+    });
+    
+    // Before user leaves the page
+    window.addEventListener('beforeunload', (event) => {
+      // Modern browsers require returnValue to be set
+      event.preventDefault();
+      event.returnValue = '';
+      return ''; // For older browsers
+    });
+    
+    // Window resize
+    window.addEventListener('resize', handleResize);
+    
+    // Scroll events
+    window.addEventListener('scroll', handleScroll);
+    ```
+  </Accordion>
+  
+  <Accordion title="Touch Events">
+    ```javascript
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchmove', handleTouchMove);
+    element.addEventListener('touchend', handleTouchEnd);
+    element.addEventListener('touchcancel', handleTouchCancel);
+    
+    function handleTouchStart(event) {
+      // Access touch points
+      const touch = event.touches[0];
+      console.log(`Touch at ${touch.clientX}, ${touch.clientY}`);
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### The Event Object
+
+The event object contains information about the event and provides methods to control event behavior.
+
+```javascript
+element.addEventListener('click', (event) => {
+  // Event properties
+  console.log(event.type); // "click"
+  console.log(event.target); // Element that triggered the event
+  console.log(event.currentTarget); // Element that the listener is attached to
+  console.log(event.clientX, event.clientY); // Mouse coordinates (for mouse events)
+  
+  // Stop event propagation (bubbling)
+  event.stopPropagation();
+  
+  // Prevent default behavior
+  event.preventDefault();
+});
+```
+
+### Event Propagation
+
+Events in the DOM propagate in three phases:
+
+1. **Capture Phase**: From window down to the target element
+2. **Target Phase**: The event reaches the target element
+3. **Bubbling Phase**: From the target element back up to the window
+
+<img src="/images/event-propagation.png" alt="Event Propagation Phases" width="500" />
+
+```javascript
+// Default: Listen during bubbling phase
+element.addEventListener('click', handleClick);
+
+// Listen during capture phase
+element.addEventListener('click', handleCapture, true);
+// Or with options object
+element.addEventListener('click', handleCapture, { capture: true });
+
+// Stop propagation
+function handleClick(event) {
+  event.stopPropagation(); // Prevents event from bubbling up
+  // event.stopImmediatePropagation(); // Also prevents other listeners on same element
+}
+```
+
+### Event Delegation
+
+Event delegation is a technique where you attach a single event listener to a parent element instead of multiple listeners on child elements. It leverages event bubbling.
+
+```javascript
+// Instead of this:
+const buttons = document.querySelectorAll('.btn');
+buttons.forEach(button => {
+  button.addEventListener('click', handleClick);
+});
+
+// Use event delegation:
+const container = document.querySelector('.button-container');
+container.addEventListener('click', (event) => {
+  // Check if clicked element is a button
+  if (event.target.classList.contains('btn')) {
+    // Handle the button click
+    console.log('Button clicked:', event.target);
+  }
+});
+```
+
+Benefits of event delegation:
+- Works for dynamically added elements
+- Requires fewer event listeners (better performance)
+- Less memory usage
+- Cleaner code for large numbers of similar elements
+
+## Working with Forms
+
+### Accessing Form Elements
+
+```javascript
+// Get form by ID
+const form = document.getElementById('registration-form');
+
+// Access form elements by name
+const username = form.elements.username;
+const email = form.elements.email;
+
+// Alternative: direct property access if name is valid JS identifier
+const password = form.password;
+
+// Access by index
+const firstElement = form.elements[0];
+```
+
+### Form Validation
+
+```javascript
+const form = document.getElementById('registration-form');
+
+form.addEventListener('submit', (event) => {
+  let isValid = true;
+  
+  // Get form fields
+  const username = form.elements.username;
+  const email = form.elements.email;
+  const password = form.elements.password;
+  
+  // Clear previous error messages
+  clearErrors();
+  
+  // Validate username
+  if (username.value.trim() === '') {
+    displayError(username, 'Username is required');
+    isValid = false;
+  } else if (username.value.length < 3) {
+    displayError(username, 'Username must be at least 3 characters');
+    isValid = false;
+  }
+  
+  // Validate email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.value)) {
+    displayError(email, 'Please enter a valid email address');
+    isValid = false;
+  }
+  
+  // Validate password
+  if (password.value.length < 8) {
+    displayError(password, 'Password must be at least 8 characters');
+    isValid = false;
+  }
+  
+  // Prevent form submission if validation fails
+  if (!isValid) {
+    event.preventDefault();
+  }
+});
+
+function displayError(input, message) {
+  const formGroup = input.parentElement;
+  const errorElement = document.createElement('div');
+  errorElement.className = 'error-message';
+  errorElement.textContent = message;
+  formGroup.appendChild(errorElement);
+  formGroup.classList.add('error');
+  input.classList.add('invalid');
+}
+
+function clearErrors() {
+  const errorMessages = form.querySelectorAll('.error-message');
+  errorMessages.forEach(element => element.remove());
+  
+  const errorFields = form.querySelectorAll('.invalid');
+  errorFields.forEach(field => field.classList.remove('invalid'));
+  
+  const errorGroups = form.querySelectorAll('.error');
+  errorGroups.forEach(group => group.classList.remove('error'));
+}
+```
+
+### Working with Form Data
+
+```javascript
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  
+  // Create FormData object
+  const formData = new FormData(form);
+  
+  // Access form values
+  const username = formData.get('username');
+  const email = formData.get('email');
+  
+  // Iterate through all form values
+  for (const [name, value] of formData.entries()) {
+    console.log(`${name}: ${value}`);
+  }
+  
+  // Convert to object
+  const formDataObject = Object.fromEntries(formData.entries());
+  
+  // Send data to server
+  fetch('/api/register', {
+    method: 'POST',
+    body: formData, // FormData is automatically serialized
+    // Or send as JSON
+    // body: JSON.stringify(formDataObject),
+    // headers: {
+    //   'Content-Type': 'application/json'
+    // }
+  })
+  .then(response => response.json())
+  .then(data => console.log('Success:', data))
+  .catch(error => console.error('Error:', error));
+});
+```
+
+## DOM Manipulation Best Practices
+
+### Performance Optimization
+
+<CardGroup cols={2}>
+  <Card title="Minimize DOM Access" icon="bolt">
+    Cache DOM references in variables instead of repeatedly querying the DOM.
+    
+    ```javascript
+    // Bad
+    for (let i = 0; i < 100; i++) {
+      document.getElementById('result').innerHTML += i + ', ';
+    }
+    
+    // Good
+    const result = document.getElementById('result');
+    let content = '';
+    for (let i = 0; i < 100; i++) {
+      content += i + ', ';
+    }
+    result.innerHTML = content;
+    ```
+  </Card>
+  
+  <Card title="Use Document Fragments" icon="puzzle-piece">
+    When adding multiple elements, use document fragments to batch DOM operations.
+    
+    ```javascript
+    const fragment = document.createDocumentFragment();
+    
+    for (let i = 0; i < 1000; i++) {
+      const listItem = document.createElement('li');
+      listItem.textContent = `Item ${i}`;
+      fragment.appendChild(listItem);
+    }
+    
+    // Only one DOM update
+    document.getElementById('myList').appendChild(fragment);
+    ```
+  </Card>
+  
+  <Card title="Avoid Layout Thrashing" icon="arrows-repeat">
+    Batch your reads and writes to prevent forcing multiple layout recalculations.
+    
+    ```javascript
+    // Bad: Forces layout recalculation in each iteration
+    const boxes = document.querySelectorAll('.box');
+    boxes.forEach(box => {
+      const height = box.offsetHeight; // Read
+      box.style.height = (height * 2) + 'px'; // Write
+    });
+    
+    // Good: Batch reads, then writes
+    const boxes = document.querySelectorAll('.box');
+    const heights = [];
+    
+    // Read phase
+    boxes.forEach(box => {
+      heights.push(box.offsetHeight);
+    });
+    
+    // Write phase
+    boxes.forEach((box, i) => {
+      box.style.height = (heights[i] * 2) + 'px';
+    });
+    ```
+  </Card>
+  
+  <Card title="Use Event Delegation" icon="sitemap">
+    Attach event listeners to parent elements instead of multiple child elements.
+    
+    ```javascript
+    // Instead of this
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', handleClick);
+    });
+    
+    // Do this
+    document.querySelector('.button-container').addEventListener('click', (e) => {
+      if (e.target.matches('button')) {
+        handleClick(e);
+      }
+    });
+    ```
+  </Card>
+</CardGroup>
+
+### Maintainability
+
+<CardGroup cols={2}>
+  <Card title="Separate Concerns" icon="layer-group">
+    Keep DOM manipulation separate from business logic.
+    
+    ```javascript
+    // Bad: Mixed concerns
+    function processUserData(userId) {
+      fetch(`/api/users/${userId}`)
+        .then(response => response.json())
+        .then(user => {
+          document.getElementById('username').textContent = user.name;
+          document.getElementById('email').textContent = user.email;
+          // More DOM manipulation...
+        });
+    }
+    
+    // Good: Separated concerns
+    function fetchUserData(userId) {
+      return fetch(`/api/users/${userId}`)
+        .then(response => response.json());
+    }
+    
+    function renderUserData(user) {
+      document.getElementById('username').textContent = user.name;
+      document.getElementById('email').textContent = user.email;
+      // More DOM manipulation...
+    }
+    
+    // Usage
+    fetchUserData(123).then(renderUserData);
+    ```
+  </Card>
+  
+  <Card title="Use Data Attributes" icon="database">
+    Store data in data attributes instead of global variables or DOM properties.
+    
+    ```javascript
+    // HTML
+    <button data-user-id="123" data-role="admin">Edit User</button>
+    
+    // JavaScript
+    document.querySelector('button').addEventListener('click', (e) => {
+      const userId = e.target.dataset.userId;
+      const role = e.target.dataset.role;
+      editUser(userId, role);
+    });
+    ```
+  </Card>
+  
+  <Card title="Create Helper Functions" icon="screwdriver-wrench">
+    Abstract common DOM operations into reusable functions.
+    
+    ```javascript
+    // Helper functions
+    function createElement(tag, props = {}, children = []) {
+      const element = document.createElement(tag);
+      
+      // Set properties
+      Object.entries(props).forEach(([key, value]) => {
+        if (key === 'classList' && Array.isArray(value)) {
+          element.classList.add(...value);
+        } else if (key === 'dataset' && typeof value === 'object') {
+          Object.entries(value).forEach(([dataKey, dataValue]) => {
+            element.dataset[dataKey] = dataValue;
+          });
+        } else if (key === 'style' && typeof value === 'object') {
+          Object.assign(element.style, value);
+        } else {
+          element[key] = value;
+        }
+      });
+      
+      // Add children
+      children.forEach(child => {
+        if (typeof child === 'string') {
+          element.appendChild(document.createTextNode(child));
+        } else {
+          element.appendChild(child);
+        }
+      });
+      
+      return element;
+    }
+    
+    // Usage
+    const card = createElement('div', { classList: ['card', 'shadow'] }, [
+      createElement('h2', { className: 'card-title' }, ['User Profile']),
+      createElement('p', { dataset: { userId: '123' } }, ['John Doe']),
+      createElement('button', { 
+        className: 'btn', 
+        onclick: () => alert('Clicked!') 
+      }, ['View Details'])
+    ]);
+    
+    document.body.appendChild(card);
+    ```
+  </Card>
+  
+  <Card title="Use Templates" icon="clone">
+    Use HTML templates for complex structures.
+    
+    ```html
+    <!-- HTML Template -->
+    <template id="user-card-template">
+      <div class="card">
+        <h2 class="card-title">User Profile</h2>
+        <p class="user-name"></p>
+        <p class="user-email"></p>
+        <button class="btn view-details">View Details</button>
+      </div>
+    </template>
+    ```
+    
+    ```javascript
+    function createUserCard(user) {
+      // Clone the template
+      const template = document.getElementById('user-card-template');
+      const card = template.content.cloneNode(true);
+      
+      // Fill in the data
+      card.querySelector('.user-name').textContent = user.name;
+      card.querySelector('.user-email').textContent = user.email;
+      card.querySelector('.view-details').addEventListener('click', () => {
+        viewUserDetails(user.id);
+      });
+      
+      return card;
+    }
+    
+    // Usage
+    const userCard = createUserCard({ id: 123, name: 'John Doe', email: 'john@example.com' });
+    document.body.appendChild(userCard);
+    ```
+  </Card>
+</CardGroup>
+
+### Accessibility
+
+<CardGroup cols={2}>
+  <Card title="Use Semantic HTML" icon="universal-access">
+    Use appropriate HTML elements for their intended purpose.
+    
+    ```javascript
+    // Bad
+    const div = document.createElement('div');
+    div.setAttribute('role', 'button');
+    div.setAttribute('tabindex', '0');
+    div.textContent = 'Click Me';
+    div.addEventListener('click', handleClick);
+    div.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        handleClick();
+      }
+    });
+    
+    // Good
+    const button = document.createElement('button');
+    button.textContent = 'Click Me';
+    button.addEventListener('click', handleClick);
+    ```
+  </Card>
+  
+  <Card title="Manage Focus" icon="eye">
+    Manage keyboard focus for interactive elements.
+    
+    ```javascript
+    // Open modal and set focus to first focusable element
+    function openModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.add('active');
+      
+      // Find first focusable element
+      const focusableElement = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      
+      if (focusableElement) {
+        focusableElement.focus();
+      }
+    }
+    
+    // Trap focus within modal
+    modal.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        const firstFocusable = focusable[0];
+        const lastFocusable = focusable[focusable.length - 1];
+        
+        if (e.shiftKey && document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable.focus();
+        } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable.focus();
+        }
+      }
+    });
+    ```
+  </Card>
+  
+  <Card title="ARIA Attributes" icon="check-to-slot">
+    Use ARIA attributes when necessary to improve accessibility.
+    
+    ```javascript
+    // Create a custom dropdown
+    const dropdown = document.createElement('div');
+    dropdown.className = 'dropdown';
+    dropdown.setAttribute('role', 'combobox');
+    dropdown.setAttribute('aria-expanded', 'false');
+    dropdown.setAttribute('aria-haspopup', 'listbox');
+    
+    const button = document.createElement('button');
+    button.className = 'dropdown-toggle';
+    button.textContent = 'Select an option';
+    button.setAttribute('aria-label', 'Select an option, collapsed');
+    
+    const list = document.createElement('ul');
+    list.className = 'dropdown-menu';
+    list.setAttribute('role', 'listbox');
+    list.setAttribute('aria-hidden', 'true');
+    
+    // Toggle dropdown
+    button.addEventListener('click', () => {
+      const expanded = dropdown.getAttribute('aria-expanded') === 'true';
+      dropdown.setAttribute('aria-expanded', !expanded);
+      list.setAttribute('aria-hidden', expanded);
+      button.setAttribute('aria-label', `Select an option, ${expanded ? 'collapsed' : 'expanded'}`);
+    });
+    ```
+  </Card>
+  
+  <Card title="Announce Dynamic Changes" icon="bullhorn">
+    Use ARIA live regions to announce dynamic content changes.
+    
+    ```html
+    <div id="notification" aria-live="polite" class="sr-only"></div>
+    ```
+    
+    ```javascript
+    function notify(message) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      
+      // Clear after screen readers have time to announce
+      setTimeout(() => {
+        notification.textContent = '';
+      }, 5000);
+    }
+    
+    // Usage
+    document.getElementById('save-button').addEventListener('click', () => {
+      saveData()
+        .then(() => notify('Your changes have been saved successfully'));
+    });
+    ```
+  </Card>
+</CardGroup>
+
+## Advanced DOM Manipulation
+
+### Intersection Observer
+
+The Intersection Observer API provides a way to asynchronously observe changes in the intersection of an element with its parent or the viewport.
+
+```javascript
+// Create an observer
+const observer = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // Element is in view
+      console.log('Element is now visible');
+      entry.target.classList.add('visible');
+      
+      // Stop observing if needed
+      // observer.unobserve(entry.target);
+    } else {
+      // Element is out of view
+      console.log('Element is now hidden');
+      entry.target.classList.remove('visible');
+    }
+  });
+}, {
+  root: null, // viewport
+  rootMargin: '0px', // margin around root
+  threshold: 0.1 // percentage of element visible
+});
+
+// Start observing elements
+const elements = document.querySelectorAll('.lazy-load');
+elements.forEach(element => {
+  observer.observe(element);
+});
+```
+
+Common use cases:
+- Lazy loading images
+- Infinite scrolling
+- Animation triggers
+- Visibility tracking for analytics
+
+### Mutation Observer
+
+The Mutation Observer API provides a way to watch for changes being made to the DOM tree.
+
+```javascript
+// Create an observer
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach(mutation => {
+    if (mutation.type === 'childList') {
+      console.log('Child nodes have changed');
+      console.log('Added nodes:', mutation.addedNodes);
+      console.log('Removed nodes:', mutation.removedNodes);
+    } else if (mutation.type === 'attributes') {
+      console.log(`The ${mutation.attributeName} attribute was modified`);
+    }
+  });
+});
+
+// Start observing
+const targetNode = document.getElementById('dynamic-content');
+const config = {
+  attributes: true, // watch for attribute changes
+  childList: true, // watch for child additions/removals
+  subtree: true, // watch all descendants
+  attributeOldValue: true, // record old attribute value
+  characterData: true, // watch for text changes
+  characterDataOldValue: true // record old text value
+};
+
+observer.observe(targetNode, config);
+
+// Stop observing when needed
+// observer.disconnect();
+```
+
+Common use cases:
+- Custom elements that need to react to content changes
+- Tracking DOM changes made by third-party scripts
+- Implementing undo/redo functionality
+
+### Web Components
+
+Web Components allow you to create reusable custom elements with encapsulated functionality.
+
+```javascript
+// Define a custom element
+class UserCard extends HTMLElement {
+  constructor() {
+    super();
+    
+    // Create a shadow root
+    this.attachShadow({ mode: 'open' });
+    
+    // Create the component structure
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          padding: 1rem;
+          margin: 1rem 0;
+        }
+        h2 {
+          margin-top: 0;
+          color: #333;
+        }
+        .info {
+          color: #666;
+        }
+        button {
+          background: #0077cc;
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+      </style>
+      
+      <h2></h2>
+      <div class="info">
+        <p class="email"></p>
+        <p class="phone"></p>
+      </div>
+      <button>View Profile</button>
+    `;
+    
+    // Add event listener
+    this.shadowRoot.querySelector('button').addEventListener('click', () => {
+      const event = new CustomEvent('profile-click', {
+        bubbles: true,
+        composed: true, // allows the event to cross the shadow DOM boundary
+        detail: { userId: this.getAttribute('user-id') }
+      });
+      this.dispatchEvent(event);
+    });
+  }
+  
+  // Lifecycle: when element is added to the DOM
+  connectedCallback() {
+    this.render();
+  }
+  
+  // Lifecycle: when attributes change
+  static get observedAttributes() {
+    return ['name', 'email', 'phone', 'user-id'];
+  }
+  
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      this.render();
+    }
+  }
+  
+  // Render the component
+  render() {
+    const name = this.getAttribute('name') || 'Unknown User';
+    const email = this.getAttribute('email') || 'No email';
+    const phone = this.getAttribute('phone') || 'No phone';
+    
+    this.shadowRoot.querySelector('h2').textContent = name;
+    this.shadowRoot.querySelector('.email').textContent = `Email: ${email}`;
+    this.shadowRoot.querySelector('.phone').textContent = `Phone: ${phone}`;
+  }
+}
+
+// Register the custom element
+customElements.define('user-card', UserCard);
+```
+
+Usage in HTML:
+
+```html
+<user-card 
+  name="John Doe" 
+  email="john@example.com" 
+  phone="(555) 123-4567"
+  user-id="123">
+</user-card>
+
+<script>
+  document.addEventListener('profile-click', (e) => {
+    console.log(`View profile for user ${e.detail.userId}`);
+  });
+</script>
+```
+
+## Browser Compatibility
+
+Different browsers may implement DOM APIs differently or have varying levels of support.
+
+### Feature Detection
+
+Always use feature detection instead of browser detection:
+
+```javascript
+// Bad: Browser detection
+if (navigator.userAgent.includes('Chrome')) {
+  // Chrome-specific code
+}
+
+// Good: Feature detection
+if ('IntersectionObserver' in window) {
+  // Use Intersection Observer
+} else {
+  // Fallback implementation
+}
+
+if (element.classList) {
+  element.classList.add('active');
+} else {
+  // Fallback for older browsers
+  const classes = element.className.split(' ');
+  if (classes.indexOf('active') === -1) {
+    element.className += ' active';
+  }
+}
+```
+
+### Polyfills
+
+Polyfills provide functionality that may not be built into older browsers:
+
+```javascript
+// Polyfill for Element.matches
+if (!Element.prototype.matches) {
+  Element.prototype.matches = 
+    Element.prototype.msMatchesSelector || 
+    Element.prototype.webkitMatchesSelector;
+}
+
+// Polyfill for Element.closest
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function(selector) {
+    let el = this;
+    while (el) {
+      if (el.matches(selector)) {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return null;
+  };
+}
+```
+
+## Conclusion
+
+DOM manipulation is a fundamental skill for frontend developers. It allows you to create dynamic, interactive web applications that respond to user input and update content without page reloads.
+
+Key takeaways:
+
+1. The DOM represents HTML documents as a tree of nodes that JavaScript can interact with
+2. Modern DOM APIs provide powerful methods for selecting, creating, and modifying elements
+3. Event handling allows you to respond to user interactions
+4. Performance optimization is crucial for smooth user experiences
+5. Follow best practices for maintainability and accessibility
+6. Advanced APIs like Intersection Observer and Web Components enable more sophisticated interactions
+
+As you build more complex applications, consider using frameworks like React, Vue, or Angular, which provide abstracted approaches to DOM manipulation with optimized rendering strategies. However, understanding the underlying DOM APIs remains valuable even when working with these frameworks.
+
+## Resources
+
+### Documentation
+
+- [MDN Web Docs: Document Object Model (DOM)](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
+- [MDN Web Docs: Introduction to the DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction)
+- [MDN Web Docs: Events](https://developer.mozilla.org/en-US/docs/Web/Events)
+
+### Tools
+
+- [DOM Visualizer](https://bioub.github.io/dom-visualizer/) - Visualize the DOM tree
+- [DOM Monster](https://dommonster.io/) - Analyze DOM health and performance
+- [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools) - Inspect and debug the DOM
+
+### Further Learning
+
+- [JavaScript.info: Document](https://javascript.info/document)
+- [JavaScript.info: Events](https://javascript.info/events)
+- [Web Components](https://www.webcomponents.org/) - Resources for Web Components
