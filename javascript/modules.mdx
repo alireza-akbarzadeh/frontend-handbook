@@ -1,0 +1,1532 @@
+---
+title: 'JavaScript Modules'
+description: 'Learn how to organize your JavaScript code using modules, imports, and exports'
+---
+
+## Introduction to JavaScript Modules
+
+Modules are a fundamental concept in modern JavaScript development that allow you to split your code into separate files, making it more maintainable, reusable, and organized. They provide a way to encapsulate functionality, prevent global namespace pollution, and establish clear dependencies between different parts of your application.
+
+<CardGroup cols={2}>
+  <Card title="Code Organization" icon="folder-tree">
+    Modules help you organize your code into logical, separate files with clear responsibilities.
+  </Card>
+
+{' '}
+
+<Card title="Encapsulation" icon="lock">
+  Modules allow you to hide implementation details and only expose what's
+  necessary through exports.
+</Card>
+
+{' '}
+
+<Card title="Dependency Management" icon="diagram-project">
+  Modules make dependencies explicit through imports, creating a clear
+  dependency graph.
+</Card>
+
+  <Card title="Reusability" icon="recycle">
+    Well-designed modules can be reused across different parts of your application or even in different projects.
+  </Card>
+</CardGroup>
+
+## The Evolution of JavaScript Modules
+
+JavaScript wasn't originally designed with a built-in module system. Over time, several module patterns and systems emerged to address this limitation:
+
+<Steps>
+  <Step title="Global Variables and Namespaces (Pre-2009)">
+    Early JavaScript relied on global variables and objects as namespaces to organize code.
+
+    ```javascript
+    // Global variable
+    var myFunction = function() { /* ... */ };
+
+    // Namespace pattern
+    var MyApp = MyApp || {};
+    MyApp.utils = {};
+    MyApp.utils.formatDate = function(date) { /* ... */ };
+    ```
+
+    **Problems**: Global namespace pollution, implicit dependencies, difficulty managing large codebases.
+
+  </Step>
+
+  <Step title="Module Pattern with IIFEs (2009+)">
+    The Module Pattern used Immediately Invoked Function Expressions (IIFEs) to create private scopes.
+
+    ```javascript
+    var MyModule = (function() {
+      // Private variables and functions
+      var privateVariable = 'I am private';
+      function privateFunction() {
+        return privateVariable;
+      }
+
+      // Public API
+      return {
+        publicMethod: function() {
+          return privateFunction();
+        },
+        publicVariable: 'I am public'
+      };
+    })();
+
+    // Usage
+    console.log(MyModule.publicVariable); // 'I am public'
+    console.log(MyModule.privateVariable); // undefined
+    ```
+
+    **Improvements**: Encapsulation, reduced global scope pollution.
+    **Limitations**: Still manual dependency management, no standard way to load modules.
+
+  </Step>
+
+  <Step title="CommonJS (2009)">
+    CommonJS was developed for server-side JavaScript (Node.js) with synchronous module loading.
+
+    ```javascript
+    // math.js
+    function add(a, b) {
+      return a + b;
+    }
+
+    function subtract(a, b) {
+      return a - b;
+    }
+
+    module.exports = {
+      add: add,
+      subtract: subtract
+    };
+
+    // app.js
+    const math = require('./math');
+    console.log(math.add(5, 3)); // 8
+    ```
+
+    **Improvements**: Clear dependency declaration, file-based modules.
+    **Limitations**: Synchronous loading not ideal for browsers, requires bundling for web use.
+
+  </Step>
+
+  <Step title="AMD - Asynchronous Module Definition (2011)">
+    AMD was designed for browsers with asynchronous module loading.
+
+    ```javascript
+    // math.js
+    define([], function() {
+      function add(a, b) {
+        return a + b;
+      }
+
+      function subtract(a, b) {
+        return a - b;
+      }
+
+      return {
+        add: add,
+        subtract: subtract
+      };
+    });
+
+    // app.js
+    require(['math'], function(math) {
+      console.log(math.add(5, 3)); // 8
+    });
+    ```
+
+    **Improvements**: Asynchronous loading, better for browsers.
+    **Limitations**: More verbose syntax, callback-based API.
+
+  </Step>
+
+  <Step title="UMD - Universal Module Definition (2012)">
+    UMD aimed to be compatible with both CommonJS and AMD.
+
+    ```javascript
+    (function(root, factory) {
+      if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['dependency'], factory);
+      } else if (typeof module === 'object' && module.exports) {
+        // CommonJS
+        module.exports = factory(require('dependency'));
+      } else {
+        // Browser globals
+        root.myModule = factory(root.dependency);
+      }
+    }(typeof self !== 'undefined' ? self : this, function(dependency) {
+      // Module code goes here
+      return {};
+    }));
+    ```
+
+    **Improvements**: Works in multiple environments.
+    **Limitations**: Complex boilerplate code.
+
+  </Step>
+
+  <Step title="ES Modules (2015+)">
+    ECMAScript Modules (ESM) became the official standard for JavaScript modules.
+
+    ```javascript
+    // math.js
+    export function add(a, b) {
+      return a + b;
+    }
+
+    export function subtract(a, b) {
+      return a - b;
+    }
+
+    // app.js
+    import { add, subtract } from './math.js';
+    console.log(add(5, 3)); // 8
+    ```
+
+    **Improvements**: Native language support, static analysis, tree-shaking, async loading.
+    **Current status**: Supported in all modern browsers and Node.js.
+
+  </Step>
+</Steps>
+
+## ES Modules in Detail
+
+ES Modules (ESM) are the official standard for JavaScript modules and are now supported in all modern browsers and Node.js. Let's explore their syntax and features in detail.
+
+### Basic Export and Import
+
+```javascript
+// math.js - Exporting
+export function add(a, b) {
+  return a + b;
+}
+
+export function subtract(a, b) {
+  return a - b;
+}
+
+export const PI = 3.14159;
+
+// app.js - Importing
+import { add, subtract, PI } from './math.js';
+
+console.log(add(5, 3)); // 8
+console.log(subtract(10, 4)); // 6
+console.log(PI); // 3.14159
+```
+
+### Named Exports and Imports
+
+```javascript
+// utils.js
+export function formatDate(date) {
+  // Implementation
+}
+
+export function formatCurrency(amount) {
+  // Implementation
+}
+
+// Alternative syntax - declare first, export later
+function calculateTax(amount, rate) {
+  return amount * rate;
+}
+
+const TAX_RATE = 0.07;
+
+export { calculateTax, TAX_RATE };
+
+// app.js
+// Import specific exports
+import { formatDate, calculateTax } from './utils.js';
+
+// Rename imports to avoid naming conflicts
+import { formatDate as formatDateString, formatCurrency } from './utils.js';
+
+// Import all exports as a namespace object
+import * as Utils from './utils.js';
+Utils.formatDate(new Date());
+Utils.calculateTax(100, Utils.TAX_RATE);
+```
+
+### Default Exports and Imports
+
+```javascript
+// user.js
+class User {
+  constructor(name, email) {
+    this.name = name;
+    this.email = email;
+  }
+
+  getInfo() {
+    return `${this.name} (${this.email})`;
+  }
+}
+
+// Default export (only one per module)
+export default User;
+
+// app.js
+// Import default export (can use any name)
+import User from './user.js';
+
+const user = new User('John', 'john@example.com');
+```
+
+### Mixing Default and Named Exports
+
+```javascript
+// api.js
+export default class API {
+  // API class implementation
+}
+
+export const API_URL = 'https://api.example.com';
+export const API_VERSION = 'v1';
+
+// app.js
+import API, { API_URL, API_VERSION } from './api.js';
+
+const api = new API();
+console.log(`Using API ${API_VERSION} at ${API_URL}`);
+```
+
+### Re-exporting
+
+```javascript
+// math.js
+export function add(a, b) {
+  return a + b;
+}
+export function subtract(a, b) {
+  return a - b;
+}
+
+// string.js
+export function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+export function reverse(str) {
+  return str.split('').reverse().join('');
+}
+
+// utils.js - Re-exporting from other modules
+export { add, subtract } from './math.js';
+export { capitalize, reverse as reverseString } from './string.js';
+
+// Re-export everything
+export * from './date-utils.js';
+
+// Re-export default
+export { default as StringUtils } from './advanced-string.js';
+
+// app.js
+import { add, capitalize, reverseString } from './utils.js';
+```
+
+### Dynamic Imports
+
+```javascript
+// Static imports must be at the top level
+import { essential } from './essential.js';
+
+// Dynamic import - returns a promise
+async function loadModule() {
+  try {
+    // Load module dynamically when needed
+    const { feature1, feature2 } = await import('./features.js');
+    feature1();
+
+    // Dynamic import with destructuring in the .then() callback
+    import('./another-module.js')
+      .then(({ default: DefaultExport, namedExport }) => {
+        // Use the imported values
+      })
+      .catch((error) => {
+        console.error('Failed to load module:', error);
+      });
+  } catch (error) {
+    console.error('Failed to load module:', error);
+  }
+}
+
+// Dynamic imports are useful for:
+// 1. Code-splitting
+// 2. Loading modules conditionally
+// 3. Reducing initial load time
+button.addEventListener('click', async () => {
+  const { renderChart } = await import('./chart.js');
+  renderChart(data);
+});
+```
+
+## Module Features and Behavior
+
+### Strict Mode
+
+All ES modules automatically run in strict mode, even without the `'use strict'` directive.
+
+```javascript
+// This module runs in strict mode by default
+export function test() {
+  // This would throw an error in strict mode
+  // undeclaredVariable = 42;
+
+  // This is required in strict mode
+  const declaredVariable = 42;
+}
+```
+
+### Module Scope
+
+Variables declared in a module are scoped to that module unless explicitly exported.
+
+```javascript
+// module-a.js
+const privateVariable = 'This is private to module-a';
+export const publicVariable = 'This is public';
+
+// module-b.js
+import { publicVariable } from './module-a.js';
+console.log(publicVariable); // 'This is public'
+console.log(privateVariable); // ReferenceError: privateVariable is not defined
+```
+
+### Single Execution
+
+Modules are executed only once, even if imported multiple times.
+
+```javascript
+// counter.js
+console.log('Module initialized');
+let count = 0;
+
+export function increment() {
+  count++;
+  return count;
+}
+
+// app.js
+import { increment } from './counter.js';
+import { increment as inc } from './counter.js';
+
+// 'Module initialized' is logged only once
+console.log(increment()); // 1
+console.log(inc()); // 2 (same instance)
+```
+
+### Top-level await
+
+Modern JavaScript allows using `await` at the top level of modules (outside of async functions).
+
+```javascript
+// config.js
+export const config = await fetch('/api/config').then((r) => r.json());
+
+// database.js
+import { config } from './config.js';
+
+// The importing module waits for config.js to finish loading
+const db = connectToDatabase(config.dbUrl);
+export { db };
+```
+
+## Using ES Modules in the Browser
+
+To use ES modules directly in the browser, add `type="module"` to your script tag.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ES Modules Example</title>
+  </head>
+  <body>
+    <!-- Regular script (parsed and executed before modules) -->
+    <script>
+      console.log('Regular script executed');
+    </script>
+
+    <!-- Module script -->
+    <script type="module">
+      import { add } from './math.js';
+      console.log('Module script executed');
+      console.log(`5 + 3 = ${add(5, 3)}`);
+    </script>
+
+    <!-- External module script -->
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
+```
+
+### Browser Module Features
+
+1. **Deferred by default**: Module scripts are deferred automatically (like adding `defer` attribute)
+2. **Strict mode**: Modules run in strict mode automatically
+3. **CORS**: Modules are subject to CORS (Cross-Origin Resource Sharing) restrictions
+4. **Loaded once**: Modules are only executed once, even if included multiple times
+5. **No inline imports**: Dynamic imports work, but static imports must specify a path
+
+```javascript
+// This works in a module script
+import { feature } from './feature.js';
+
+// This doesn't work - no specifier
+import { something } from 'something';
+
+// Dynamic imports work
+button.addEventListener('click', async () => {
+  const module = await import('./feature.js');
+  module.feature();
+});
+```
+
+### Module File Extensions
+
+When using ES modules in browsers, it's recommended to use the `.js` or `.mjs` extension for module files.
+
+```html
+<script type="module" src="app.js"></script>
+```
+
+```javascript
+// In app.js
+import { helper } from './utils.js'; // Must include the extension
+```
+
+<Note>
+  Unlike in Node.js or bundlers like webpack, browser ES modules require file
+  extensions in import paths.
+</Note>
+
+## Using ES Modules in Node.js
+
+Node.js supports ES modules alongside its original CommonJS system.
+
+### Enabling ES Modules in Node.js
+
+There are several ways to use ES modules in Node.js:
+
+1. **File extension**: Use `.mjs` extension for ES module files
+2. **Package.json**: Add `"type": "module"` to make all `.js` files in the package ES modules
+3. **Command line**: Run with `--input-type=module` flag
+
+```json
+// package.json
+{
+  "name": "my-package",
+  "version": "1.0.0",
+  "type": "module"
+}
+```
+
+### ES Modules vs. CommonJS in Node.js
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>ES Modules (.mjs)</th>
+      <th>CommonJS (.cjs)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Import syntax</td>
+      <td>
+        <code>import {something} from 'module';</code>
+      </td>
+      <td>
+        <code>const {something} = require('module');</code>
+      </td>
+    </tr>
+    <tr>
+      <td>Export syntax</td>
+      <td>
+        <code>export function something() {}</code>
+      </td>
+      <td>
+        <code>module.exports.something = function() {}</code>
+      </td>
+    </tr>
+    <tr>
+      <td>File extensions in imports</td>
+      <td>Required for local files</td>
+      <td>Optional</td>
+    </tr>
+    <tr>
+      <td>JSON imports</td>
+      <td>
+        Requires import assertion:{' '}
+        <code>import data from './data.json' assert</code>
+      </td>
+      <td>
+        Automatic: <code>const data = require('./data.json');</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>__dirname</code>, <code>__filename</code>
+      </td>
+      <td>
+        Not available (use <code>import.meta.url</code> instead)
+      </td>
+      <td>Available globally</td>
+    </tr>
+    <tr>
+      <td>Hoisting</td>
+      <td>Imports are hoisted</td>
+      <td>
+        <code>require()</code> can be called anywhere
+      </td>
+    </tr>
+    <tr>
+      <td>Top-level await</td>
+      <td>Supported</td>
+      <td>Not supported</td>
+    </tr>
+  </tbody>
+</table>
+
+### Node.js ES Module Examples
+
+```javascript
+// math.mjs
+export function add(a, b) {
+  return a + b;
+}
+
+export default function multiply(a, b) {
+  return a * b;
+}
+
+// app.mjs
+import { add } from './math.mjs';
+import multiply from './math.mjs';
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+async function main() {
+  console.log(`5 + 3 = ${add(5, 3)}`);
+  console.log(`5 * 3 = ${multiply(5, 3)}`);
+
+  // Top-level await example
+  const data = await fs.readFile(path.join(__dirname, 'data.txt'), 'utf8');
+  console.log('File content:', data);
+}
+
+main().catch(console.error);
+```
+
+### Interoperability Between ES Modules and CommonJS
+
+```javascript
+// commonjs-module.cjs
+const PI = 3.14159;
+
+function calculateArea(radius) {
+  return PI * radius * radius;
+}
+
+module.exports = {
+  PI,
+  calculateArea,
+};
+
+// es-module.mjs
+import { PI, calculateArea } from './commonjs-module.cjs';
+
+console.log(`Area of circle with radius 5: ${calculateArea(5)}`);
+
+// Default import of CommonJS module
+import math from './commonjs-module.cjs';
+console.log(`PI from default import: ${math.PI}`);
+```
+
+<Note>
+  When importing CommonJS modules into ES modules, the CommonJS `module.exports`
+  object becomes the default export, and its properties become named exports.
+</Note>
+
+## Module Bundlers
+
+Module bundlers are tools that process modules and their dependencies to generate optimized bundles for browsers.
+
+### Why Use Module Bundlers?
+
+<CardGroup cols={2}>
+  <Card title="Browser Compatibility" icon="globe">
+    Ensure your modular code works in older browsers that don't support ES modules.
+  </Card>
+
+{' '}
+
+<Card title="Performance Optimization" icon="gauge-high">
+  Reduce the number of HTTP requests by combining multiple modules into fewer
+  files.
+</Card>
+
+{' '}
+
+<Card title="Code Transformation" icon="wand-magic-sparkles">
+  Process code through transpilers (like Babel) and preprocessors.
+</Card>
+
+{' '}
+
+<Card title="Tree Shaking" icon="tree">
+  Eliminate unused code to reduce bundle size.
+</Card>
+
+{' '}
+
+<Card title="Non-JavaScript Assets" icon="file-image">
+  Import and process CSS, images, and other assets as modules.
+</Card>
+
+  <Card title="Development Experience" icon="laptop-code">
+    Enable features like hot module replacement for faster development.
+  </Card>
+</CardGroup>
+
+### Popular Module Bundlers
+
+<AccordionGroup>
+  <Accordion title="webpack">
+    The most widely used bundler with a vast ecosystem of plugins and loaders.
+
+    ```javascript
+    // webpack.config.js
+    const path = require('path');
+
+    module.exports = {
+      entry: './src/index.js',
+      output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+      },
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env']
+              }
+            }
+          },
+          {
+            test: /\.css$/,
+            use: ['style-loader', 'css-loader']
+          }
+        ]
+      }
+    };
+    ```
+
+    **Key Features**:
+    - Extensive plugin system
+    - Code splitting
+    - Hot Module Replacement
+    - Asset optimization
+    - Development server
+
+  </Accordion>
+
+  <Accordion title="Rollup">
+    Focused on ES modules and tree-shaking, ideal for libraries.
+
+    ```javascript
+    // rollup.config.js
+    import resolve from '@rollup/plugin-node-resolve';
+    import commonjs from '@rollup/plugin-commonjs';
+    import babel from '@rollup/plugin-babel';
+    import terser from '@rollup/plugin-terser';
+
+    export default {
+      input: 'src/main.js',
+      output: {
+        file: 'dist/bundle.js',
+        format: 'esm',
+        sourcemap: true
+      },
+      plugins: [
+        resolve(),
+        commonjs(),
+        babel({ babelHelpers: 'bundled' }),
+        terser()
+      ]
+    };
+    ```
+
+    **Key Features**:
+    - Efficient tree-shaking
+    - Multiple output formats (ESM, CJS, UMD)
+    - Small bundle sizes
+    - Plugin architecture
+
+  </Accordion>
+
+  <Accordion title="esbuild">
+    Extremely fast bundler written in Go, focused on speed.
+
+    ```javascript
+    // build.js
+    const esbuild = require('esbuild');
+
+    esbuild.build({
+      entryPoints: ['src/app.js'],
+      bundle: true,
+      minify: true,
+      sourcemap: true,
+      target: ['chrome58', 'firefox57', 'safari11', 'edge16'],
+      outfile: 'dist/bundle.js',
+    }).catch(() => process.exit(1));
+    ```
+
+    **Key Features**:
+    - Extremely fast build times
+    - Built-in minification
+    - TypeScript and JSX support
+    - Simple API
+
+  </Accordion>
+
+  <Accordion title="Vite">
+    Next-generation frontend build tool that leverages native ES modules.
+
+    ```javascript
+    // vite.config.js
+    import { defineConfig } from 'vite';
+    import react from '@vitejs/plugin-react';
+
+    export default defineConfig({
+      plugins: [react()],
+      build: {
+        outDir: 'dist',
+        minify: 'terser',
+        sourcemap: true
+      }
+    });
+    ```
+
+    **Key Features**:
+    - Lightning-fast dev server using native ES modules
+    - Optimized production builds with Rollup
+    - Hot Module Replacement
+    - CSS preprocessing
+    - Framework-specific plugins
+
+  </Accordion>
+
+  <Accordion title="Parcel">
+    Zero-configuration bundler for web applications.
+
+    ```bash
+    # Just point Parcel to your entry file
+    parcel build src/index.html
+    ```
+
+    **Key Features**:
+    - Zero configuration
+    - Automatic dependency resolution
+    - Fast builds with multicore processing
+    - Built-in development server
+    - Code splitting
+
+  </Accordion>
+</AccordionGroup>
+
+## Module Design Patterns
+
+Well-designed modules make your code more maintainable and reusable. Here are some patterns and best practices for creating effective modules.
+
+### Single Responsibility Principle
+
+Each module should have a single responsibility or purpose.
+
+```javascript
+// Bad: Module doing too many things
+export function formatDate(date) {
+  /* ... */
+}
+export function calculateTax(amount) {
+  /* ... */
+}
+export function validateEmail(email) {
+  /* ... */
+}
+
+// Good: Separate modules with clear responsibilities
+// date-utils.js
+export function formatDate(date) {
+  /* ... */
+}
+export function parseDate(dateString) {
+  /* ... */
+}
+
+// tax-utils.js
+export function calculateTax(amount, rate) {
+  /* ... */
+}
+export function applyDiscount(amount, discount) {
+  /* ... */
+}
+```
+
+### Revealing Module Pattern
+
+Expose only what's necessary and keep implementation details private.
+
+```javascript
+// user-service.js
+// Private implementation details
+const API_URL = 'https://api.example.com/users';
+
+async function fetchFromApi(endpoint) {
+  const response = await fetch(`${API_URL}${endpoint}`);
+  if (!response.ok) throw new Error(`API error: ${response.status}`);
+  return response.json();
+}
+
+function validateUser(user) {
+  // Private validation logic
+  return user.name && user.email;
+}
+
+// Public API
+export async function getUser(id) {
+  return fetchFromApi(`/${id}`);
+}
+
+export async function createUser(userData) {
+  if (!validateUser(userData)) {
+    throw new Error('Invalid user data');
+  }
+
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData),
+  });
+
+  return response.json();
+}
+```
+
+### Factory Pattern
+
+Use factory functions to create and return objects with private state.
+
+```javascript
+// counter.js
+export function createCounter(initialValue = 0) {
+  // Private state
+  let count = initialValue;
+
+  // Return object with public methods
+  return {
+    increment() {
+      return ++count;
+    },
+    decrement() {
+      return --count;
+    },
+    getValue() {
+      return count;
+    },
+    reset() {
+      count = initialValue;
+      return count;
+    },
+  };
+}
+
+// Usage
+import { createCounter } from './counter.js';
+
+const counter1 = createCounter(10);
+const counter2 = createCounter(5);
+
+console.log(counter1.increment()); // 11
+console.log(counter2.increment()); // 6
+```
+
+### Adapter Pattern
+
+Create adapters to provide a consistent interface for different implementations.
+
+```javascript
+// storage-adapter.js
+// LocalStorage adapter
+const localStorageAdapter = {
+  get(key) {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
+  },
+  set(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  },
+  remove(key) {
+    localStorage.removeItem(key);
+  },
+  clear() {
+    localStorage.clear();
+  },
+};
+
+// SessionStorage adapter
+const sessionStorageAdapter = {
+  get(key) {
+    const value = sessionStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
+  },
+  set(key, value) {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  },
+  remove(key) {
+    sessionStorage.removeItem(key);
+  },
+  clear() {
+    sessionStorage.clear();
+  },
+};
+
+// In-memory adapter (for testing or fallback)
+function createMemoryAdapter() {
+  const storage = new Map();
+
+  return {
+    get(key) {
+      return storage.get(key) || null;
+    },
+    set(key, value) {
+      storage.set(key, value);
+    },
+    remove(key) {
+      storage.delete(key);
+    },
+    clear() {
+      storage.clear();
+    },
+  };
+}
+
+// Export factory function to create the appropriate adapter
+export function createStorageAdapter(type = 'local') {
+  switch (type) {
+    case 'local':
+      return localStorageAdapter;
+    case 'session':
+      return sessionStorageAdapter;
+    case 'memory':
+      return createMemoryAdapter();
+    default:
+      throw new Error(`Unknown storage type: ${type}`);
+  }
+}
+
+// Usage
+import { createStorageAdapter } from './storage-adapter.js';
+
+const storage = createStorageAdapter('local');
+storage.set('user', { id: 1, name: 'John' });
+console.log(storage.get('user')); // { id: 1, name: 'John' }
+```
+
+### Configuration Module
+
+Create modules for application configuration that can be imported where needed.
+
+```javascript
+// config.js
+const env = process.env.NODE_ENV || 'development';
+
+const config = {
+  development: {
+    apiUrl: 'http://localhost:3000/api',
+    debug: true,
+    featureFlags: {
+      newUI: true,
+      analytics: false,
+    },
+  },
+  production: {
+    apiUrl: 'https://api.example.com',
+    debug: false,
+    featureFlags: {
+      newUI: false,
+      analytics: true,
+    },
+  },
+  test: {
+    apiUrl: 'http://localhost:3001/api',
+    debug: true,
+    featureFlags: {
+      newUI: true,
+      analytics: false,
+    },
+  },
+};
+
+export default config[env];
+
+// Usage
+import config from './config.js';
+
+fetch(`${config.apiUrl}/users`)
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+
+if (config.debug) {
+  console.log('Debug mode enabled');
+}
+
+if (config.featureFlags.newUI) {
+  enableNewUI();
+}
+```
+
+## Best Practices for JavaScript Modules
+
+<CardGroup cols={2}>
+  <Card title="Keep modules focused" icon="bullseye">
+    Each module should have a single responsibility and a clear purpose.
+  </Card>
+
+{' '}
+
+<Card title="Export only what's necessary" icon="filter">
+  Minimize your public API by only exporting what other modules need.
+</Card>
+
+{' '}
+
+<Card title="Use consistent naming" icon="signature">
+  Use clear, descriptive names for modules and their exports that reflect their
+  purpose.
+</Card>
+
+{' '}
+
+<Card title="Organize by feature, not type" icon="folder-tree">
+  Group related files together by feature or domain, not by their technical
+  role.
+</Card>
+
+{' '}
+
+<Card title="Avoid circular dependencies" icon="circle-notch">
+  Circular dependencies can cause issues. Restructure your code to avoid them.
+</Card>
+
+{' '}
+
+<Card title="Document your modules" icon="file-lines">
+  Add comments explaining the purpose of the module and how to use its exports.
+</Card>
+
+{' '}
+
+<Card title="Use index files for public API" icon="file-export">
+  Create index.js files to re-export from multiple files, creating a cleaner
+  public API.
+</Card>
+
+  <Card title="Prefer named exports" icon="tags">
+    Named exports make imports more explicit and enable better tree-shaking.
+  </Card>
+</CardGroup>
+
+### Organizing Module Structure
+
+```
+src/
+├── features/
+│   ├── auth/
+│   │   ├── index.js           # Public API for auth feature
+│   │   ├── auth-service.js    # Authentication logic
+│   │   ├── user-model.js      # User data structure
+│   │   └── auth-utils.js      # Helper functions
+│   │
+│   └── products/
+│       ├── index.js           # Public API for products feature
+│       ├── product-service.js # Product-related logic
+│       ├── product-model.js   # Product data structure
+│       └── product-utils.js   # Helper functions
+│
+├── shared/
+│   ├── api/
+│   │   ├── index.js           # API client exports
+│   │   ├── api-client.js      # Base API client
+│   │   └── error-handling.js  # API error handling
+│   │
+│   └── utils/
+│       ├── index.js           # Utility exports
+│       ├── date-utils.js      # Date formatting, parsing
+│       └── string-utils.js    # String manipulation
+│
+└── index.js                   # Main application entry point
+```
+
+### Using Index Files for Clean Exports
+
+```javascript
+// features/auth/index.js
+export { login, logout, register } from './auth-service.js';
+export { getCurrentUser, getUserProfile } from './user-service.js';
+export { User } from './user-model.js';
+
+// Don't export internal utilities or implementation details
+
+// Usage in another file
+import { login, getCurrentUser } from './features/auth';
+// Instead of:
+// import { login } from './features/auth/auth-service.js';
+// import { getCurrentUser } from './features/auth/user-service.js';
+```
+
+### Avoiding Circular Dependencies
+
+Circular dependencies occur when module A imports from module B, and module B imports from module A.
+
+```javascript
+// Bad: Circular dependency
+// user.js
+import { getUserPosts } from './post.js';
+
+export function getUser(id) {
+  // ...
+}
+
+export function getUserWithPosts(id) {
+  const user = getUser(id);
+  user.posts = getUserPosts(id);
+  return user;
+}
+
+// post.js
+import { getUser } from './user.js';
+
+export function getPost(id) {
+  // ...
+}
+
+export function getUserPosts(userId) {
+  // ...
+}
+
+export function getPostWithUser(id) {
+  const post = getPost(id);
+  post.user = getUser(post.userId);
+  return post;
+}
+```
+
+Solution: Create a separate module for shared functionality or restructure your code.
+
+```javascript
+// Better: Avoid circular dependency
+// user.js
+export function getUser(id) {
+  // ...
+}
+
+// post.js
+export function getPost(id) {
+  // ...
+}
+
+export function getUserPosts(userId) {
+  // ...
+}
+
+// user-posts.js (new module that imports from both)
+import { getUser } from './user.js';
+import { getUserPosts } from './post.js';
+
+export function getUserWithPosts(id) {
+  const user = getUser(id);
+  user.posts = getUserPosts(id);
+  return user;
+}
+
+// post-details.js
+import { getPost } from './post.js';
+import { getUser } from './user.js';
+
+export function getPostWithUser(id) {
+  const post = getPost(id);
+  post.user = getUser(post.userId);
+  return post;
+}
+```
+
+## Debugging Modules
+
+Debugging modular JavaScript code can be challenging. Here are some tips and techniques:
+
+### Source Maps
+
+When using bundlers, enable source maps to map the bundled code back to the original module files.
+
+```javascript
+// webpack.config.js
+module.exports = {
+  // ...
+  devtool: 'source-map', // or 'eval-source-map' for development
+};
+
+// rollup.config.js
+export default {
+  // ...
+  output: {
+    // ...
+    sourcemap: true,
+  },
+};
+```
+
+### Browser DevTools
+
+Modern browser DevTools provide features for working with modules:
+
+1. **Sources Panel**: Navigate the module structure and set breakpoints
+2. **Call Stack**: See which module and function is currently executing
+3. **Breakpoints**: Set breakpoints in specific modules
+4. **Network Panel**: See which modules are being loaded
+
+### Common Module Issues and Solutions
+
+<AccordionGroup>
+  <Accordion title="Module not found errors">
+    ```
+    Error: Cannot find module 'path/to/module'
+    ```
+
+    **Possible causes and solutions**:
+
+    1. **Incorrect path**: Check for typos in the import path
+    2. **Missing file extension**: Add the file extension (especially in browser environments)
+    3. **Case sensitivity**: Ensure the case matches the actual file name
+    4. **File doesn't exist**: Verify the file exists at the specified path
+
+  </Accordion>
+
+  <Accordion title="Unexpected token errors">
+    ```
+    SyntaxError: Unexpected token 'export'
+    ```
+
+    **Possible causes and solutions**:
+
+    1. **Using ES modules without proper setup**: Ensure you have `type="module"` in script tags or `"type": "module"` in package.json
+    2. **Missing transpilation**: Set up Babel or another transpiler for older browsers
+    3. **Mixing module systems**: Ensure you're not mixing CommonJS and ES modules incorrectly
+
+  </Accordion>
+
+  <Accordion title="Circular dependency warnings">
+    ```
+    Warning: Circular dependency detected: A -> B -> A
+    ```
+
+    **Possible causes and solutions**:
+
+    1. **Modules importing each other**: Restructure your code to avoid circular dependencies
+    2. **Create a third module**: Move shared functionality to a separate module
+    3. **Use dynamic imports**: Replace one of the static imports with a dynamic import
+
+  </Accordion>
+
+  <Accordion title="Undefined exports">
+    ```
+    TypeError: Cannot destructure property 'x' of 'module' as it is undefined
+    ```
+
+    **Possible causes and solutions**:
+
+    1. **Export doesn't exist**: Verify the export exists in the source module
+    2. **Typo in import or export name**: Check spelling of imported/exported names
+    3. **Default vs. named export confusion**: Make sure you're using the correct import syntax
+    4. **Order of operations**: Ensure exports are defined before they're imported
+
+  </Accordion>
+</AccordionGroup>
+
+## Module Testing
+
+Testing modular code requires some specific approaches:
+
+### Unit Testing Modules
+
+```javascript
+// math.js
+export function add(a, b) {
+  return a + b;
+}
+
+export function subtract(a, b) {
+  return a - b;
+}
+
+// math.test.js
+import { add, subtract } from './math.js';
+
+describe('Math module', () => {
+  test('add function adds two numbers correctly', () => {
+    expect(add(2, 3)).toBe(5);
+    expect(add(-1, 1)).toBe(0);
+    expect(add(0, 0)).toBe(0);
+  });
+
+  test('subtract function subtracts two numbers correctly', () => {
+    expect(subtract(5, 3)).toBe(2);
+    expect(subtract(1, 1)).toBe(0);
+    expect(subtract(0, 5)).toBe(-5);
+  });
+});
+```
+
+### Mocking Module Dependencies
+
+```javascript
+// user-service.js
+import api from './api.js';
+
+export async function getUser(id) {
+  return api.get(`/users/${id}`);
+}
+
+export async function updateUser(id, data) {
+  return api.put(`/users/${id}`, data);
+}
+
+// user-service.test.js
+import { getUser, updateUser } from './user-service.js';
+import api from './api.js';
+
+// Mock the api module
+jest.mock('./api.js', () => ({
+  get: jest.fn(),
+  put: jest.fn(),
+}));
+
+describe('User Service', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('getUser calls the API with correct path', async () => {
+    api.get.mockResolvedValue({ id: 1, name: 'John' });
+
+    const user = await getUser(1);
+
+    expect(api.get).toHaveBeenCalledWith('/users/1');
+    expect(user).toEqual({ id: 1, name: 'John' });
+  });
+
+  test('updateUser calls the API with correct path and data', async () => {
+    const userData = { name: 'Updated Name' };
+    api.put.mockResolvedValue({ id: 1, name: 'Updated Name' });
+
+    const user = await updateUser(1, userData);
+
+    expect(api.put).toHaveBeenCalledWith('/users/1', userData);
+    expect(user).toEqual({ id: 1, name: 'Updated Name' });
+  });
+});
+```
+
+### Testing Dynamic Imports
+
+```javascript
+// feature-loader.js
+export async function loadFeature(featureName) {
+  try {
+    const module = await import(`./features/${featureName}.js`);
+    return module.default || module;
+  } catch (error) {
+    console.error(`Failed to load feature: ${featureName}`, error);
+    return null;
+  }
+}
+
+// feature-loader.test.js
+import { loadFeature } from './feature-loader.js';
+
+// Mock dynamic imports
+jest.mock('./features/auth.js', () => ({ default: { login: jest.fn() } }), {
+  virtual: true,
+});
+jest.mock('./features/profile.js', () => ({ getProfile: jest.fn() }), {
+  virtual: true,
+});
+
+describe('Feature Loader', () => {
+  test('loads default export from feature module', async () => {
+    const authFeature = await loadFeature('auth');
+    expect(authFeature).toBeDefined();
+    expect(typeof authFeature.login).toBe('function');
+  });
+
+  test('loads named exports from feature module', async () => {
+    const profileFeature = await loadFeature('profile');
+    expect(profileFeature).toBeDefined();
+    expect(typeof profileFeature.getProfile).toBe('function');
+  });
+
+  test('returns null for non-existent feature', async () => {
+    const nonExistentFeature = await loadFeature('non-existent');
+    expect(nonExistentFeature).toBeNull();
+  });
+});
+```
+
+## Conclusion
+
+JavaScript modules are a fundamental part of modern web development, providing a structured way to organize code, manage dependencies, and create reusable components. By understanding the different module systems, their features, and best practices, you can write more maintainable and efficient JavaScript applications.
+
+Key takeaways:
+
+1. ES Modules are the standard module system for JavaScript, supported in modern browsers and Node.js
+2. Modules help with code organization, encapsulation, and dependency management
+3. Use named exports for better tree-shaking and more explicit imports
+4. Module bundlers like webpack, Rollup, and esbuild help optimize modules for production
+5. Follow module design patterns and best practices for more maintainable code
+6. Understand the differences between module systems when working with different environments
+
+## Resources
+
+### Documentation
+
+- [MDN Web Docs: JavaScript Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+- [Node.js Documentation: ECMAScript Modules](https://nodejs.org/api/esm.html)
+- [JavaScript.info: Modules](https://javascript.info/modules)
+
+### Tools
+
+- [webpack](https://webpack.js.org/)
+- [Rollup](https://rollupjs.org/)
+- [esbuild](https://esbuild.github.io/)
+- [Vite](https://vitejs.dev/)
+- [Parcel](https://parceljs.org/)
+
+### Further Learning
+
+- [Exploring JS: Modules](https://exploringjs.com/es6/ch_modules.html)
+- [JavaScript Modules: A Beginner's Guide](https://www.freecodecamp.org/news/javascript-modules-a-beginner-s-guide-783f7d7a5fcc/)
+- [Understanding ES6 Modules](https://www.sitepoint.com/understanding-es6-modules/)
