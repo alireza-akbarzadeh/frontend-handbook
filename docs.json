@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Frontend Handbook",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -15,11 +15,11 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
+            "pages": ["index", "quickstart", "development"]
+          },
+          {
+            "group": "Frontend Handbook",
+            "pages": ["essentials/html"]
           },
           {
             "group": "Essentials",
@@ -39,9 +39,7 @@
         "groups": [
           {
             "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "pages": ["api-reference/introduction"]
           },
           {
             "group": "Endpoint Examples",

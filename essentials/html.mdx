@@ -1,0 +1,159 @@
+---
+## Advanced HTML Topics for Senior Developers
+
+Senior developers are expected to understand not just what HTML is, but how to **structure semantic, accessible, performant** pages using HTML5.
+---
+
+### 1. Semantic HTML
+
+Semantic elements clearly describe their meaning in a human- and machine-readable way.
+
+```html
+<article>
+  <header>
+    <h1>Understanding Semantic HTML</h1>
+    <p>Updated: 2024-10-01</p>
+  </header>
+  <section>
+    <p>Semantic HTML improves SEO, accessibility, and maintainability.</p>
+  </section>
+  <footer>
+    <p>Written by Alireza</p>
+  </footer>
+</article>
+```
+
+**Common Semantic Elements**:
+
+- `<header>`, `<footer>`
+- `<section>`, `<article>`
+- `<nav>`, `<aside>`
+- `<main>`, `<figure>`, `<figcaption>`
+
+---
+
+### 2. Accessible HTML
+
+Accessibility (a11y) is essential for inclusive web development.
+
+#### Labels and Inputs
+
+```html
+<label for="email">Email</label>
+<input id="email" type="email" aria-required="true" />
+```
+
+#### Landmarks for Screen Readers
+
+```html
+<main>
+  <h1>Dashboard</h1>
+</main>
+
+<aside aria-label="Sidebar Navigation">
+  <nav>
+    <ul>
+      <li><a href="/settings">Settings</a></li>
+    </ul>
+  </nav>
+</aside>
+```
+
+---
+
+### 3. Custom Data Attributes
+
+Use `data-*` attributes to store custom data.
+
+```html
+<div data-product-id="123" data-category="electronics">Product Info</div>
+```
+
+Access with JS:
+
+```js
+const el = document.querySelector("[data-product-id]");
+console.log(el.dataset.productId); // "123"
+```
+
+---
+
+### 4. Performance: Lazy Loading
+
+HTML5 provides native lazy loading:
+
+```html
+<img src="image.jpg" alt="Preview" loading="lazy" />
+```
+
+This defers image loading until it's in the viewport.
+
+---
+
+### 5. Form Enhancements
+
+#### Native Validation
+
+```html
+<form>
+  <input type="email" required />
+  <input type="submit" />
+</form>
+```
+
+Browser will enforce email format automatically.
+
+#### `autocomplete`, `inputmode`, `pattern`
+
+```html
+<input type="text" autocomplete="email" inputmode="email" />
+```
+
+---
+
+### 6. `<template>` and `<slot>` (Web Components)
+
+You can define reusable HTML chunks:
+
+```html
+<template id="card-template">
+  <div class="card">
+    <slot name="title"></slot>
+    <slot name="content"></slot>
+  </div>
+</template>
+```
+
+Useful when building Web Components or integrating with frameworks like Lit or Stencil.
+
+---
+
+### 7. Meta Tags and SEO
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="Advanced HTML for senior frontend engineers."
+/>
+<meta property="og:title" content="Frontend Handbook" />
+```
+
+---
+
+### 8. Prevent CLS (Cumulative Layout Shift)
+
+Reserve image dimensions to prevent layout jumps:
+
+```html
+<img src="image.jpg" width="400" height="300" alt="..." />
+```
+
+Or use `aspect-ratio` in CSS.
+
+---
+
+## What's Next?
+
+- Go deeper into **forms**, **ARIA**, **custom elements**, or **progressive enhancement**
+- Consider linking to: `essentials/forms.md`, `essentials/accessibility.md`, etc.
