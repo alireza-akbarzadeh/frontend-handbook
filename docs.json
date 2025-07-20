@@ -59,7 +59,7 @@
             "pages": [
               "css/flexbox",
               "css/grid",
-              "css/responsive",
+              "css/responsive-design",
               "css/positioning"
             ]
           },
@@ -139,7 +139,10 @@
               "best-practices/clean-code",
               "best-practices/performance",
               "best-practices/accessibility",
-              "best-practices/security"
+              "best-practices/frontend-security",
+              "best-practices/security",
+              "best-practices/state-management",
+              "best-practices/testing"
             ]
           },
           {

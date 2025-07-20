@@ -1,0 +1,659 @@
+---
+title: "CSS Grid"
+description: "Learn how to create complex two-dimensional layouts using CSS Grid"
+---
+
+## Introduction to CSS Grid
+
+CSS Grid Layout is a two-dimensional layout system designed for the web. It allows you to create complex grid-based layouts with rows and columns, giving you precise control over how elements are sized and positioned on a webpage.
+
+<Note>
+While Flexbox is one-dimensional and ideal for components, CSS Grid is two-dimensional and perfect for overall page layouts and complex interfaces.
+</Note>
+
+## Basic Concepts
+
+CSS Grid involves two main components: the grid container (parent) and grid items (children).
+
+<Frame caption="Grid Container and Items">
+  <img src="/images/grid-basics.png" alt="Grid Container and Items" />
+</Frame>
+
+### Creating a Grid Container
+
+To create a grid container, set the `display` property to `grid` or `inline-grid`:
+
+```css
+.container {
+  display: grid; /* Creates a block-level grid container */
+}
+
+.container-inline {
+  display: inline-grid; /* Creates an inline-level grid container */
+}
+```
+
+## Defining Grid Structure
+
+### Grid Template Columns and Rows
+
+The `grid-template-columns` and `grid-template-rows` properties define the columns and rows of the grid with a space-separated list of values.
+
+```css
+.container {
+  display: grid;
+  
+  /* Three columns: 100px, 200px, and 100px wide */
+  grid-template-columns: 100px 200px 100px;
+  
+  /* Two rows: 50px and 100px tall */
+  grid-template-rows: 50px 100px;
+}
+```
+
+<Frame caption="Grid Template Columns and Rows">
+  <img src="/images/grid-template.png" alt="Grid Template Columns and Rows" />
+</Frame>
+
+### The fr Unit
+
+The `fr` unit represents a fraction of the available space in the grid container.
+
+```css
+.container {
+  display: grid;
+  
+  /* Three equal-width columns */
+  grid-template-columns: 1fr 1fr 1fr;
+  /* Same as: grid-template-columns: repeat(3, 1fr); */
+  
+  /* First column is twice as wide as the others */
+  grid-template-columns: 2fr 1fr 1fr;
+  
+  /* Fixed width column with remaining space distributed */
+  grid-template-columns: 200px 1fr 1fr;
+}
+```
+
+### The repeat() Function
+
+The `repeat()` function is a shorthand for repeating patterns.
+
+```css
+.container {
+  display: grid;
+  
+  /* 5 columns, each 1fr wide */
+  grid-template-columns: repeat(5, 1fr);
+  
+  /* Repeat a pattern: 100px, then 1fr, 3 times */
+  grid-template-columns: repeat(3, 100px 1fr);
+  /* Results in: 100px 1fr 100px 1fr 100px 1fr */
+  
+  /* 3 rows, each 100px tall */
+  grid-template-rows: repeat(3, 100px);
+}
+```
+
+### minmax() Function
+
+The `minmax()` function defines a size range, setting minimum and maximum sizes.
+
+```css
+.container {
+  display: grid;
+  
+  /* Columns that are at least 100px and at most 1fr */
+  grid-template-columns: repeat(3, minmax(100px, 1fr));
+  
+  /* Rows that are at least 100px and expand as needed */
+  grid-template-rows: repeat(2, minmax(100px, auto));
+}
+```
+
+### auto-fill and auto-fit
+
+The `auto-fill` and `auto-fit` keywords create as many tracks as will fit in the container.
+
+```css
+.container {
+  display: grid;
+  
+  /* Create as many 100px columns as will fit */
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  
+  /* Similar to auto-fill, but collapses empty tracks */
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}
+```
+
+<Frame caption="auto-fill vs auto-fit">
+  <img src="/images/grid-auto-fill-fit.png" alt="auto-fill vs auto-fit" />
+</Frame>
+
+### Grid Template Areas
+
+The `grid-template-areas` property defines named grid areas, providing a visual representation of the layout.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 
+    "header header header"
+    "sidebar content content"
+    "footer footer footer";
+}
+
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.content { grid-area: content; }
+.footer { grid-area: footer; }
+```
+
+<Frame caption="Grid Template Areas">
+  <img src="/images/grid-template-areas.png" alt="Grid Template Areas" />
+</Frame>
+
+### Grid Gap
+
+The `grid-gap` property (or its longhand properties `row-gap` and `column-gap`) sets the spacing between grid cells.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  
+  /* Sets both row and column gap to 20px */
+  gap: 20px;
+  /* Same as: */
+  /* row-gap: 20px; */
+  /* column-gap: 20px; */
+  
+  /* Different row and column gaps */
+  gap: 10px 20px;
+  /* Same as: */
+  /* row-gap: 10px; */
+  /* column-gap: 20px; */
+}
+```
+
+<Note>
+The properties `grid-gap`, `grid-row-gap`, and `grid-column-gap` are deprecated in favor of `gap`, `row-gap`, and `column-gap`, which work in both Grid and Flexbox.
+</Note>
+
+## Grid Item Placement
+
+### Grid Lines
+
+Grid lines are the horizontal and vertical dividing lines that define the grid structure. They are numbered starting from 1.
+
+<Frame caption="Grid Lines">
+  <img src="/images/grid-lines.png" alt="Grid Lines" />
+</Frame>
+
+### Grid Column and Row
+
+The `grid-column` and `grid-row` properties determine a grid item's location and span within the grid.
+
+```css
+.item {
+  /* Start at column line 1, end at column line 3 */
+  grid-column: 1 / 3;
+  /* Same as: */
+  /* grid-column-start: 1; */
+  /* grid-column-end: 3; */
+  
+  /* Start at row line 2, end at row line 4 */
+  grid-row: 2 / 4;
+  /* Same as: */
+  /* grid-row-start: 2; */
+  /* grid-row-end: 4; */
+}
+```
+
+### Spanning Cells
+
+You can make items span multiple cells using the `span` keyword.
+
+```css
+.item1 {
+  /* Start at column line 1 and span 2 columns */
+  grid-column: 1 / span 2;
+  /* Same as: grid-column: 1 / 3; */
+  
+  /* Start at row line 1 and span 2 rows */
+  grid-row: 1 / span 2;
+  /* Same as: grid-row: 1 / 3; */
+}
+
+.item2 {
+  /* Span 2 columns, ending at column line 4 */
+  grid-column: span 2 / 4;
+  
+  /* Span all rows from start to end */
+  grid-row: 1 / -1;
+}
+```
+
+<Frame caption="Grid Item Spanning">
+  <img src="/images/grid-spanning.png" alt="Grid Item Spanning" />
+</Frame>
+
+### Grid Area
+
+The `grid-area` property is a shorthand for `grid-row-start`, `grid-column-start`, `grid-row-end`, and `grid-column-end`.
+
+```css
+.item {
+  /* grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+  grid-area: 1 / 1 / 3 / 3;
+}
+```
+
+It can also refer to a named area defined with `grid-template-areas`.
+
+```css
+.header {
+  grid-area: header;
+}
+```
+
+## Alignment and Justification
+
+### Aligning Grid Items
+
+The `justify-items` and `align-items` properties align grid items within their cells.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 100px);
+  
+  /* Horizontal alignment within cells */
+  justify-items: start; /* Default: stretch */
+  /* Other values: end, center */
+  
+  /* Vertical alignment within cells */
+  align-items: center; /* Default: stretch */
+  /* Other values: start, end */
+}
+```
+
+<Frame caption="Justify Items and Align Items">
+  <img src="/images/grid-justify-align-items.png" alt="Justify Items and Align Items" />
+</Frame>
+
+### Aligning Grid Content
+
+The `justify-content` and `align-content` properties align the entire grid within the container when the grid is smaller than the container.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  width: 500px;
+  height: 500px;
+  
+  /* Horizontal alignment of the entire grid */
+  justify-content: center; /* Default: start */
+  /* Other values: end, space-between, space-around, space-evenly */
+  
+  /* Vertical alignment of the entire grid */
+  align-content: center; /* Default: start */
+  /* Other values: end, space-between, space-around, space-evenly */
+}
+```
+
+<Frame caption="Justify Content and Align Content">
+  <img src="/images/grid-justify-align-content.png" alt="Justify Content and Align Content" />
+</Frame>
+
+### Self Alignment
+
+The `justify-self` and `align-self` properties allow individual grid items to override the container's alignment settings.
+
+```css
+.item {
+  /* Horizontal self-alignment */
+  justify-self: center; /* Default: auto (inherits from justify-items) */
+  /* Other values: start, end, stretch */
+  
+  /* Vertical self-alignment */
+  align-self: end; /* Default: auto (inherits from align-items) */
+  /* Other values: start, center, stretch */
+}
+```
+
+## Implicit Grid
+
+### Auto Rows and Columns
+
+The `grid-auto-rows` and `grid-auto-columns` properties define the size of implicitly created grid tracks.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 100px);
+  
+  /* Any implicitly created rows will be 100px tall */
+  grid-auto-rows: 100px;
+  
+  /* Implicitly created rows with minimum and maximum heights */
+  grid-auto-rows: minmax(100px, auto);
+  
+  /* Any implicitly created columns will be 200px wide */
+  grid-auto-columns: 200px;
+}
+```
+
+### Grid Auto Flow
+
+The `grid-auto-flow` property controls how the auto-placement algorithm works.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 100px);
+  
+  /* Default: items are placed by filling each row */
+  grid-auto-flow: row;
+  
+  /* Items are placed by filling each column */
+  grid-auto-flow: column;
+  
+  /* Items are placed by filling rows and attempting to fill holes */
+  grid-auto-flow: row dense;
+  
+  /* Items are placed by filling columns and attempting to fill holes */
+  grid-auto-flow: column dense;
+}
+```
+
+<Frame caption="Grid Auto Flow">
+  <img src="/images/grid-auto-flow.png" alt="Grid Auto Flow" />
+</Frame>
+
+## Common Grid Patterns
+
+### Holy Grail Layout
+
+The classic "holy grail" layout (header, footer, and three columns) is simple with Grid:
+
+```css
+body {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "nav content sidebar"
+    "footer footer footer";
+  grid-template-columns: 200px 1fr 200px;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  margin: 0;
+}
+
+header { grid-area: header; }
+nav { grid-area: nav; }
+main { grid-area: content; }
+aside { grid-area: sidebar; }
+footer { grid-area: footer; }
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+  body {
+    grid-template-areas:
+      "header"
+      "nav"
+      "content"
+      "sidebar"
+      "footer";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr auto auto;
+  }
+}
+```
+
+### Card Layout
+
+Grid can create responsive card layouts:
+
+```css
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+}
+```
+
+### Magazine Layout
+
+Grid is perfect for creating magazine-style layouts:
+
+```css
+.magazine-layout {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 20px;
+}
+
+.headline {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.main-story {
+  grid-column: 1 / 3;
+  grid-row: 2 / 4;
+}
+
+.secondary-story {
+  grid-column: 3 / 5;
+  grid-row: 2;
+}
+
+.sidebar {
+  grid-column: 3 / 5;
+  grid-row: 3;
+}
+```
+
+### Image Gallery
+
+Grid can create dynamic image galleries:
+
+```css
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: 200px;
+  gap: 10px;
+}
+
+.gallery-item {
+  overflow: hidden;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item img:hover {
+  transform: scale(1.1);
+}
+
+/* Featured items */
+.gallery-item.featured {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+```
+
+## Responsive Grid Layouts
+
+CSS Grid makes responsive layouts easier with features like `minmax()`, `auto-fill`, and `auto-fit`.
+
+```css
+.container {
+  display: grid;
+  
+  /* Responsive columns that adjust based on viewport width */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* You can also use media queries for more control */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr; /* Single column on small screens */
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .container {
+    grid-template-columns: repeat(2, 1fr); /* Two columns on medium screens */
+  }
+}
+
+@media (min-width: 1201px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr); /* Three columns on large screens */
+  }
+}
+```
+
+## Grid Template Shorthand
+
+The `grid-template` property is a shorthand for `grid-template-rows`, `grid-template-columns`, and `grid-template-areas`.
+
+```css
+.container {
+  display: grid;
+  
+  /* <grid-template-rows> / <grid-template-columns> */
+  grid-template: 100px 200px / 1fr 2fr 1fr;
+  
+  /* With grid-template-areas */
+  grid-template:
+    "header header header" 100px
+    "sidebar content content" auto
+    "footer footer footer" 100px
+    / 200px 1fr 1fr;
+}
+```
+
+## Grid Shorthand
+
+The `grid` property is a shorthand for all grid properties.
+
+```css
+.container {
+  display: grid;
+  
+  /* <grid-template-rows> / <grid-template-columns> */
+  grid: 100px 200px / 1fr 2fr 1fr;
+  
+  /* With grid-template-areas */
+  grid:
+    "header header header" 100px
+    "sidebar content content" auto
+    "footer footer footer" 100px
+    / 200px 1fr 1fr;
+  
+  /* With auto-flow */
+  grid: auto-flow / 1fr 2fr 1fr; /* auto-flow row */
+  grid: auto-flow dense 100px / 1fr 2fr 1fr; /* auto-flow row dense with 100px row height */
+  grid: 100px 200px / auto-flow; /* auto-flow column */
+}
+```
+
+## Browser Support and Fallbacks
+
+CSS Grid is supported in all modern browsers, but if you need to support older browsers, consider using feature detection or providing fallbacks:
+
+```css
+/* Fallback for older browsers */
+.container {
+  display: block;
+}
+
+.item {
+  float: left;
+  width: 33.33%;
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+/* Clear floats */
+.container::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Modern browsers with Grid support */
+@supports (display: grid) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .item {
+    float: none;
+    width: auto;
+    padding: 0;
+  }
+}
+```
+
+## Grid vs. Flexbox
+
+While Grid and Flexbox can sometimes be used to achieve similar layouts, they have different strengths:
+
+- **Grid** is two-dimensional, handling both rows AND columns simultaneously
+- **Flexbox** is one-dimensional, focusing on either rows OR columns
+
+Use Grid for:
+- Two-dimensional layouts (rows AND columns)
+- When you want the layout to determine the content
+- Overall page layout, complex grid-based interfaces
+
+Use Flexbox for:
+- One-dimensional layouts (rows OR columns)
+- When you want content to determine the layout
+- Components, navigation, small-scale layouts
+
+<Note>
+Grid and Flexbox work well together! Use Grid for the overall layout and Flexbox for components within the grid.
+</Note>
+
+## Conclusion
+
+CSS Grid is a powerful layout system that allows for complex, two-dimensional layouts with relatively simple code. By understanding the properties of both grid containers and grid items, you can create sophisticated layouts that adapt to different screen sizes.
+
+Key takeaways:
+
+1. Grid is a two-dimensional layout system for creating complex layouts with rows and columns
+2. The parent element becomes a grid container with `display: grid`
+3. Define the grid structure with `grid-template-columns` and `grid-template-rows`
+4. Position items precisely with `grid-column` and `grid-row`
+5. Create responsive layouts with `minmax()`, `auto-fill`, and `auto-fit`
+6. Use named areas with `grid-template-areas` for more readable layouts
+
+With these concepts in mind, you can leverage CSS Grid to create sophisticated, responsive layouts for your web projects.

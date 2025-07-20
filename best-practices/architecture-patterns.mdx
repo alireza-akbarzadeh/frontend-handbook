@@ -1,0 +1,1300 @@
+---
+title: "Frontend Architecture Patterns"
+description: "Best practices for structuring and organizing frontend applications using proven architecture patterns"
+---
+
+## Introduction to Frontend Architecture
+
+Frontend architecture refers to the organization, structure, and patterns used to build maintainable, scalable, and robust frontend applications. A well-designed architecture helps teams work efficiently, reduces technical debt, and makes applications easier to extend and maintain over time.
+
+<CardGroup cols={2}>
+  <Card title="Component Architecture" icon="puzzle-piece">
+    Learn how to structure components for maximum reusability and maintainability.
+  </Card>
+  
+  <Card title="Application State Management" icon="database">
+    Explore patterns for managing application state effectively.
+  </Card>
+  
+  <Card title="Code Organization" icon="folder-tree">
+    Discover best practices for organizing your frontend codebase.
+  </Card>
+  
+  <Card title="Design Patterns" icon="sitemap">
+    Implement common design patterns in frontend development.
+  </Card>
+</CardGroup>
+
+## Component Architecture
+
+### Component-Based Design
+
+Component-based design is a development approach where UIs are built from small, reusable pieces called components. Each component encapsulates its own logic, styling, and behavior.
+
+#### Atomic Design Methodology
+
+Atomic Design, created by Brad Frost, breaks down interfaces into five distinct levels:
+
+1. **Atoms**: Basic building blocks (buttons, inputs, labels)
+2. **Molecules**: Simple groups of UI elements functioning together (search form)
+3. **Organisms**: Complex UI components composed of molecules and atoms (header)
+4. **Templates**: Page-level objects placing components into a layout
+5. **Pages**: Specific instances of templates with real content
+
+```jsx
+// Example of Atomic Design in React
+
+// Atom: Button
+const Button = ({ children, onClick, variant = 'primary' }) => (
+  <button className={`btn btn-${variant}`} onClick={onClick}>
+    {children}
+  </button>
+);
+
+// Atom: Input
+const Input = ({ type = 'text', value, onChange, placeholder }) => (
+  <input
+    type={type}
+    value={value}
+    onChange={onChange}
+    placeholder={placeholder}
+    className="input"
+  />
+);
+
+// Molecule: SearchForm
+const SearchForm = ({ onSearch }) => {
+  const [query, setQuery] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSearch(query);
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className="search-form">
+      <Input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search..."
+      />
+      <Button type="submit">Search</Button>
+    </form>
+  );
+};
+
+// Organism: Header
+const Header = ({ user, onSearch, onLogout }) => (
+  <header className="header">
+    <div className="logo">MyApp</div>
+    <SearchForm onSearch={onSearch} />
+    <div className="user-menu">
+      <span>Welcome, {user.name}</span>
+      <Button onClick={onLogout} variant="secondary">Logout</Button>
+    </div>
+  </header>
+);
+
+// Template: DashboardTemplate
+const DashboardTemplate = ({ header, sidebar, mainContent, footer }) => (
+  <div className="dashboard-layout">
+    <div className="dashboard-header">{header}</div>
+    <div className="dashboard-body">
+      <div className="dashboard-sidebar">{sidebar}</div>
+      <div className="dashboard-content">{mainContent}</div>
+    </div>
+    <div className="dashboard-footer">{footer}</div>
+  </div>
+);
+
+// Page: UserDashboard
+const UserDashboard = () => {
+  const user = useUser();
+  const { data: stats } = useStats();
+  
+  return (
+    <DashboardTemplate
+      header={<Header user={user} onSearch={handleSearch} onLogout={handleLogout} />}
+      sidebar={<Sidebar menuItems={sidebarMenu} />}
+      mainContent={<DashboardContent stats={stats} />}
+      footer={<Footer />}
+    />
+  );
+};
+```
+
+### Component Composition
+
+Component composition is a pattern where complex UIs are built by combining simpler components.
+
+#### Composition vs. Inheritance
+
+React and most modern frameworks favor composition over inheritance for building component hierarchies.
+
+```jsx
+// Composition example
+
+// Generic Card component
+const Card = ({ title, children }) => (
+  <div className="card">
+    <div className="card-header">
+      <h3>{title}</h3>
+    </div>
+    <div className="card-body">{children}</div>
+  </div>
+);
+
+// Specialized components using composition
+const UserCard = ({ user }) => (
+  <Card title={user.name}>
+    <div className="user-details">
+      <img src={user.avatar} alt={user.name} />
+      <p>{user.email}</p>
+      <p>{user.role}</p>
+    </div>
+  </Card>
+);
+
+const ProductCard = ({ product }) => (
+  <Card title={product.name}>
+    <div className="product-details">
+      <img src={product.image} alt={product.name} />
+      <p className="price">${product.price}</p>
+      <p>{product.description}</p>
+      <Button>Add to Cart</Button>
+    </div>
+  </Card>
+);
+```
+
+### Component Types
+
+#### Presentational Components
+
+Presentational components focus on how things look. They receive data and callbacks via props and render UI elements.
+
+```jsx
+// Presentational component example
+const UserProfile = ({ user, onEdit }) => (
+  <div className="user-profile">
+    <img src={user.avatar} alt={user.name} className="avatar" />
+    <h2>{user.name}</h2>
+    <p>{user.bio}</p>
+    <div className="stats">
+      <div className="stat">
+        <span className="stat-value">{user.followers}</span>
+        <span className="stat-label">Followers</span>
+      </div>
+      <div className="stat">
+        <span className="stat-value">{user.following}</span>
+        <span className="stat-label">Following</span>
+      </div>
+    </div>
+    <Button onClick={onEdit}>Edit Profile</Button>
+  </div>
+);
+```
+
+#### Container Components
+
+Container components focus on how things work. They fetch data, manage state, and pass data to presentational components.
+
+```jsx
+// Container component example
+const UserProfileContainer = ({ userId }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getUser(userId);
+        setUser(response.data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load user profile');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUser();
+  }, [userId]);
+  
+  const handleEdit = () => {
+    // Handle edit logic
+  };
+  
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!user) return null;
+  
+  return <UserProfile user={user} onEdit={handleEdit} />;
+};
+```
+
+#### Higher-Order Components (HOCs)
+
+HOCs are functions that take a component and return a new enhanced component.
+
+```jsx
+// Higher-Order Component example
+const withAuth = (WrappedComponent) => {
+  return function WithAuth(props) {
+    const { isAuthenticated, user } = useAuth();
+    
+    if (!isAuthenticated) {
+      return <Redirect to="/login" />;
+    }
+    
+    return <WrappedComponent {...props} user={user} />;
+  };
+};
+
+// Usage
+const ProfilePage = ({ user }) => (
+  <div>
+    <h1>Profile</h1>
+    <p>Welcome, {user.name}!</p>
+    {/* Profile content */}
+  </div>
+);
+
+const AuthenticatedProfilePage = withAuth(ProfilePage);
+```
+
+#### Render Props
+
+Render props is a technique where a component receives a function as a prop that returns a React element.
+
+```jsx
+// Render props example
+const MouseTracker = ({ render }) => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  
+  const handleMouseMove = (event) => {
+    setPosition({
+      x: event.clientX,
+      y: event.clientY
+    });
+  };
+  
+  return (
+    <div onMouseMove={handleMouseMove} style={{ height: '100vh' }}>
+      {render(position)}
+    </div>
+  );
+};
+
+// Usage
+const App = () => (
+  <MouseTracker
+    render={({ x, y }) => (
+      <div>
+        <h1>Mouse position:</h1>
+        <p>X: {x}, Y: {y}</p>
+      </div>
+    )}
+  />
+);
+```
+
+#### Hooks
+
+Hooks allow you to use state and other React features without writing a class.
+
+```jsx
+// Custom hook example
+const useUserProfile = (userId) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getUser(userId);
+        setUser(response.data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load user profile');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUser();
+  }, [userId]);
+  
+  return { user, loading, error };
+};
+
+// Usage
+const UserProfile = ({ userId }) => {
+  const { user, loading, error } = useUserProfile(userId);
+  
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!user) return null;
+  
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{user.bio}</p>
+      {/* More user details */}
+    </div>
+  );
+};
+```
+
+## Application State Management
+
+### State Management Patterns
+
+#### Flux Architecture
+
+Flux is an architecture pattern developed by Facebook for building client-side web applications. It complements React's composable view components by utilizing a unidirectional data flow.
+
+```jsx
+// Simplified Flux implementation
+
+// Actions
+const TodoActions = {
+  addTodo: (text) => {
+    Dispatcher.dispatch({
+      type: 'ADD_TODO',
+      text
+    });
+  },
+  toggleTodo: (id) => {
+    Dispatcher.dispatch({
+      type: 'TOGGLE_TODO',
+      id
+    });
+  }
+};
+
+// Dispatcher
+const Dispatcher = new Flux.Dispatcher();
+
+// Store
+class TodoStore extends EventEmitter {
+  constructor() {
+    super();
+    this.todos = [];
+    
+    Dispatcher.register((action) => {
+      switch (action.type) {
+        case 'ADD_TODO':
+          this.todos.push({
+            id: Date.now(),
+            text: action.text,
+            completed: false
+          });
+          this.emit('change');
+          break;
+        case 'TOGGLE_TODO':
+          const todo = this.todos.find(todo => todo.id === action.id);
+          if (todo) {
+            todo.completed = !todo.completed;
+            this.emit('change');
+          }
+          break;
+        default:
+          // Do nothing
+      }
+    });
+  }
+  
+  getTodos() {
+    return this.todos;
+  }
+}
+
+const todoStore = new TodoStore();
+
+// View
+const TodoApp = () => {
+  const [todos, setTodos] = useState(todoStore.getTodos());
+  
+  useEffect(() => {
+    const onChange = () => {
+      setTodos(todoStore.getTodos());
+    };
+    
+    todoStore.on('change', onChange);
+    return () => todoStore.removeListener('change', onChange);
+  }, []);
+  
+  const handleAddTodo = (text) => {
+    TodoActions.addTodo(text);
+  };
+  
+  const handleToggleTodo = (id) => {
+    TodoActions.toggleTodo(id);
+  };
+  
+  return (
+    <div>
+      <TodoForm onAddTodo={handleAddTodo} />
+      <TodoList todos={todos} onToggleTodo={handleToggleTodo} />
+    </div>
+  );
+};
+```
+
+#### Redux
+
+Redux is a predictable state container for JavaScript apps, inspired by Flux but with some simplifications.
+
+```jsx
+// Redux example
+
+// Actions
+const ADD_TODO = 'ADD_TODO';
+const TOGGLE_TODO = 'TOGGLE_TODO';
+
+const addTodo = (text) => ({
+  type: ADD_TODO,
+  payload: { text }
+});
+
+const toggleTodo = (id) => ({
+  type: TOGGLE_TODO,
+  payload: { id }
+});
+
+// Reducer
+const initialState = {
+  todos: []
+};
+
+const todoReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case ADD_TODO:
+      return {
+        ...state,
+        todos: [
+          ...state.todos,
+          {
+            id: Date.now(),
+            text: action.payload.text,
+            completed: false
+          }
+        ]
+      };
+    case TOGGLE_TODO:
+      return {
+        ...state,
+        todos: state.todos.map(todo =>
+          todo.id === action.payload.id
+            ? { ...todo, completed: !todo.completed }
+            : todo
+        )
+      };
+    default:
+      return state;
+  }
+};
+
+// Store
+const store = createStore(todoReducer);
+
+// Component with React-Redux
+const TodoList = ({ todos, toggleTodo }) => (
+  <ul>
+    {todos.map(todo => (
+      <li
+        key={todo.id}
+        onClick={() => toggleTodo(todo.id)}
+        style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+      >
+        {todo.text}
+      </li>
+    ))}
+  </ul>
+);
+
+const mapStateToProps = (state) => ({
+  todos: state.todos
+});
+
+const mapDispatchToProps = {
+  toggleTodo
+};
+
+const ConnectedTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoList);
+
+// App
+const App = () => (
+  <Provider store={store}>
+    <div>
+      <h1>Todo List</h1>
+      <AddTodoForm />
+      <ConnectedTodoList />
+    </div>
+  </Provider>
+);
+```
+
+#### Context API
+
+React's Context API provides a way to share values between components without explicitly passing props through every level of the tree.
+
+```jsx
+// Context API example
+
+// Create context
+const ThemeContext = createContext();
+
+// Provider component
+const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState('light');
+  
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
+  
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+// Custom hook for consuming the context
+const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
+
+// Consumer component
+const ThemedButton = () => {
+  const { theme, toggleTheme } = useTheme();
+  
+  return (
+    <button
+      onClick={toggleTheme}
+      style={{
+        backgroundColor: theme === 'light' ? '#fff' : '#333',
+        color: theme === 'light' ? '#333' : '#fff',
+        border: `1px solid ${theme === 'light' ? '#333' : '#fff'}`,
+        padding: '8px 16px',
+        borderRadius: '4px'
+      }}
+    >
+      Toggle Theme
+    </button>
+  );
+};
+
+// App
+const App = () => (
+  <ThemeProvider>
+    <div>
+      <h1>Themed App</h1>
+      <ThemedButton />
+    </div>
+  </ThemeProvider>
+);
+```
+
+#### MobX
+
+MobX is a state management library that makes state management simple and scalable by applying transparent functional reactive programming.
+
+```jsx
+// MobX example
+import { makeAutoObservable } from 'mobx';
+import { observer } from 'mobx-react-lite';
+
+// Store
+class TodoStore {
+  todos = [];
+  
+  constructor() {
+    makeAutoObservable(this);
+  }
+  
+  addTodo(text) {
+    this.todos.push({
+      id: Date.now(),
+      text,
+      completed: false
+    });
+  }
+  
+  toggleTodo(id) {
+    const todo = this.todos.find(todo => todo.id === id);
+    if (todo) {
+      todo.completed = !todo.completed;
+    }
+  }
+  
+  get completedCount() {
+    return this.todos.filter(todo => todo.completed).length;
+  }
+}
+
+const todoStore = new TodoStore();
+
+// Components
+const TodoList = observer(() => (
+  <div>
+    <h2>Todos ({todoStore.completedCount} completed)</h2>
+    <ul>
+      {todoStore.todos.map(todo => (
+        <li
+          key={todo.id}
+          onClick={() => todoStore.toggleTodo(todo.id)}
+          style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+        >
+          {todo.text}
+        </li>
+      ))}
+    </ul>
+  </div>
+));
+
+const AddTodoForm = () => {
+  const [text, setText] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (text.trim()) {
+      todoStore.addTodo(text);
+      setText('');
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Add todo"
+      />
+      <button type="submit">Add</button>
+    </form>
+  );
+};
+
+const App = () => (
+  <div>
+    <h1>MobX Todo App</h1>
+    <AddTodoForm />
+    <TodoList />
+  </div>
+);
+```
+
+### State Management Best Practices
+
+#### Single Source of Truth
+
+Maintain a single source of truth for your application state to avoid inconsistencies and synchronization issues.
+
+#### Immutable State Updates
+
+Always update state in an immutable way to prevent unexpected side effects and make state changes more predictable.
+
+```javascript
+// Bad - mutating state directly
+const updateUser = (user, updates) => {
+  user.name = updates.name;
+  user.email = updates.email;
+  return user;
+};
+
+// Good - creating a new object
+const updateUser = (user, updates) => {
+  return { ...user, ...updates };
+};
+
+// Good - using immer for complex updates
+import produce from 'immer';
+
+const updateNestedState = produce((draft) => {
+  draft.users[0].address.city = 'New York';
+});
+```
+
+#### Normalized State Shape
+
+Normalize complex state to avoid duplication and make updates more efficient.
+
+```javascript
+// Normalized state example
+const normalizedState = {
+  entities: {
+    users: {
+      '1': { id: '1', name: 'John', postIds: ['101', '102'] },
+      '2': { id: '2', name: 'Jane', postIds: ['103'] }
+    },
+    posts: {
+      '101': { id: '101', title: 'Post 1', authorId: '1' },
+      '102': { id: '102', title: 'Post 2', authorId: '1' },
+      '103': { id: '103', title: 'Post 3', authorId: '2' }
+    },
+    comments: {
+      '201': { id: '201', text: 'Comment 1', postId: '101', authorId: '2' },
+      '202': { id: '202', text: 'Comment 2', postId: '101', authorId: '1' }
+    }
+  },
+  ids: {
+    users: ['1', '2'],
+    posts: ['101', '102', '103'],
+    comments: ['201', '202']
+  }
+};
+```
+
+## Code Organization
+
+### Project Structure
+
+#### Feature-Based Structure
+
+Organize code by features or domains rather than by technical role.
+
+```
+src/
+├── features/
+│   ├── auth/
+│   │   ├── components/
+│   │   │   ├── LoginForm.js
+│   │   │   ├── SignupForm.js
+│   │   │   └── PasswordReset.js
+│   │   ├── services/
+│   │   │   └── authService.js
+│   │   ├── hooks/
+│   │   │   └── useAuth.js
+│   │   ├── store/
+│   │   │   ├── authSlice.js
+│   │   │   └── authSelectors.js
+│   │   └── routes/
+│   │       ├── Login.js
+│   │       ├── Signup.js
+│   │       └── PasswordReset.js
+│   ├── users/
+│   │   ├── components/
+│   │   ├── services/
+│   │   ├── hooks/
+│   │   ├── store/
+│   │   └── routes/
+│   └── products/
+│       ├── components/
+│       ├── services/
+│       ├── hooks/
+│       ├── store/
+│       └── routes/
+├── common/
+│   ├── components/
+│   │   ├── Button.js
+│   │   ├── Card.js
+│   │   └── Modal.js
+│   ├── hooks/
+│   │   ├── useForm.js
+│   │   └── useLocalStorage.js
+│   └── utils/
+│       ├── api.js
+│       └── formatters.js
+├── app/
+│   ├── App.js
+│   ├── AppProviders.js
+│   ├── routes.js
+│   └── store.js
+└── index.js
+```
+
+#### Atomic Design Structure
+
+Organize components according to the Atomic Design methodology.
+
+```
+src/
+├── components/
+│   ├── atoms/
+│   │   ├── Button/
+│   │   │   ├── Button.js
+│   │   │   ├── Button.test.js
+│   │   │   └── Button.module.css
+│   │   ├── Input/
+│   │   └── Typography/
+│   ├── molecules/
+│   │   ├── SearchForm/
+│   │   ├── Card/
+│   │   └── Notification/
+│   ├── organisms/
+│   │   ├── Header/
+│   │   ├── Footer/
+│   │   └── Sidebar/
+│   ├── templates/
+│   │   ├── DashboardTemplate/
+│   │   └── AuthTemplate/
+│   └── pages/
+│       ├── Home/
+│       ├── Login/
+│       └── Dashboard/
+├── features/
+│   ├── auth/
+│   ├── users/
+│   └── products/
+└── ...
+```
+
+### Module Organization
+
+#### Barrel Files
+
+Use barrel files (index.js) to simplify imports and exports.
+
+```javascript
+// components/atoms/index.js
+export { default as Button } from './Button/Button';
+export { default as Input } from './Input/Input';
+export { default as Typography } from './Typography/Typography';
+
+// Usage in another file
+import { Button, Input, Typography } from '../components/atoms';
+```
+
+#### Component Co-location
+
+Keep related files together to improve maintainability.
+
+```
+Button/
+├── Button.js        // Component implementation
+├── Button.test.js   // Tests
+├── Button.stories.js // Storybook stories
+├── Button.module.css // Styles
+└── index.js         // Barrel file for exports
+```
+
+## Design Patterns
+
+### Presentational and Container Pattern
+
+Separate the concerns of data fetching and presentation.
+
+```jsx
+// Container component
+const UserListContainer = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getUsers();
+        setUsers(response.data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load users');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUsers();
+  }, []);
+  
+  return (
+    <UserList
+      users={users}
+      loading={loading}
+      error={error}
+    />
+  );
+};
+
+// Presentational component
+const UserList = ({ users, loading, error }) => {
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
+  if (users.length === 0) return <EmptyState message="No users found" />;
+  
+  return (
+    <div className="user-list">
+      <h2>Users</h2>
+      <ul>
+        {users.map(user => (
+          <li key={user.id} className="user-item">
+            <img src={user.avatar} alt={user.name} />
+            <div>
+              <h3>{user.name}</h3>
+              <p>{user.email}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
+
+### Compound Components
+
+Compound components work together to form a complete UI.
+
+```jsx
+// Compound components example
+const Tabs = ({ children, defaultIndex = 0 }) => {
+  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+  
+  return (
+    <TabsContext.Provider value={{ activeIndex, setActiveIndex }}>
+      <div className="tabs">{children}</div>
+    </TabsContext.Provider>
+  );
+};
+
+const TabList = ({ children }) => {
+  return <div className="tab-list">{children}</div>;
+};
+
+const Tab = ({ children, index }) => {
+  const { activeIndex, setActiveIndex } = useContext(TabsContext);
+  
+  return (
+    <button
+      className={`tab ${activeIndex === index ? 'active' : ''}`}
+      onClick={() => setActiveIndex(index)}
+    >
+      {children}
+    </button>
+  );
+};
+
+const TabPanels = ({ children }) => {
+  return <div className="tab-panels">{children}</div>;
+};
+
+const TabPanel = ({ children, index }) => {
+  const { activeIndex } = useContext(TabsContext);
+  
+  if (activeIndex !== index) return null;
+  
+  return <div className="tab-panel">{children}</div>;
+};
+
+// Assign components as properties
+Tabs.TabList = TabList;
+Tabs.Tab = Tab;
+Tabs.TabPanels = TabPanels;
+Tabs.TabPanel = TabPanel;
+
+// Usage
+const App = () => (
+  <Tabs defaultIndex={0}>
+    <Tabs.TabList>
+      <Tabs.Tab index={0}>Profile</Tabs.Tab>
+      <Tabs.Tab index={1}>Settings</Tabs.Tab>
+      <Tabs.Tab index={2}>Notifications</Tabs.Tab>
+    </Tabs.TabList>
+    
+    <Tabs.TabPanels>
+      <Tabs.TabPanel index={0}>
+        <h2>Profile Content</h2>
+        <p>User profile information goes here.</p>
+      </Tabs.TabPanel>
+      <Tabs.TabPanel index={1}>
+        <h2>Settings Content</h2>
+        <p>User settings go here.</p>
+      </Tabs.TabPanel>
+      <Tabs.TabPanel index={2}>
+        <h2>Notifications Content</h2>
+        <p>User notifications go here.</p>
+      </Tabs.TabPanel>
+    </Tabs.TabPanels>
+  </Tabs>
+);
+```
+
+### Render Props
+
+Pass a function as a prop to customize rendering.
+
+```jsx
+// Render props example
+const DataFetcher = ({ url, render }) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(url);
+        const json = await response.json();
+        setData(json);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [url]);
+  
+  return render({ data, loading, error });
+};
+
+// Usage
+const App = () => (
+  <DataFetcher
+    url="https://api.example.com/users"
+    render={({ data, loading, error }) => {
+      if (loading) return <p>Loading...</p>;
+      if (error) return <p>Error: {error}</p>;
+      if (!data) return null;
+      
+      return (
+        <ul>
+          {data.map(user => (
+            <li key={user.id}>{user.name}</li>
+          ))}
+        </ul>
+      );
+    }}
+  />
+);
+```
+
+### Custom Hooks
+
+Extract reusable logic into custom hooks.
+
+```jsx
+// Custom hook for form handling
+const useForm = (initialValues = {}) => {
+  const [values, setValues] = useState(initialValues);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues(prevValues => ({ ...prevValues, [name]: value }));
+  };
+  
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched(prevTouched => ({ ...prevTouched, [name]: true }));
+  };
+  
+  const reset = () => {
+    setValues(initialValues);
+    setErrors({});
+    setTouched({});
+  };
+  
+  const validate = (validationSchema) => {
+    try {
+      validationSchema.validateSync(values, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (validationErrors) {
+      const errors = {};
+      validationErrors.inner.forEach(error => {
+        errors[error.path] = error.message;
+      });
+      setErrors(errors);
+      return false;
+    }
+  };
+  
+  return {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    reset,
+    validate
+  };
+};
+
+// Usage with Yup validation
+import * as Yup from 'yup';
+
+const LoginForm = () => {
+  const loginSchema = Yup.object().shape({
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    password: Yup.string().required('Password is required')
+  });
+  
+  const { values, errors, touched, handleChange, handleBlur, validate } = useForm({
+    email: '',
+    password: ''
+  });
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate(loginSchema)) {
+      // Submit form
+      console.log('Form submitted:', values);
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        {touched.email && errors.email && <p className="error">{errors.email}</p>}
+      </div>
+      
+      <div>
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          value={values.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        {touched.password && errors.password && <p className="error">{errors.password}</p>}
+      </div>
+      
+      <button type="submit">Login</button>
+    </form>
+  );
+};
+```
+
+## Scalable Architecture Approaches
+
+### Micro-Frontends
+
+Micro-frontends extend the microservices concept to frontend development, breaking down a frontend application into smaller, more manageable pieces.
+
+#### Module Federation
+
+Webpack 5's Module Federation allows multiple independent builds to form a single application.
+
+```javascript
+// webpack.config.js for a micro-frontend
+const { ModuleFederationPlugin } = require('webpack').container;
+
+module.exports = {
+  // ...
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'productApp',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './ProductList': './src/components/ProductList',
+        './ProductDetail': './src/components/ProductDetail'
+      },
+      shared: ['react', 'react-dom']
+    })
+  ]
+};
+
+// webpack.config.js for the container application
+const { ModuleFederationPlugin } = require('webpack').container;
+
+module.exports = {
+  // ...
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'container',
+      remotes: {
+        productApp: 'productApp@http://localhost:3001/remoteEntry.js',
+        cartApp: 'cartApp@http://localhost:3002/remoteEntry.js'
+      },
+      shared: ['react', 'react-dom']
+    })
+  ]
+};
+```
+
+```jsx
+// Container application using micro-frontends
+import React, { lazy, Suspense } from 'react';
+
+const ProductList = lazy(() => import('productApp/ProductList'));
+const Cart = lazy(() => import('cartApp/Cart'));
+
+const App = () => (
+  <div>
+    <h1>E-Commerce App</h1>
+    <div className="container">
+      <div className="products-container">
+        <Suspense fallback={<div>Loading Products...</div>}>
+          <ProductList />
+        </Suspense>
+      </div>
+      <div className="cart-container">
+        <Suspense fallback={<div>Loading Cart...</div>}>
+          <Cart />
+        </Suspense>
+      </div>
+    </div>
+  </div>
+);
+```
+
+### Monorepo Architecture
+
+Monorepos allow managing multiple packages in a single repository, promoting code sharing and consistency.
+
+```
+monorepo/
+├── packages/
+│   ├── common/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   └── package.json
+│   ├── design-system/
+│   │   ├── components/
+│   │   ├── tokens/
+│   │   └── package.json
+│   ├── app-dashboard/
+│   │   ├── src/
+│   │   └── package.json
+│   └── app-website/
+│       ├── src/
+│       └── package.json
+├── package.json
+└── lerna.json
+```
+
+## Conclusion
+
+Implementing effective frontend architecture patterns is essential for building maintainable, scalable applications. By following the best practices outlined in this guide, you can create a solid foundation for your frontend projects.
+
+Remember these key takeaways:
+
+1. **Component-based architecture** helps create reusable, maintainable UI elements.
+
+2. **State management patterns** provide structure for handling application data.
+
+3. **Code organization** improves developer experience and project maintainability.
+
+4. **Design patterns** solve common problems with proven solutions.
+
+5. **Scalable approaches** like micro-frontends and monorepos help manage growing applications.
+
+By implementing these patterns and practices, you'll create frontend applications that are easier to develop, maintain, and scale over time.

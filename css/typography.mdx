@@ -1,0 +1,563 @@
+---
+title: "CSS Typography"
+description: "Learn how to style text and fonts using CSS to create beautiful and readable typography"
+---
+
+## Introduction to CSS Typography
+
+Typography is the art and technique of arranging type to make written language legible, readable, and appealing. In web design, CSS provides powerful tools to control the appearance of text, allowing you to create visually engaging and accessible content.
+
+<Frame caption="Typography is a fundamental aspect of web design">
+  <img src="/images/typography-example.png" alt="Typography Example" />
+</Frame>
+
+## Font Properties
+
+### Font Family
+
+The `font-family` property specifies the typeface that will be used for text. You can provide multiple font names as a "fallback" system, so if the browser doesn't support the first font, it can use the next one.
+
+```css
+body {
+  /* Generic font family */
+  font-family: sans-serif;
+  
+  /* Specific font with fallbacks */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+```
+
+#### Web Safe Fonts
+
+Web safe fonts are fonts that are commonly available across different operating systems:
+
+- Arial, Helvetica (sans-serif)
+- Times New Roman, Times (serif)
+- Courier New, Courier (monospace)
+- Georgia (serif)
+- Verdana (sans-serif)
+
+#### Web Fonts
+
+Web fonts allow you to use fonts that aren't installed on the user's device by downloading them.
+
+```css
+/* Using Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+```
+
+You can also use `@font-face` to define custom fonts:
+
+```css
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('fonts/custom-font.woff2') format('woff2'),
+       url('fonts/custom-font.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'MyCustomFont', sans-serif;
+}
+```
+
+### Font Size
+
+The `font-size` property sets the size of the text. There are several units you can use:
+
+```css
+/* Absolute units */
+h1 {
+  font-size: 32px;
+}
+
+/* Relative to parent element */
+p {
+  font-size: 1.2em; /* 1.2 times the parent's font size */
+}
+
+/* Relative to root element (html) */
+h2 {
+  font-size: 1.5rem; /* 1.5 times the root font size */
+}
+
+/* Viewport-based units */
+h1 {
+  font-size: 5vw; /* 5% of viewport width */
+}
+```
+
+<Note>
+For responsive typography, it's generally best to use relative units like `rem` or `em`. The `rem` unit is particularly useful as it's always relative to the root element, avoiding compounding issues that can occur with `em`.
+</Note>
+
+### Font Weight
+
+The `font-weight` property sets the thickness or boldness of the font:
+
+```css
+/* Keyword values */
+p {
+  font-weight: normal; /* Same as 400 */
+}
+
+h1 {
+  font-weight: bold; /* Same as 700 */
+}
+
+/* Numeric values (100-900) */
+.light {
+  font-weight: 300;
+}
+
+.regular {
+  font-weight: 400;
+}
+
+.medium {
+  font-weight: 500;
+}
+
+.bold {
+  font-weight: 700;
+}
+```
+
+### Font Style
+
+The `font-style` property is mainly used to specify italic text:
+
+```css
+.normal {
+  font-style: normal;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.oblique {
+  font-style: oblique;
+}
+```
+
+### Font Variant
+
+The `font-variant` property can be used to display text in small-caps:
+
+```css
+.small-caps {
+  font-variant: small-caps;
+}
+```
+
+### Font Shorthand
+
+The `font` shorthand property sets all font properties in one declaration:
+
+```css
+/* font: font-style font-variant font-weight font-size/line-height font-family */
+body {
+  font: italic small-caps bold 16px/1.5 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+```
+
+## Text Properties
+
+### Text Alignment
+
+The `text-align` property sets the horizontal alignment of text:
+
+```css
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.justify {
+  text-align: justify;
+}
+```
+
+### Text Decoration
+
+The `text-decoration` property adds decorative lines to text:
+
+```css
+.underline {
+  text-decoration: underline;
+}
+
+.overline {
+  text-decoration: overline;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+.no-decoration {
+  text-decoration: none; /* Useful for removing underlines from links */
+}
+
+/* Text decoration can be customized further */
+.custom-underline {
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-style: wavy;
+  text-decoration-thickness: 2px;
+}
+```
+
+### Text Transform
+
+The `text-transform` property controls text capitalization:
+
+```css
+.uppercase {
+  text-transform: uppercase;
+}
+
+.lowercase {
+  text-transform: lowercase;
+}
+
+.capitalize {
+  text-transform: capitalize; /* Capitalizes first letter of each word */
+}
+```
+
+### Text Indent
+
+The `text-indent` property specifies the indentation of the first line in a text block:
+
+```css
+.indented {
+  text-indent: 2em;
+}
+
+.negative-indent {
+  text-indent: -20px; /* Creates a hanging indent */
+  padding-left: 20px;
+}
+```
+
+### Letter Spacing
+
+The `letter-spacing` property adjusts the space between characters:
+
+```css
+.tight {
+  letter-spacing: -0.5px;
+}
+
+.normal {
+  letter-spacing: normal;
+}
+
+.wide {
+  letter-spacing: 2px;
+}
+```
+
+### Word Spacing
+
+The `word-spacing` property adjusts the space between words:
+
+```css
+.tight-words {
+  word-spacing: -2px;
+}
+
+.normal-words {
+  word-spacing: normal;
+}
+
+.wide-words {
+  word-spacing: 5px;
+}
+```
+
+### Line Height
+
+The `line-height` property sets the height of a line of text, affecting the space between lines:
+
+```css
+.single-spaced {
+  line-height: 1; /* Same as the font size */
+}
+
+.comfortable {
+  line-height: 1.5; /* 1.5 times the font size */
+}
+
+.double-spaced {
+  line-height: 2; /* Twice the font size */
+}
+
+/* You can also use specific units */
+.specific {
+  line-height: 24px;
+}
+```
+
+<Note>
+For better readability, a line height of 1.4 to 1.6 is often recommended for body text. Using unitless values for line-height is preferred as they are inherited as a ratio rather than a fixed value.
+</Note>
+
+### Text Shadow
+
+The `text-shadow` property adds shadow effects to text:
+
+```css
+.basic-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  /* horizontal-offset vertical-offset blur-radius color */
+}
+
+.multiple-shadows {
+  text-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em blue;
+}
+
+.text-outline {
+  color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+```
+
+### White Space
+
+The `white-space` property specifies how white space inside an element is handled:
+
+```css
+.normal {
+  white-space: normal; /* Default: collapses white space, wraps text */
+}
+
+.nowrap {
+  white-space: nowrap; /* Prevents text from wrapping */
+}
+
+.pre {
+  white-space: pre; /* Preserves white space, like the <pre> element */
+}
+
+.pre-wrap {
+  white-space: pre-wrap; /* Preserves white space, but wraps text */
+}
+
+.pre-line {
+  white-space: pre-line; /* Collapses white space, but preserves line breaks */
+}
+```
+
+### Word Break and Overflow
+
+Control how words break and text overflows:
+
+```css
+/* Word Break */
+.break-all {
+  word-break: break-all; /* May break words at any character */
+}
+
+.break-word {
+  word-break: keep-all;
+  overflow-wrap: break-word; /* Breaks words only when necessary */
+}
+
+/* Text Overflow */
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds ... when text overflows */
+}
+
+.multi-line-ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+```
+
+## Responsive Typography
+
+Responsive typography adapts to different screen sizes for optimal readability.
+
+### Using Viewport Units
+
+```css
+h1 {
+  font-size: calc(1.5rem + 2vw); /* Base size plus responsive component */
+}
+
+p {
+  font-size: clamp(1rem, 0.5rem + 1vw, 1.5rem);
+  /* Minimum size, preferred size, maximum size */
+}
+```
+
+### Media Queries
+
+```css
+body {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+}
+```
+
+## Typography Best Practices
+
+### Readability
+
+- Use sufficient contrast between text and background
+- Maintain appropriate line length (45-75 characters per line)
+- Choose readable fonts, especially for body text
+- Use proper spacing (line height, letter spacing, paragraph spacing)
+
+```css
+.readable-text {
+  font-family: 'Georgia', serif;
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 70ch; /* Limits line length to approximately 70 characters */
+  color: #333;
+  background-color: #fff;
+}
+```
+
+### Hierarchy
+
+Establish a clear typographic hierarchy to guide users through your content:
+
+```css
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #666;
+  margin-bottom: 2rem;
+}
+```
+
+### Font Pairing
+
+Combine fonts thoughtfully for visual interest while maintaining harmony:
+
+```css
+/* Serif for headings, sans-serif for body */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+}
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+/* Or sans-serif for headings, serif for body */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+body {
+  font-family: 'Merriweather', serif;
+}
+```
+
+## Accessibility Considerations
+
+### Font Size
+
+Ensure text is readable without zooming:
+
+```css
+body {
+  font-size: 16px; /* Minimum recommended size for body text */
+}
+```
+
+### Line Height
+
+Provide adequate line spacing for readability:
+
+```css
+p {
+  line-height: 1.5; /* WCAG recommends at least 1.5 for body text */
+}
+```
+
+### Font Weight
+
+Ensure sufficient contrast with background:
+
+```css
+.accessible-text {
+  font-weight: 500; /* Medium weight for better readability on light backgrounds */
+}
+```
+
+### Text Spacing
+
+Allow users to adjust text spacing without breaking layout:
+
+```css
+.text-content {
+  /* These properties can be overridden by user stylesheets */
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+```
+
+## Conclusion
+
+CSS typography is a powerful tool for creating readable, accessible, and visually appealing text on the web. By mastering font and text properties, you can enhance the user experience and effectively communicate your content's message and hierarchy.
+
+Remember that good typography is both an art and a science—it requires attention to detail, an understanding of design principles, and consideration for how people read and process information.

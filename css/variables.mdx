@@ -1,0 +1,588 @@
+---
+title: "CSS Variables"
+description: "Learn how to use CSS custom properties (variables) to create more maintainable and dynamic stylesheets"
+---
+
+## Introduction to CSS Variables
+
+CSS variables, officially known as CSS custom properties, allow you to store specific values to be reused throughout your stylesheet. They help create more maintainable, flexible, and dynamic CSS code.
+
+Introduced as part of CSS3, variables are now supported in all modern browsers, making them a powerful tool for modern web development.
+
+## Basic Syntax
+
+CSS variables are defined using a double hyphen (`--`) prefix, and are accessed using the `var()` function.
+
+### Defining Variables
+
+Variables are typically defined in the `:root` selector to make them globally available, but they can be defined in any selector:
+
+```css
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --text-color: #333333;
+  --font-size-base: 16px;
+  --spacing-unit: 8px;
+}
+```
+
+### Using Variables
+
+To use a variable, you use the `var()` function:
+
+```css
+.button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: calc(var(--spacing-unit) * 2);
+  font-size: var(--font-size-base);
+  border: none;
+  border-radius: 4px;
+}
+
+.button.secondary {
+  background-color: var(--secondary-color);
+}
+```
+
+## Variable Scope
+
+CSS variables follow the standard CSS cascading rules and inherit their values from their parent elements.
+
+### Global Variables
+
+Variables defined in the `:root` selector are globally available throughout the document:
+
+```css
+:root {
+  --global-color: blue;
+}
+
+/* This will use the global blue color */
+.element {
+  color: var(--global-color);
+}
+```
+
+### Local Variables
+
+Variables can also be defined within specific selectors, limiting their scope:
+
+```css
+.card {
+  --card-padding: 16px;
+  padding: var(--card-padding);
+}
+
+.special-card {
+  --card-padding: 24px; /* Overrides the value only for .special-card */
+  background-color: #f0f0f0;
+}
+```
+
+### Variable Inheritance
+
+Variables are inherited by child elements:
+
+```css
+.parent {
+  --text-color: blue;
+}
+
+.parent .child {
+  /* Inherits --text-color from .parent */
+  color: var(--text-color);
+}
+```
+
+## Fallback Values
+
+The `var()` function accepts a second parameter that serves as a fallback value if the variable is not defined:
+
+```css
+.element {
+  /* If --undefined-color doesn't exist, it will use #333 */
+  color: var(--undefined-color, #333);
+}
+```
+
+You can also chain fallbacks:
+
+```css
+.element {
+  /* First tries --primary-color, then --secondary-color, then falls back to #333 */
+  color: var(--primary-color, var(--secondary-color, #333));
+}
+```
+
+## Updating Variables with JavaScript
+
+One of the most powerful features of CSS variables is the ability to update them using JavaScript, enabling dynamic styling without inline styles.
+
+```javascript
+// Get the root element
+const root = document.documentElement;
+
+// Set a variable
+root.style.setProperty('--primary-color', '#ff0000');
+
+// Get a variable value
+const primaryColor = getComputedStyle(root).getPropertyValue('--primary-color').trim();
+console.log(primaryColor); // '#ff0000'
+```
+
+This capability makes CSS variables perfect for themes, dark mode toggles, and other dynamic styling needs.
+
+### Example: Theme Switcher
+
+```html
+<button id="theme-toggle">Toggle Dark Mode</button>
+```
+
+```css
+:root {
+  --bg-color: white;
+  --text-color: #333;
+  --heading-color: #000;
+}
+
+.dark-theme {
+  --bg-color: #222;
+  --text-color: #f0f0f0;
+  --heading-color: white;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+h1, h2, h3 {
+  color: var(--heading-color);
+}
+```
+
+```javascript
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark-theme');
+});
+```
+
+## Responsive Design with CSS Variables
+
+CSS variables can be redefined within media queries, making responsive design more maintainable:
+
+```css
+:root {
+  --container-width: 1200px;
+  --font-size-base: 16px;
+  --heading-size: 2rem;
+  --spacing: 20px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --container-width: 100%;
+    --font-size-base: 14px;
+    --heading-size: 1.8rem;
+    --spacing: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --font-size-base: 12px;
+    --heading-size: 1.5rem;
+    --spacing: 10px;
+  }
+}
+
+.container {
+  width: var(--container-width);
+  padding: var(--spacing);
+}
+
+body {
+  font-size: var(--font-size-base);
+}
+
+h1 {
+  font-size: var(--heading-size);
+}
+```
+
+This approach centralizes your responsive adjustments, making them easier to maintain.
+
+## Calculating with CSS Variables
+
+CSS variables can be used with the `calc()` function for dynamic calculations:
+
+```css
+:root {
+  --spacing-unit: 8px;
+  --container-padding: calc(var(--spacing-unit) * 2); /* 16px */
+  --large-spacing: calc(var(--spacing-unit) * 4); /* 32px */
+}
+
+.container {
+  padding: var(--container-padding);
+  margin-bottom: var(--large-spacing);
+}
+```
+
+This makes your spacing system more consistent and easier to adjust globally.
+
+## Color Manipulation with CSS Variables
+
+CSS variables are particularly useful for creating color systems:
+
+```css
+:root {
+  --primary-hue: 210; /* Blue */
+  --primary-saturation: 100%;
+  --primary-lightness: 50%;
+  
+  --primary-color: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
+  --primary-light: hsl(var(--primary-hue), var(--primary-saturation), 70%);
+  --primary-dark: hsl(var(--primary-hue), var(--primary-saturation), 30%);
+}
+
+.button {
+  background-color: var(--primary-color);
+}
+
+.button:hover {
+  background-color: var(--primary-dark);
+}
+
+.info-box {
+  background-color: var(--primary-light);
+  border: 1px solid var(--primary-color);
+}
+```
+
+By manipulating the HSL values, you can create an entire color system from a few base variables.
+
+## Organizing CSS Variables
+
+As your project grows, organizing your variables becomes important. Here's a recommended approach:
+
+```css
+:root {
+  /* Colors */
+  --color-primary: #3498db;
+  --color-secondary: #2ecc71;
+  --color-accent: #e74c3c;
+  --color-text: #333333;
+  --color-text-light: #666666;
+  --color-background: #ffffff;
+  --color-border: #dddddd;
+  
+  /* Typography */
+  --font-family-base: 'Open Sans', sans-serif;
+  --font-family-heading: 'Montserrat', sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-xxl: 32px;
+  --line-height-base: 1.5;
+  --line-height-heading: 1.2;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* Borders */
+  --border-radius-sm: 2px;
+  --border-radius-md: 4px;
+  --border-radius-lg: 8px;
+  --border-width: 1px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Z-index */
+  --z-index-dropdown: 100;
+  --z-index-sticky: 200;
+  --z-index-fixed: 300;
+  --z-index-modal: 400;
+  --z-index-popover: 500;
+  --z-index-tooltip: 600;
+}
+```
+
+This organization makes it easy to find and update variables as needed.
+
+## Component-Specific Variables
+
+For larger applications, you might want to create component-specific variables that reference global variables:
+
+```css
+:root {
+  /* Global color palette */
+  --color-blue-500: #3498db;
+  --color-green-500: #2ecc71;
+  --color-red-500: #e74c3c;
+}
+
+/* Button component variables */
+.button {
+  --button-bg: var(--color-blue-500);
+  --button-text: white;
+  --button-padding: 8px 16px;
+  --button-radius: 4px;
+  
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  padding: var(--button-padding);
+  border-radius: var(--button-radius);
+  border: none;
+}
+
+.button.success {
+  --button-bg: var(--color-green-500);
+}
+
+.button.danger {
+  --button-bg: var(--color-red-500);
+}
+```
+
+This approach creates a clear separation between global design tokens and component-specific variables.
+
+## CSS Variables vs. Preprocessor Variables
+
+CSS variables offer several advantages over preprocessor variables (like those in Sass or Less):
+
+| Feature | CSS Variables | Preprocessor Variables |
+|---------|--------------|------------------------|
+| Runtime updates | ✅ Can be updated with JavaScript | ❌ Compiled before runtime |
+| Cascade & inheritance | ✅ Follow CSS inheritance rules | ❌ Static at compile time |
+| Scope | ✅ Scoped to the selector | ❌ Usually global or limited by preprocessor scope |
+| Browser support | ✅ All modern browsers | ✅ Compiled to standard CSS |
+| Computed values | ✅ Can be computed in browser | ❌ Computed at compile time |
+| Debugging | ✅ Visible in browser dev tools | ❌ Not visible after compilation |
+
+However, preprocessor variables still have some advantages:
+
+- Better browser compatibility (after compilation)
+- More advanced features like mixins and functions
+- Can be used in more contexts (like media query definitions)
+
+Many developers use both: preprocessor variables for static values and build-time features, and CSS variables for values that might change at runtime.
+
+## Best Practices
+
+1. **Use meaningful names**: Choose descriptive names that indicate the purpose, not just the value.
+   ```css
+   /* Good */
+   --color-primary: #3498db;
+   
+   /* Avoid */
+   --blue: #3498db;
+   ```
+
+2. **Create a system**: Develop a systematic approach to naming and organizing variables.
+   ```css
+   --spacing-xs: 4px;
+   --spacing-sm: 8px;
+   --spacing-md: 16px;
+   ```
+
+3. **Document your variables**: Add comments to explain the purpose and usage of variables.
+   ```css
+   /* Primary brand colors - use for main UI elements */
+   --color-primary: #3498db;
+   --color-secondary: #2ecc71;
+   ```
+
+4. **Use variables for repeated values**: Any value used more than once is a good candidate for a variable.
+
+5. **Create relationships between variables**: Define base variables and derive others from them.
+   ```css
+   --spacing-base: 8px;
+   --spacing-small: calc(var(--spacing-base) / 2);
+   --spacing-large: calc(var(--spacing-base) * 2);
+   ```
+
+6. **Avoid excessive nesting**: While variables can be scoped to selectors, too much nesting can make it hard to track variable values.
+
+7. **Provide fallbacks**: Always include fallbacks for older browsers.
+   ```css
+   .element {
+     color: #3498db; /* Fallback */
+     color: var(--primary-color);
+   }
+   ```
+
+## Browser Support and Fallbacks
+
+CSS variables are supported in all modern browsers, but if you need to support older browsers (particularly IE11), you'll need fallbacks:
+
+```css
+:root {
+  --primary-color: #3498db;
+}
+
+.button {
+  /* Fallback for browsers that don't support variables */
+  background-color: #3498db;
+  /* Modern browsers will use this */
+  background-color: var(--primary-color);
+}
+```
+
+For more complex scenarios, you can use feature detection:
+
+```css
+@supports (--css: variables) {
+  /* Styles that use CSS variables */
+  .element {
+    color: var(--text-color);
+  }
+}
+```
+
+Or use a JavaScript-based solution like a polyfill for older browsers.
+
+## Practical Examples
+
+### Theme Switching
+
+```css
+:root {
+  --color-bg: white;
+  --color-text: #333;
+  --color-primary: #3498db;
+}
+
+[data-theme="dark"] {
+  --color-bg: #222;
+  --color-text: #f0f0f0;
+  --color-primary: #5dade2;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+a {
+  color: var(--color-primary);
+}
+```
+
+```javascript
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+});
+```
+
+### Dynamic Form Validation
+
+```css
+:root {
+  --input-border: #ddd;
+  --input-border-focus: #3498db;
+  --input-border-error: #e74c3c;
+}
+
+.form-input {
+  border: 1px solid var(--input-border);
+  transition: border-color 0.3s;
+}
+
+.form-input:focus {
+  border-color: var(--input-border-focus);
+}
+
+.form-input.error {
+  border-color: var(--input-border-error);
+}
+```
+
+```javascript
+const input = document.querySelector('.form-input');
+input.addEventListener('blur', () => {
+  if (!input.value) {
+    input.classList.add('error');
+  } else {
+    input.classList.remove('error');
+  }
+});
+```
+
+### User Preference-Based Styling
+
+```css
+:root {
+  --font-size-base: 16px;
+  --content-width: 800px;
+}
+
+[data-text-size="large"] {
+  --font-size-base: 20px;
+}
+
+[data-layout="wide"] {
+  --content-width: 1200px;
+}
+
+body {
+  font-size: var(--font-size-base);
+}
+
+.content {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+```
+
+```javascript
+const textSizeToggle = document.getElementById('text-size-toggle');
+textSizeToggle.addEventListener('click', () => {
+  const currentSize = document.documentElement.getAttribute('data-text-size');
+  const newSize = currentSize === 'large' ? 'normal' : 'large';
+  document.documentElement.setAttribute('data-text-size', newSize);
+});
+
+const layoutToggle = document.getElementById('layout-toggle');
+layoutToggle.addEventListener('click', () => {
+  const currentLayout = document.documentElement.getAttribute('data-layout');
+  const newLayout = currentLayout === 'wide' ? 'normal' : 'wide';
+  document.documentElement.setAttribute('data-layout', newLayout);
+});
+```
+
+## Conclusion
+
+CSS variables (custom properties) provide a powerful way to create more maintainable, flexible, and dynamic stylesheets. They enable you to:
+
+1. Define values once and reuse them throughout your CSS
+2. Create relationships between different values
+3. Update styles dynamically with JavaScript
+4. Implement theming and user preferences
+5. Simplify responsive design
+6. Create more organized and systematic design systems
+
+By leveraging CSS variables effectively, you can write more maintainable CSS code and create more dynamic user experiences without relying heavily on JavaScript for style manipulation.

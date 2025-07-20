@@ -1,0 +1,235 @@
+---
+title: "CSS Box Model"
+description: "Understanding the CSS Box Model and how it affects layout and spacing"
+---
+
+## Introduction to the Box Model
+
+The CSS Box Model is a fundamental concept that describes how elements are rendered on a webpage. Every HTML element is treated as a rectangular box with content, padding, border, and margin areas.
+
+<Frame caption="The CSS Box Model">
+  <img src="/images/box-model.png" alt="CSS Box Model Diagram" />
+</Frame>
+
+## Components of the Box Model
+
+The CSS Box Model consists of four components, from inside to outside:
+
+### Content
+
+The content area contains the actual content of the element, such as text, images, or other HTML elements. Its size is determined by the `width` and `height` properties.
+
+```css
+.element {
+  width: 300px;
+  height: 200px;
+}
+```
+
+### Padding
+
+Padding is the space between the content and the border. It's transparent and shows the background of the element.
+
+```css
+.element {
+  padding: 20px; /* Applies 20px padding on all sides */
+  padding-top: 10px;
+  padding-right: 15px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  
+  /* Shorthand (top, right, bottom, left) */
+  padding: 10px 15px 10px 15px;
+  
+  /* Shorthand (top/bottom, left/right) */
+  padding: 10px 15px;
+}
+```
+
+### Border
+
+The border surrounds the padding (if any) and content. It can have different styles, widths, and colors.
+
+```css
+.element {
+  border: 1px solid black; /* width style color */
+  
+  /* Individual properties */
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  
+  /* Individual sides */
+  border-top: 2px dashed red;
+  border-right: 1px dotted blue;
+  border-bottom: 3px double green;
+  border-left: 1px solid orange;
+}
+```
+
+### Margin
+
+Margin is the space outside the border, creating distance between the element and surrounding elements. It's always transparent.
+
+```css
+.element {
+  margin: 20px; /* Applies 20px margin on all sides */
+  margin-top: 10px;
+  margin-right: 15px;
+  margin-bottom: 10px;
+  margin-left: 15px;
+  
+  /* Shorthand (top, right, bottom, left) */
+  margin: 10px 15px 10px 15px;
+  
+  /* Shorthand (top/bottom, left/right) */
+  margin: 10px 15px;
+  
+  /* Auto margins for horizontal centering */
+  margin: 0 auto;
+}
+```
+
+## Box Sizing
+
+By default, the `width` and `height` properties in CSS only set the size of the content area. This means that padding and border are added to the specified width and height, which can make layout calculations difficult.
+
+The `box-sizing` property changes how the width and height of elements are calculated:
+
+### Content-Box (Default)
+
+```css
+.element {
+  box-sizing: content-box; /* Default */
+  width: 300px;
+  padding: 20px;
+  border: 1px solid black;
+  /* Total width: 300px + 20px*2 + 1px*2 = 342px */
+}
+```
+
+### Border-Box
+
+```css
+.element {
+  box-sizing: border-box;
+  width: 300px;
+  padding: 20px;
+  border: 1px solid black;
+  /* Total width: 300px (includes padding and border) */
+}
+```
+
+<Note>
+Many developers prefer to use `box-sizing: border-box` for all elements to make layout calculations more intuitive. This can be applied globally with:
+
+```css
+* {
+  box-sizing: border-box;
+}
+```
+</Note>
+
+## Margin Collapse
+
+Margin collapse is a behavior where vertical margins between adjacent elements can overlap. This only happens with vertical margins (top and bottom), not horizontal margins (left and right).
+
+<Frame caption="Margin Collapse Example">
+  <img src="/images/margin-collapse.png" alt="Margin Collapse Diagram" />
+</Frame>
+
+When two vertical margins meet, they collapse to form a single margin. The height of this collapsed margin is equal to the larger of the two margins.
+
+```css
+.element1 {
+  margin-bottom: 20px;
+}
+
+.element2 {
+  margin-top: 30px;
+}
+
+/* The margin between element1 and element2 will be 30px, not 50px */
+```
+
+### Preventing Margin Collapse
+
+There are several ways to prevent margin collapse:
+
+1. Add a border or padding between the elements
+2. Create a new block formatting context (e.g., with `overflow: hidden`)
+3. Use flexbox or grid layout
+
+```css
+.container {
+  overflow: hidden; /* Creates a new block formatting context */
+}
+
+.parent {
+  display: flex; /* Flexbox prevents margin collapse */
+  flex-direction: column;
+}
+```
+
+## Practical Examples
+
+### Creating a Card Component
+
+```css
+.card {
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.card-title {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.card-content {
+  margin-bottom: 0;
+}
+```
+
+### Creating Space Between Elements
+
+```css
+.nav-item {
+  display: inline-block;
+  margin-right: 15px; /* Adds space between navigation items */
+}
+
+.nav-item:last-child {
+  margin-right: 0; /* Removes margin from the last item */
+}
+```
+
+## Browser Developer Tools
+
+Modern browser developer tools provide a visual representation of the box model for any element, making it easier to understand and debug layout issues.
+
+<Frame caption="Box Model in Chrome DevTools">
+  <img src="/images/devtools-box-model.png" alt="Box Model in Chrome DevTools" />
+</Frame>
+
+To view the box model of an element:
+
+1. Right-click on the element and select "Inspect" or "Inspect Element"
+2. Go to the "Computed" tab in the styles panel
+3. Look for the box model diagram
+
+## Conclusion
+
+Understanding the CSS Box Model is essential for creating precise layouts and spacing in web design. By mastering the concepts of content, padding, border, margin, and box-sizing, you'll have greater control over how elements are rendered on your webpage.
+
+Remember these key points:
+
+- Every HTML element is a rectangular box with content, padding, border, and margin areas
+- The `box-sizing` property determines how width and height are calculated
+- Vertical margins can collapse in certain situations
+- Browser developer tools can help visualize the box model

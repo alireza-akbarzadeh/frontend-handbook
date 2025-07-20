@@ -1,0 +1,1098 @@
+---
+title: "Clean Code Principles"
+description: "Best practices for writing clean, readable, and maintainable frontend code"
+---
+
+## Introduction to Clean Code
+
+Clean code is code that is easy to understand, easy to modify, and easy to maintain. It's not just about making code work; it's about making code that communicates its purpose clearly to other developers (including your future self). This guide covers principles and practices for writing clean code in frontend development.
+
+<CardGroup cols={2}>
+  <Card title="Readability" icon="book-open-reader">
+    Make your code easy to read and understand.
+  </Card>
+  
+  <Card title="Simplicity" icon="wand-magic-sparkles">
+    Keep your code simple and straightforward.
+  </Card>
+  
+  <Card title="Maintainability" icon="screwdriver-wrench">
+    Write code that's easy to maintain and extend.
+  </Card>
+  
+  <Card title="Consistency" icon="arrows-repeat">
+    Follow consistent patterns and conventions.
+  </Card>
+</CardGroup>
+
+## Core Principles of Clean Code
+
+### 1. Meaningful Names
+
+Names should reveal intent. Variables, functions, classes, and other identifiers should clearly communicate what they represent or do.
+
+#### Variables
+
+```javascript
+// Poor naming
+const d = new Date().getTime();
+const td = 86400000;
+const ts = d - (d % td);
+
+// Clean naming
+const currentTimestamp = new Date().getTime();
+const millisecondsInDay = 86400000;
+const startOfDay = currentTimestamp - (currentTimestamp % millisecondsInDay);
+```
+
+#### Functions
+
+```javascript
+// Poor naming
+function getData() {
+  // Fetches user profile data
+}
+
+// Clean naming
+function fetchUserProfile() {
+  // Fetches user profile data
+}
+```
+
+#### Classes and Components
+
+```javascript
+// Poor naming
+class Mgr {
+  // Manages user authentication
+}
+
+// Clean naming
+class AuthenticationManager {
+  // Manages user authentication
+}
+```
+
+### 2. Functions
+
+Functions should be small, do one thing, and operate at a single level of abstraction.
+
+#### Small and Focused
+
+```javascript
+// Function doing too much
+function renderUserProfile(user) {
+  let html = '<div class="profile">';
+  
+  // Add user avatar
+  if (user.avatar) {
+    html += `<img src="${user.avatar}" alt="${user.name}">`;
+  } else {
+    html += `<div class="avatar-placeholder">${user.name.charAt(0)}</div>`;
+  }
+  
+  // Add user info
+  html += `<h2>${user.name}</h2>`;
+  html += `<p>${user.bio}</p>`;
+  
+  // Add user stats
+  html += '<div class="stats">';
+  html += `<span>Followers: ${user.followers}</span>`;
+  html += `<span>Following: ${user.following}</span>`;
+  html += '</div>';
+  
+  html += '</div>';
+  return html;
+}
+
+// Clean approach: smaller, focused functions
+function renderUserProfile(user) {
+  return `
+    <div class="profile">
+      ${renderUserAvatar(user)}
+      ${renderUserInfo(user)}
+      ${renderUserStats(user)}
+    </div>
+  `;
+}
+
+function renderUserAvatar(user) {
+  if (user.avatar) {
+    return `<img src="${user.avatar}" alt="${user.name}">`;
+  }
+  return `<div class="avatar-placeholder">${user.name.charAt(0)}</div>`;
+}
+
+function renderUserInfo(user) {
+  return `
+    <h2>${user.name}</h2>
+    <p>${user.bio}</p>
+  `;
+}
+
+function renderUserStats(user) {
+  return `
+    <div class="stats">
+      <span>Followers: ${user.followers}</span>
+      <span>Following: ${user.following}</span>
+    </div>
+  `;
+}
+```
+
+#### Single Level of Abstraction
+
+Each function should operate at a single level of abstraction. Don't mix high-level logic with low-level details.
+
+```javascript
+// Mixed levels of abstraction
+function processUserData(userData) {
+  // High-level: Validate user data
+  if (!userData.name || !userData.email) {
+    throw new Error('Invalid user data');
+  }
+  
+  // Low-level: Format email
+  userData.email = userData.email.trim().toLowerCase();
+  
+  // High-level: Save to database
+  saveToDatabase(userData);
+  
+  // Low-level: Log action
+  console.log(`User ${userData.name} processed at ${new Date().toISOString()}`);
+}
+
+// Clean approach: consistent abstraction levels
+function processUserData(userData) {
+  validateUserData(userData);
+  const formattedData = formatUserData(userData);
+  saveToDatabase(formattedData);
+  logUserProcessing(formattedData);
+}
+
+function validateUserData(userData) {
+  if (!userData.name || !userData.email) {
+    throw new Error('Invalid user data');
+  }
+}
+
+function formatUserData(userData) {
+  return {
+    ...userData,
+    email: userData.email.trim().toLowerCase()
+  };
+}
+
+function logUserProcessing(userData) {
+  console.log(`User ${userData.name} processed at ${new Date().toISOString()}`);
+}
+```
+
+#### Function Arguments
+
+Limit the number of function parameters. Fewer parameters make functions easier to understand and test.
+
+```javascript
+// Too many parameters
+function createUser(name, email, password, age, location, interests, role, avatar) {
+  // Create user
+}
+
+// Clean approach: use an object parameter
+function createUser({ name, email, password, age, location, interests, role, avatar }) {
+  // Create user
+}
+
+// Or better, separate concerns
+function createUser(userDetails, userPreferences) {
+  // Create user using core details and preferences
+}
+```
+
+### 3. Comments
+
+Good code is self-documenting. Use comments to explain why, not what.
+
+#### Avoid Obvious Comments
+
+```javascript
+// Poor commenting
+// Set the user's name
+user.name = 'John';
+
+// No comment needed for obvious operations
+user.name = 'John';
+```
+
+#### Explain Intent
+
+```javascript
+// Good commenting
+// Use a temporary user for testing in development environments
+if (process.env.NODE_ENV !== 'production') {
+  user = getMockUser();
+}
+```
+
+#### Document Public APIs
+
+Use JSDoc or similar for documenting public APIs.
+
+```javascript
+/**
+ * Calculates the total price including tax
+ * @param {number} price - The base price
+ * @param {number} [taxRate=0.1] - The tax rate (default: 10%)
+ * @returns {number} The total price including tax
+ */
+function calculateTotalPrice(price, taxRate = 0.1) {
+  return price * (1 + taxRate);
+}
+```
+
+### 4. Code Structure and Organization
+
+Well-structured code is easier to navigate and understand.
+
+#### Consistent File Structure
+
+Maintain a consistent file structure for components.
+
+```jsx
+// React component structure example
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
+// Import dependencies
+import { fetchData } from '../api';
+import { formatDate } from '../utils';
+
+// Import components
+import Loading from './Loading';
+import Error from './Error';
+
+// Import styles
+import './UserProfile.css';
+
+function UserProfile({ userId }) {
+  // State declarations
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Effects
+  useEffect(() => {
+    // Effect implementation
+  }, [userId]);
+  
+  // Event handlers
+  const handleSomething = () => {
+    // Handler implementation
+  };
+  
+  // Helper functions
+  const formatUserData = (data) => {
+    // Formatting logic
+  };
+  
+  // Render logic
+  if (loading) return <Loading />;
+  if (error) return <Error message={error} />;
+  
+  return (
+    <div className="user-profile">
+      {/* Component JSX */}
+    </div>
+  );
+}
+
+// PropTypes
+UserProfile.propTypes = {
+  userId: PropTypes.string.isRequired
+};
+
+export default UserProfile;
+```
+
+#### Group Related Code
+
+Group related code together to improve readability.
+
+```javascript
+// Poor organization: mixed concerns
+function UserDashboard() {
+  // User state
+  const [user, setUser] = useState(null);
+  
+  // Posts state
+  const [posts, setPosts] = useState([]);
+  
+  // User loading state
+  const [userLoading, setUserLoading] = useState(true);
+  
+  // Posts loading state
+  const [postsLoading, setPostsLoading] = useState(true);
+  
+  // Fetch user
+  useEffect(() => {
+    fetchUser().then(data => {
+      setUser(data);
+      setUserLoading(false);
+    });
+  }, []);
+  
+  // Fetch posts
+  useEffect(() => {
+    fetchPosts().then(data => {
+      setPosts(data);
+      setPostsLoading(false);
+    });
+  }, []);
+  
+  // Rest of component
+}
+
+// Clean organization: grouped by concern
+function UserDashboard() {
+  // User state and loading
+  const [user, setUser] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
+  
+  // Posts state and loading
+  const [posts, setPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+  
+  // User data fetching
+  useEffect(() => {
+    fetchUser().then(data => {
+      setUser(data);
+      setUserLoading(false);
+    });
+  }, []);
+  
+  // Posts data fetching
+  useEffect(() => {
+    fetchPosts().then(data => {
+      setPosts(data);
+      setPostsLoading(false);
+    });
+  }, []);
+  
+  // Rest of component
+}
+```
+
+### 5. Error Handling
+
+Proper error handling makes code more robust and easier to debug.
+
+#### Be Specific About Errors
+
+```javascript
+// Vague error handling
+try {
+  // Complex operation
+} catch (error) {
+  console.error('An error occurred');
+}
+
+// Specific error handling
+try {
+  // Complex operation
+} catch (error) {
+  if (error instanceof NetworkError) {
+    console.error('Network error:', error.message);
+    // Handle network error
+  } else if (error instanceof ValidationError) {
+    console.error('Validation error:', error.message);
+    // Handle validation error
+  } else {
+    console.error('Unexpected error:', error);
+    // Handle other errors
+  }
+}
+```
+
+#### Don't Ignore Errors
+
+```javascript
+// Poor practice: ignoring errors
+try {
+  riskyOperation();
+} catch (error) {
+  // Empty catch block
+}
+
+// Better practice: at minimum, log the error
+try {
+  riskyOperation();
+} catch (error) {
+  console.error('Error during risky operation:', error);
+  // Consider whether to re-throw or handle the error
+}
+```
+
+### 6. DRY (Don't Repeat Yourself)
+
+Avoid duplication by extracting repeated code into reusable functions or components.
+
+```javascript
+// Repetitive code
+function validateEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
+
+function validateForm() {
+  // Email validation
+  const email = document.getElementById('email').value;
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!regex.test(email)) {
+    showError('Invalid email');
+    return false;
+  }
+  
+  // Rest of validation
+}
+
+// DRY approach
+function validateEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
+
+function validateForm() {
+  // Email validation
+  const email = document.getElementById('email').value;
+  if (!validateEmail(email)) {
+    showError('Invalid email');
+    return false;
+  }
+  
+  // Rest of validation
+}
+```
+
+### 7. KISS (Keep It Simple, Stupid)
+
+Simpler solutions are easier to understand, maintain, and debug.
+
+```javascript
+// Overly complex
+function isEven(num) {
+  return !Boolean(num & 1);
+}
+
+// Simpler and more readable
+function isEven(num) {
+  return num % 2 === 0;
+}
+```
+
+## Clean Code in React
+
+### Component Structure
+
+#### Small, Focused Components
+
+```jsx
+// Large, unfocused component
+function UserProfile({ user }) {
+  return (
+    <div className="profile">
+      <div className="header">
+        <img src={user.avatar} alt={user.name} />
+        <h2>{user.name}</h2>
+        <p>{user.bio}</p>
+      </div>
+      
+      <div className="stats">
+        <div className="stat">
+          <span className="stat-value">{user.followers}</span>
+          <span className="stat-label">Followers</span>
+        </div>
+        <div className="stat">
+          <span className="stat-value">{user.following}</span>
+          <span className="stat-label">Following</span>
+        </div>
+        <div className="stat">
+          <span className="stat-value">{user.posts}</span>
+          <span className="stat-label">Posts</span>
+        </div>
+      </div>
+      
+      <div className="recent-activity">
+        <h3>Recent Activity</h3>
+        <ul>
+          {user.activities.map(activity => (
+            <li key={activity.id}>
+              <span className="activity-type">{activity.type}</span>
+              <span className="activity-date">{activity.date}</span>
+              <p className="activity-description">{activity.description}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+// Clean approach: smaller, focused components
+function UserProfile({ user }) {
+  return (
+    <div className="profile">
+      <ProfileHeader user={user} />
+      <ProfileStats user={user} />
+      <RecentActivity activities={user.activities} />
+    </div>
+  );
+}
+
+function ProfileHeader({ user }) {
+  return (
+    <div className="header">
+      <img src={user.avatar} alt={user.name} />
+      <h2>{user.name}</h2>
+      <p>{user.bio}</p>
+    </div>
+  );
+}
+
+function ProfileStats({ user }) {
+  return (
+    <div className="stats">
+      <Stat value={user.followers} label="Followers" />
+      <Stat value={user.following} label="Following" />
+      <Stat value={user.posts} label="Posts" />
+    </div>
+  );
+}
+
+function Stat({ value, label }) {
+  return (
+    <div className="stat">
+      <span className="stat-value">{value}</span>
+      <span className="stat-label">{label}</span>
+    </div>
+  );
+}
+
+function RecentActivity({ activities }) {
+  return (
+    <div className="recent-activity">
+      <h3>Recent Activity</h3>
+      <ul>
+        {activities.map(activity => (
+          <ActivityItem key={activity.id} activity={activity} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ActivityItem({ activity }) {
+  return (
+    <li>
+      <span className="activity-type">{activity.type}</span>
+      <span className="activity-date">{activity.date}</span>
+      <p className="activity-description">{activity.description}</p>
+    </li>
+  );
+}
+```
+
+### Props
+
+#### Destructure Props
+
+```jsx
+// Without destructuring
+function UserCard(props) {
+  return (
+    <div className="user-card">
+      <img src={props.avatarUrl} alt={props.name} />
+      <h3>{props.name}</h3>
+      <p>{props.bio}</p>
+    </div>
+  );
+}
+
+// With destructuring
+function UserCard({ avatarUrl, name, bio }) {
+  return (
+    <div className="user-card">
+      <img src={avatarUrl} alt={name} />
+      <h3>{name}</h3>
+      <p>{bio}</p>
+    </div>
+  );
+}
+```
+
+#### Default Props
+
+```jsx
+// Using default parameters
+function Button({ text = 'Click me', type = 'button', onClick }) {
+  return (
+    <button type={type} onClick={onClick}>
+      {text}
+    </button>
+  );
+}
+
+// Or using defaultProps (for class components or more complex defaults)
+Button.defaultProps = {
+  text: 'Click me',
+  type: 'button'
+};
+```
+
+### State Management
+
+#### Lift State Up
+
+```jsx
+// Child components managing related state
+function ParentComponent() {
+  return (
+    <div>
+      <ChildA />
+      <ChildB />
+    </div>
+  );
+}
+
+function ChildA() {
+  const [value, setValue] = useState('');
+  // Component logic
+}
+
+function ChildB() {
+  const [value, setValue] = useState('');
+  // Component logic that needs to know about ChildA's value
+}
+
+// Clean approach: lift state to parent
+function ParentComponent() {
+  const [value, setValue] = useState('');
+  
+  return (
+    <div>
+      <ChildA value={value} onChange={setValue} />
+      <ChildB value={value} />
+    </div>
+  );
+}
+
+function ChildA({ value, onChange }) {
+  // Component logic
+}
+
+function ChildB({ value }) {
+  // Component logic with access to value
+}
+```
+
+#### Custom Hooks for Complex Logic
+
+```jsx
+// Complex logic in component
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    setLoading(true);
+    fetchUser(userId)
+      .then(data => {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [userId]);
+  
+  if (loading) return <Loading />;
+  if (error) return <Error message={error} />;
+  if (!user) return null;
+  
+  return (
+    <div className="profile">
+      {/* Profile content */}
+    </div>
+  );
+}
+
+// Clean approach: extract logic to custom hook
+function useUser(userId) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    setLoading(true);
+    fetchUser(userId)
+      .then(data => {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [userId]);
+  
+  return { user, loading, error };
+}
+
+function UserProfile({ userId }) {
+  const { user, loading, error } = useUser(userId);
+  
+  if (loading) return <Loading />;
+  if (error) return <Error message={error} />;
+  if (!user) return null;
+  
+  return (
+    <div className="profile">
+      {/* Profile content */}
+    </div>
+  );
+}
+```
+
+## Clean Code in Vue.js
+
+### Component Organization
+
+#### Single-File Component Structure
+
+```vue
+<!-- Well-organized Vue component -->
+<template>
+  <div class="user-profile">
+    <!-- Template content -->
+  </div>
+</template>
+
+<script>
+// Import dependencies
+import { fetchUser } from '@/api';
+import ProfileHeader from '@/components/ProfileHeader.vue';
+
+export default {
+  name: 'UserProfile',
+  
+  components: {
+    ProfileHeader
+  },
+  
+  props: {
+    userId: {
+      type: String,
+      required: true
+    }
+  },
+  
+  data() {
+    return {
+      user: null,
+      loading: true,
+      error: null
+    };
+  },
+  
+  computed: {
+    formattedName() {
+      if (!this.user) return '';
+      return `${this.user.firstName} ${this.user.lastName}`;
+    }
+  },
+  
+  watch: {
+    userId: {
+      immediate: true,
+      handler: 'fetchUserData'
+    }
+  },
+  
+  methods: {
+    async fetchUserData() {
+      this.loading = true;
+      try {
+        this.user = await fetchUser(this.userId);
+      } catch (error) {
+        this.error = error.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+    
+    handleProfileUpdate() {
+      // Method implementation
+    }
+  }
+};
+</script>
+
+<style scoped>
+.user-profile {
+  /* Component styles */
+}
+</style>
+```
+
+### Composition API
+
+```vue
+<template>
+  <div class="user-profile">
+    <!-- Template content -->
+  </div>
+</template>
+
+<script>
+import { ref, computed, watch, onMounted } from 'vue';
+import { fetchUser } from '@/api';
+
+export default {
+  name: 'UserProfile',
+  
+  props: {
+    userId: {
+      type: String,
+      required: true
+    }
+  },
+  
+  setup(props) {
+    // State
+    const user = ref(null);
+    const loading = ref(true);
+    const error = ref(null);
+    
+    // Computed properties
+    const formattedName = computed(() => {
+      if (!user.value) return '';
+      return `${user.value.firstName} ${user.value.lastName}`;
+    });
+    
+    // Methods
+    const fetchUserData = async () => {
+      loading.value = true;
+      try {
+        user.value = await fetchUser(props.userId);
+      } catch (err) {
+        error.value = err.message;
+      } finally {
+        loading.value = false;
+      }
+    };
+    
+    // Lifecycle and watchers
+    watch(() => props.userId, fetchUserData);
+    onMounted(fetchUserData);
+    
+    return {
+      user,
+      loading,
+      error,
+      formattedName
+    };
+  }
+};
+</script>
+```
+
+## Clean Code in Angular
+
+### Component Structure
+
+```typescript
+// user-profile.component.ts
+import { Component, Input, OnInit } from '@angular/core';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user.model';
+
+@Component({
+  selector: 'app-user-profile',
+  templateUrl: './user-profile.component.html',
+  styleUrls: ['./user-profile.component.scss']
+})
+export class UserProfileComponent implements OnInit {
+  @Input() userId: string;
+  
+  user: User | null = null;
+  loading = true;
+  error: string | null = null;
+  
+  constructor(private userService: UserService) {}
+  
+  ngOnInit(): void {
+    this.fetchUserData();
+  }
+  
+  private fetchUserData(): void {
+    this.loading = true;
+    this.userService.getUser(this.userId)
+      .subscribe({
+        next: (user) => {
+          this.user = user;
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error = err.message;
+          this.loading = false;
+        }
+      });
+  }
+  
+  get formattedName(): string {
+    if (!this.user) return '';
+    return `${this.user.firstName} ${this.user.lastName}`;
+  }
+}
+```
+
+### Services
+
+```typescript
+// user.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { User } from '../models/user.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+  private apiUrl = 'https://api.example.com/users';
+  
+  constructor(private http: HttpClient) {}
+  
+  getUser(userId: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${userId}`)
+      .pipe(
+        map(this.transformUserData),
+        catchError(this.handleError)
+      );
+  }
+  
+  private transformUserData(data: any): User {
+    // Transform API data to User model
+    return {
+      id: data.id,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      email: data.email,
+      // Other properties
+    };
+  }
+  
+  private handleError(error: any): Observable<never> {
+    let errorMessage = 'An unknown error occurred';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    
+    return throwError(() => new Error(errorMessage));
+  }
+}
+```
+
+## Tools for Maintaining Clean Code
+
+### Linters and Formatters
+
+#### ESLint
+
+ESLint helps identify and fix problems in your JavaScript code.
+
+```json
+// .eslintrc.json example
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "plugins": [
+    "react",
+    "react-hooks"
+  ],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-unused-vars": "warn",
+    "no-console": ["warn", { "allow": ["warn", "error"] }]
+  }
+}
+```
+
+#### Prettier
+
+Prettier is an opinionated code formatter that enforces a consistent style.
+
+```json
+// .prettierrc example
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 80,
+  "bracketSpacing": true,
+  "jsxBracketSameLine": false
+}
+```
+
+### Pre-commit Hooks
+
+Use tools like Husky and lint-staged to enforce code quality before commits.
+
+```json
+// package.json excerpt
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml}": [
+      "prettier --write"
+    ]
+  }
+}
+```
+
+## Conclusion
+
+Writing clean code is a skill that develops over time with practice and mindfulness. By following these principles and practices, you can create frontend code that is easier to understand, maintain, and extend.
+
+Remember that clean code is not just about following rules; it's about empathy for the developers who will read and work with your code in the future—including your future self.
+
+Key takeaways:
+
+1. **Meaningful names**: Use clear, descriptive names for variables, functions, and classes
+2. **Small functions**: Keep functions small, focused, and at a single level of abstraction
+3. **Self-documenting code**: Write code that explains itself, with comments that explain why, not what
+4. **Consistent structure**: Maintain consistent patterns and organization
+5. **Simplicity**: Prefer simple solutions over complex ones
+6. **DRY**: Don't repeat yourself; extract common code into reusable functions or components
+7. **Error handling**: Handle errors properly and specifically
+
+By applying these principles consistently, you'll contribute to a codebase that's a pleasure to work with and that can evolve gracefully over time.
