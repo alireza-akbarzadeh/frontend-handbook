@@ -1,0 +1,283 @@
+---
+title: 'HTML Attributes'
+description: 'Understanding HTML attributes and how they modify elements'
+---
+
+## Introduction to HTML Attributes
+
+HTML attributes provide additional information about HTML elements. They are always specified in the start tag and usually come in name/value pairs like: `name="value"`. Attributes modify the behavior or appearance of an element, providing extra functionality or information.
+
+<Note>
+  Attributes are always added to the opening tag of an HTML element, never to the closing tag.
+</Note>
+
+## Anatomy of an HTML Attribute
+
+```html
+<element attribute="value">Content</element>
+```
+
+<Steps>
+  <Step title="Attribute Name">
+    The name of the attribute (e.g., `class`, `id`, `src`)
+  </Step>
+  <Step title="Equals Sign">
+    Separates the attribute name from its value
+  </Step>
+  <Step title="Attribute Value">
+    The value of the attribute, usually enclosed in double quotes
+  </Step>
+</Steps>
+
+## Global Attributes
+
+Global attributes are attributes that can be used on any HTML element. Here are some of the most commonly used global attributes:
+
+<CardGroup cols={2}>
+  <Card title="class" icon="layer-group">
+    Specifies one or more class names for an element
+  </Card>
+  <Card title="id" icon="fingerprint">
+    Specifies a unique id for an element
+  </Card>
+  <Card title="style" icon="paintbrush">
+    Specifies inline CSS styles for an element
+  </Card>
+  <Card title="title" icon="circle-info">
+    Specifies extra information about an element (displayed as a tooltip)
+  </Card>
+</CardGroup>
+
+```html
+<div id="container" class="main-content" style="color: blue;" title="Main content container">
+  This is a div with multiple global attributes.
+</div>
+```
+
+### More Global Attributes
+
+<CardGroup cols={2}>
+  <Card title="data-*" icon="database">
+    Used to store custom data private to the page or application
+  </Card>
+  <Card title="hidden" icon="eye-slash">
+    Specifies that an element is not yet, or is no longer, relevant
+  </Card>
+  <Card title="lang" icon="language">
+    Specifies the language of the element's content
+  </Card>
+  <Card title="tabindex" icon="arrow-pointer">
+    Specifies the tabbing order of an element
+  </Card>
+</CardGroup>
+
+```html
+<p data-author="John Doe" hidden>This paragraph is hidden.</p>
+<p lang="fr" tabindex="1">Bonjour le monde!</p>
+```
+
+## Element-Specific Attributes
+
+Many HTML elements have specific attributes that only apply to them. Here are some common examples:
+
+### Anchor (`<a>`) Attributes
+
+```html
+<a href="https://example.com" target="_blank" rel="noopener noreferrer">Visit Example.com</a>
+```
+
+<CardGroup cols={2}>
+  <Card title="href" icon="link">
+    Specifies the URL of the page the link goes to
+  </Card>
+  <Card title="target" icon="square-arrow-up-right">
+    Specifies where to open the linked document
+  </Card>
+  <Card title="rel" icon="diagram-project">
+    Specifies the relationship between the current document and the linked document
+  </Card>
+  <Card title="download" icon="download">
+    Specifies that the target will be downloaded when clicked
+  </Card>
+</CardGroup>
+
+### Image (`<img>`) Attributes
+
+```html
+<img src="image.jpg" alt="Description of image" width="300" height="200" loading="lazy" />
+```
+
+<CardGroup cols={2}>
+  <Card title="src" icon="image">
+    Specifies the path to the image
+  </Card>
+  <Card title="alt" icon="closed-captioning">
+    Provides alternative text for the image
+  </Card>
+  <Card title="width" icon="arrows-left-right">
+    Specifies the width of the image
+  </Card>
+  <Card title="height" icon="arrows-up-down">
+    Specifies the height of the image
+  </Card>
+  <Card title="loading" icon="spinner">
+    Specifies whether the image should be loaded immediately or lazily
+  </Card>
+</CardGroup>
+
+### Form (`<form>`) and Input (`<input>`) Attributes
+
+```html
+<form action="/submit" method="post" autocomplete="on">
+  <input type="text" name="username" placeholder="Enter username" required />
+  <input type="password" name="password" placeholder="Enter password" minlength="8" />
+  <input type="submit" value="Login" />
+</form>
+```
+
+<CardGroup cols={2}>
+  <Card title="action" icon="paper-plane">
+    Specifies where to send the form data when submitted
+  </Card>
+  <Card title="method" icon="code-compare">
+    Specifies the HTTP method to use when sending form data
+  </Card>
+  <Card title="type" icon="input-text">
+    Specifies the type of input element to display
+  </Card>
+  <Card title="name" icon="signature">
+    Specifies the name of an input element
+  </Card>
+  <Card title="placeholder" icon="i-cursor">
+    Specifies a short hint that describes the expected value
+  </Card>
+  <Card title="required" icon="asterisk">
+    Specifies that an input field must be filled out
+  </Card>
+</CardGroup>
+
+## Boolean Attributes
+
+Boolean attributes are attributes that don't need a value. Their presence on an element represents the true value, and their absence represents the false value.
+
+```html
+<!-- These are equivalent -->
+<input type="text" required />
+<input type="text" required="required" />
+<input type="text" required="" />
+
+<!-- Other common boolean attributes -->
+<input type="checkbox" checked />
+<button disabled>Click Me</button>
+<details open>This content is visible by default</details>
+```
+
+Common boolean attributes include:
+- `checked`
+- `disabled`
+- `readonly`
+- `required`
+- `selected`
+- `hidden`
+- `open`
+- `multiple`
+- `autofocus`
+
+## Custom Data Attributes
+
+Custom data attributes allow you to store extra information on standard HTML elements without using non-standard attributes or extra properties in the DOM.
+
+```html
+<article
+  data-author="John Doe"
+  data-published="2023-01-15"
+  data-category="technology"
+>
+  <h2>Article Title</h2>
+  <p>Article content...</p>
+</article>
+```
+
+You can access these attributes in JavaScript using the `dataset` property:
+
+```javascript
+const article = document.querySelector('article');
+const author = article.dataset.author; // "John Doe"
+const publishDate = article.dataset.published; // "2023-01-15"
+const category = article.dataset.category; // "technology"
+```
+
+## Event Handler Attributes
+
+Event handler attributes specify JavaScript code to execute when a specific event occurs. While it's generally better to separate JavaScript from HTML using event listeners, event handler attributes are still commonly used.
+
+```html
+<button onclick="alert('Button clicked!')">Click Me</button>
+<a href="https://example.com" onmouseover="this.style.color='red'" onmouseout="this.style.color='blue'">Hover over me</a>
+```
+
+Common event handler attributes include:
+- `onclick`
+- `onchange`
+- `onsubmit`
+- `onload`
+- `onkeydown`
+- `onmouseover`
+- `onfocus`
+
+<Warning>
+  Using inline event handlers (like `onclick`) is generally discouraged in modern web development. It's better to separate your JavaScript from your HTML by using event listeners.
+</Warning>
+
+## ARIA Attributes
+
+Accessible Rich Internet Applications (ARIA) attributes help make web content more accessible to people with disabilities. They provide additional semantics about the role, state, and properties of elements.
+
+```html
+<div role="alert" aria-live="assertive">
+  This is an important alert message!
+</div>
+
+<button aria-expanded="false" aria-controls="menu">
+  Toggle Menu
+</button>
+
+<div id="menu" aria-hidden="true">
+  <!-- Menu content -->
+</div>
+```
+
+Common ARIA attributes include:
+- `role`
+- `aria-label`
+- `aria-labelledby`
+- `aria-hidden`
+- `aria-expanded`
+- `aria-live`
+- `aria-required`
+
+<Note>
+  It's better to use native HTML elements with built-in accessibility features when possible, rather than adding ARIA attributes to generic elements.
+</Note>
+
+## Best Practices for HTML Attributes
+
+1. **Use lowercase attribute names** for better readability and consistency with HTML5 standards
+2. **Always quote attribute values** to avoid potential issues, especially with values containing spaces
+3. **Use the appropriate attribute for the task** rather than misusing attributes for unintended purposes
+4. **Keep boolean attributes simple** by either including them (for true) or omitting them (for false)
+5. **Avoid using deprecated attributes** that are no longer supported in HTML5
+6. **Use data attributes for custom data** instead of making up non-standard attributes
+7. **Separate behavior from structure** by using external JavaScript instead of inline event handler attributes
+
+<Tip>
+  When working with attributes, always consider accessibility. Attributes like `alt` for images, `for` for labels, and ARIA attributes can significantly improve the accessibility of your web pages.
+</Tip>
+
+## Browser Support and Compatibility
+
+Most HTML attributes are well-supported across all modern browsers. However, some newer attributes (like `loading="lazy"` for images) might not be supported in older browsers. Always check browser compatibility when using newer attributes.
+
+<Warning>
+  Some attributes may behave differently across browsers. For example, the `autocomplete` attribute might work differently in Chrome versus Firefox. Test your forms in multiple browsers to ensure consistent behavior.
+</Warning>

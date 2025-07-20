@@ -1,0 +1,273 @@
+---
+title: 'HTML Elements'
+description: 'Understanding HTML elements and their usage in web development'
+---
+
+## Introduction to HTML Elements
+
+HTML elements are the building blocks of HTML pages. An element is defined by a start tag, some content, and an end tag. Elements can also have attributes that provide additional information about the element.
+
+<Note>
+  HTML elements are not the same as HTML tags. HTML tags are used to create HTML elements. For example, the `<p>` tag creates a paragraph element.
+</Note>
+
+## Anatomy of an HTML Element
+
+A typical HTML element consists of:
+
+<Steps>
+  <Step title="Opening Tag">
+    The name of the element, wrapped in opening and closing angle brackets: `<tagname>`
+  </Step>
+  <Step title="Content">
+    The content of the element, which can include text and other HTML elements
+  </Step>
+  <Step title="Closing Tag">
+    Same as the opening tag, but with a forward slash before the element name: `</tagname>`
+  </Step>
+</Steps>
+
+```html
+<p>This is a paragraph element</p>
+```
+
+## Types of HTML Elements
+
+### Block-level Elements
+
+Block-level elements start on a new line and take up the full width available. They create larger structures than inline elements.
+
+<CardGroup cols={2}>
+  <Card title="<div>" icon="square">
+    A generic container for flow content
+  </Card>
+  <Card title="<p>" icon="paragraph">
+    Represents a paragraph
+  </Card>
+  <Card title="<h1> to <h6>" icon="heading">
+    Heading elements of different levels
+  </Card>
+  <Card title="<ul>, <ol>, <li>" icon="list">
+    Unordered lists, ordered lists, and list items
+  </Card>
+</CardGroup>
+
+```html
+<div>
+  <h1>This is a heading</h1>
+  <p>This is a paragraph inside a div.</p>
+  <ul>
+    <li>List item 1</li>
+    <li>List item 2</li>
+  </ul>
+</div>
+```
+
+### Inline Elements
+
+Inline elements do not start on a new line and only take up as much width as necessary. They can be nested inside block-level elements.
+
+<CardGroup cols={2}>
+  <Card title="<span>" icon="code">
+    A generic inline container
+  </Card>
+  <Card title="<a>" icon="link">
+    Creates a hyperlink
+  </Card>
+  <Card title="<strong>, <em>" icon="bold">
+    Emphasis elements for importance and stress
+  </Card>
+  <Card title="<img>" icon="image">
+    Embeds an image
+  </Card>
+</CardGroup>
+
+```html
+<p>
+  This is a paragraph with <span style="color: blue;">blue text</span> and a
+  <a href="https://example.com">link to example.com</a>.
+  <strong>This text is important</strong> and <em>this is emphasized</em>.
+</p>
+<p>Here's an image: <img src="image.jpg" alt="Description" /></p>
+```
+
+### Void Elements
+
+Void elements (also known as self-closing elements) don't have content and don't need a closing tag.
+
+<CardGroup cols={2}>
+  <Card title="<img>" icon="image">
+    Embeds an image
+  </Card>
+  <Card title="<input>" icon="input-text">
+    Creates an input control
+  </Card>
+  <Card title="<br>" icon="arrow-turn-down-left">
+    Produces a line break
+  </Card>
+  <Card title="<hr>" icon="horizontal-rule">
+    Creates a thematic break
+  </Card>
+</CardGroup>
+
+```html
+<input type="text" placeholder="Enter your name" />
+<br />
+<img src="image.jpg" alt="Description" />
+<hr />
+```
+
+## Common HTML Elements
+
+### Document Structure Elements
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Title</title>
+  </head>
+  <body>
+    <!-- Content goes here -->
+  </body>
+</html>
+```
+
+### Text Content Elements
+
+```html
+<h1>Main Heading</h1>
+<h2>Subheading</h2>
+<p>This is a paragraph of text.</p>
+<blockquote>This is a blockquote.</blockquote>
+<pre>This is preformatted text.</pre>
+<code>This is code.</code>
+```
+
+### List Elements
+
+```html
+<!-- Unordered list -->
+<ul>
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</ul>
+
+<!-- Ordered list -->
+<ol>
+  <li>First item</li>
+  <li>Second item</li>
+  <li>Third item</li>
+</ol>
+
+<!-- Description list -->
+<dl>
+  <dt>Term 1</dt>
+  <dd>Definition 1</dd>
+  <dt>Term 2</dt>
+  <dd>Definition 2</dd>
+</dl>
+```
+
+### Table Elements
+
+```html
+<table>
+  <thead>
+    <tr>
+      <th>Header 1</th>
+      <th>Header 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Row 1, Cell 1</td>
+      <td>Row 1, Cell 2</td>
+    </tr>
+    <tr>
+      <td>Row 2, Cell 1</td>
+      <td>Row 2, Cell 2</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>Footer 1</td>
+      <td>Footer 2</td>
+    </tr>
+  </tfoot>
+</table>
+```
+
+### Form Elements
+
+```html
+<form action="/submit" method="post">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required />
+  
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required />
+  
+  <label for="message">Message:</label>
+  <textarea id="message" name="message" rows="4"></textarea>
+  
+  <button type="submit">Submit</button>
+</form>
+```
+
+### Media Elements
+
+```html
+<!-- Image -->
+<img src="image.jpg" alt="Description of the image" width="300" height="200" />
+
+<!-- Audio -->
+<audio controls>
+  <source src="audio.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
+
+<!-- Video -->
+<video width="320" height="240" controls>
+  <source src="video.mp4" type="video/mp4" />
+  Your browser does not support the video element.
+</video>
+```
+
+## Nesting HTML Elements
+
+HTML elements can be nested inside other elements, creating a hierarchical structure.
+
+```html
+<div class="container">
+  <h1>My Website</h1>
+  <p>Welcome to my website. Here's some <strong>important</strong> information.</p>
+  <div class="content">
+    <h2>About Me</h2>
+    <p>I am a <em>web developer</em> who loves <a href="#">HTML</a>.</p>
+  </div>
+</div>
+```
+
+## HTML Element Best Practices
+
+1. **Use semantic elements** whenever possible to improve accessibility and SEO
+2. **Close all elements** properly to maintain valid HTML
+3. **Nest elements correctly** to create a proper document structure
+4. **Use lowercase for element names** for better readability and consistency
+5. **Include alternative content** for media elements to improve accessibility
+
+<Tip>
+  Modern HTML5 introduces many semantic elements like `<header>`, `<footer>`, `<article>`, `<section>`, and more. These elements provide meaning to your HTML structure and should be used instead of generic `<div>` elements when appropriate.
+</Tip>
+
+## Browser Support
+
+Most HTML elements are supported by all modern browsers. However, some newer HTML5 elements might not be fully supported in older browsers. Always check browser compatibility when using newer elements.
+
+<Warning>
+  Internet Explorer has limited support for some HTML5 elements. If you need to support older browsers, consider using polyfills or fallback solutions.
+</Warning>

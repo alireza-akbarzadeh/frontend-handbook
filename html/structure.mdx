@@ -1,0 +1,427 @@
+---
+title: 'HTML Document Structure'
+description: 'Understanding the structure of HTML documents and how to organize them properly'
+---
+
+## Introduction to HTML Document Structure
+
+A well-structured HTML document is the foundation of any web page. Proper HTML structure ensures that your content is accessible, SEO-friendly, and renders correctly across different browsers and devices. This guide will walk you through the essential components of an HTML document and best practices for structuring your web pages.
+
+## Basic HTML Document Structure
+
+Every HTML document follows a standard structure that includes several key components:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Title</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Website Title</h1>
+    <nav>
+      <!-- Navigation content -->
+    </nav>
+  </header>
+  
+  <main>
+    <section>
+      <h2>Section Title</h2>
+      <p>Content goes here...</p>
+    </section>
+  </main>
+  
+  <footer>
+    <p>&copy; 2023 Your Website</p>
+  </footer>
+</body>
+</html>
+```
+
+<Steps>
+  <Step title="DOCTYPE Declaration">
+    The `<!DOCTYPE html>` declaration tells the browser that the document is an HTML5 document.
+  </Step>
+  <Step title="HTML Element">
+    The `<html>` element is the root element that contains all other HTML elements.
+  </Step>
+  <Step title="Head Section">
+    The `<head>` element contains meta-information about the document, such as its title, character encoding, viewport settings, and links to external resources.
+  </Step>
+  <Step title="Body Section">
+    The `<body>` element contains all the content that is visible on the web page, such as text, images, links, and other elements.
+  </Step>
+</Steps>
+
+## The `<!DOCTYPE>` Declaration
+
+The `<!DOCTYPE>` declaration must be the very first thing in your HTML document, before the `<html>` tag. It is not an HTML tag; it is an instruction to the web browser about what version of HTML the page is written in.
+
+```html
+<!DOCTYPE html>
+```
+
+This declaration represents the document type for HTML5, which is the current standard. Older versions of HTML had more complex DOCTYPE declarations, but HTML5 simplified this to a single, easy-to-remember line.
+
+<Note>
+  The DOCTYPE declaration is case-insensitive, so `<!DOCTYPE html>`, `<!DOCTYPE HTML>`, and `<!doctype html>` are all valid. However, lowercase is commonly used in HTML5.
+</Note>
+
+## The `<html>` Element
+
+The `<html>` element is the root element of an HTML page. All other elements must be descendants of this element.
+
+```html
+<html lang="en">
+  <!-- All other elements go here -->
+</html>
+```
+
+The `lang` attribute specifies the language of the document, which helps search engines and browsers. It's a good practice to always include this attribute.
+
+## The `<head>` Section
+
+The `<head>` section contains meta-information about the document that isn't displayed directly on the page. This includes:
+
+### Document Metadata
+
+```html
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A description of your page">
+  <meta name="keywords" content="keywords, for, search, engines">
+  <meta name="author" content="Your Name">
+  <title>Document Title</title>
+</head>
+```
+
+<CardGroup cols={2}>
+  <Card title="charset" icon="font">
+    Specifies the character encoding for the HTML document (usually UTF-8)
+  </Card>
+  <Card title="viewport" icon="mobile-screen">
+    Controls how the page is displayed on mobile devices
+  </Card>
+  <Card title="description" icon="circle-info">
+    Provides a brief description of the page for search engines
+  </Card>
+  <Card title="keywords" icon="magnifying-glass">
+    Lists keywords relevant to the page (less important for SEO now)
+  </Card>
+  <Card title="author" icon="user">
+    Specifies the author of the page
+  </Card>
+</CardGroup>
+
+### Title
+
+The `<title>` element is required in all HTML documents and defines the title of the document. This title appears in the browser's title bar or tab.
+
+```html
+<title>My Website - Home Page</title>
+```
+
+<Tip>
+  A good title is important for SEO. It should be descriptive, contain relevant keywords, and be under 60 characters to display properly in search results.
+</Tip>
+
+### External Resources
+
+The `<head>` section is also where you link to external resources like CSS stylesheets, JavaScript files, and fonts.
+
+```html
+<head>
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+  
+  <!-- JavaScript -->
+  <script src="script.js" defer></script>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  
+  <!-- Open Graph Meta Tags (for social media sharing) -->
+  <meta property="og:title" content="Page Title">
+  <meta property="og:description" content="Page Description">
+  <meta property="og:image" content="image.jpg">
+</head>
+```
+
+<CardGroup cols={2}>
+  <Card title="link" icon="link">
+    Links to external resources like CSS files and favicons
+  </Card>
+  <Card title="script" icon="code">
+    Links to JavaScript files or contains inline JavaScript
+  </Card>
+  <Card title="style" icon="paintbrush">
+    Contains inline CSS styles (though external stylesheets are preferred)
+  </Card>
+  <Card title="base" icon="sitemap">
+    Specifies the base URL for all relative URLs in the document
+  </Card>
+</CardGroup>
+
+## The `<body>` Section
+
+The `<body>` element contains all the content that is visible on the web page. This is where you place your text, images, links, and other visible elements.
+
+### Semantic Structure
+
+HTML5 introduced several semantic elements that help define the structure of a document. Using these elements properly improves accessibility, SEO, and code readability.
+
+```html
+<body>
+  <header>
+    <h1>Website Title</h1>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main>
+    <article>
+      <h2>Article Title</h2>
+      <p>Article content...</p>
+      
+      <section>
+        <h3>Section Title</h3>
+        <p>Section content...</p>
+      </section>
+      
+      <section>
+        <h3>Another Section</h3>
+        <p>More content...</p>
+      </section>
+    </article>
+    
+    <aside>
+      <h3>Related Information</h3>
+      <p>Sidebar content...</p>
+    </aside>
+  </main>
+  
+  <footer>
+    <p>&copy; 2023 Your Website</p>
+    <address>
+      Contact: <a href="mailto:info@example.com">info@example.com</a>
+    </address>
+  </footer>
+</body>
+```
+
+<CardGroup cols={2}>
+  <Card title="header" icon="heading">
+    Contains introductory content or navigation
+  </Card>
+  <Card title="nav" icon="bars">
+    Contains navigation links
+  </Card>
+  <Card title="main" icon="square">
+    Contains the main content of the document
+  </Card>
+  <Card title="article" icon="newspaper">
+    Contains a self-contained composition
+  </Card>
+  <Card title="section" icon="section">
+    Represents a standalone section of content
+  </Card>
+  <Card title="aside" icon="sidebar">
+    Contains content tangentially related to the content around it
+  </Card>
+  <Card title="footer" icon="shoe-prints">
+    Contains footer information for its nearest sectioning content
+  </Card>
+  <Card title="address" icon="address-book">
+    Contains contact information for the author or owner of the document
+  </Card>
+</CardGroup>
+
+## Document Outline and Heading Hierarchy
+
+A proper document outline is crucial for accessibility and SEO. The outline is created by the heading elements (`<h1>` through `<h6>`) and sectioning elements.
+
+```html
+<body>
+  <header>
+    <h1>Website Title</h1> <!-- Main heading for the entire page -->
+  </header>
+  
+  <main>
+    <section>
+      <h2>First Section</h2> <!-- Subheading for this section -->
+      <p>Content...</p>
+      
+      <article>
+        <h3>Article Title</h3> <!-- Sub-subheading for this article -->
+        <p>Content...</p>
+        
+        <h4>Article Subsection</h4> <!-- Even lower level heading -->
+        <p>Content...</p>
+      </article>
+    </section>
+    
+    <section>
+      <h2>Second Section</h2> <!-- Same level as "First Section" -->
+      <p>Content...</p>
+    </section>
+  </main>
+</body>
+```
+
+<Warning>
+  Always maintain a proper heading hierarchy. Don't skip heading levels (like going from `<h1>` directly to `<h3>`), as this can confuse screen readers and harm accessibility.
+</Warning>
+
+## Nesting and Indentation
+
+Proper nesting and indentation make your HTML code more readable and easier to maintain. Each nested element should be indented to show its relationship to parent elements.
+
+```html
+<div class="container">
+  <header>
+    <h1>Title</h1>
+    <nav>
+      <ul>
+        <li><a href="#">Link 1</a></li>
+        <li><a href="#">Link 2</a></li>
+      </ul>
+    </nav>
+  </header>
+</div>
+```
+
+<Tip>
+  Most code editors have features to automatically format and indent your HTML code. Use these tools to maintain consistent indentation throughout your project.
+</Tip>
+
+## Comments in HTML
+
+HTML comments are useful for documenting your code or temporarily disabling parts of it. Comments are not displayed in the browser.
+
+```html
+<!-- This is a comment -->
+
+<!-- 
+  This is a 
+  multi-line comment 
+-->
+
+<!-- <div>This element is commented out and won't be displayed</div> -->
+```
+
+## Document Fragments and IDs
+
+IDs can be used to create document fragments, which allow you to link directly to specific parts of a page.
+
+```html
+<h2 id="section1">Section 1</h2>
+<p>Content for section 1...</p>
+
+<h2 id="section2">Section 2</h2>
+<p>Content for section 2...</p>
+
+<!-- Link to a specific section -->
+<a href="#section2">Go to Section 2</a>
+```
+
+## Organizing Large Documents
+
+For large HTML documents, consider these organizational strategies:
+
+1. **Use meaningful class and ID names** that reflect the content or purpose of elements
+2. **Group related elements** with sectioning elements like `<section>`, `<article>`, and `<div>`
+3. **Add comments** to mark the beginning and end of major sections
+4. **Consider component-based architecture** where you break down the UI into reusable components
+
+```html
+<!-- Header Component -->
+<header class="site-header">
+  <!-- Header content -->
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <!-- Hero content -->
+  </section>
+  
+  <!-- Features Section -->
+  <section class="features-section">
+    <!-- Feature 1 -->
+    <div class="feature">
+      <!-- Feature 1 content -->
+    </div>
+    
+    <!-- Feature 2 -->
+    <div class="feature">
+      <!-- Feature 2 content -->
+    </div>
+  </section>
+</main>
+
+<!-- Footer Component -->
+<footer class="site-footer">
+  <!-- Footer content -->
+</footer>
+```
+
+## HTML Templates
+
+HTML templates provide a way to declare fragments of HTML that aren't rendered immediately but can be instantiated later during runtime.
+
+```html
+<template id="user-card-template">
+  <div class="user-card">
+    <img src="" alt="User Avatar" class="user-avatar">
+    <div class="user-info">
+      <h3 class="user-name"></h3>
+      <p class="user-email"></p>
+    </div>
+  </div>
+</template>
+
+<script>
+  // Later, you can use this template to create elements
+  const template = document.getElementById('user-card-template');
+  const userCard = template.content.cloneNode(true);
+  
+  // Populate with data
+  userCard.querySelector('.user-name').textContent = 'John Doe';
+  userCard.querySelector('.user-email').textContent = 'john@example.com';
+  userCard.querySelector('.user-avatar').src = 'avatar.jpg';
+  
+  // Add to the document
+  document.body.appendChild(userCard);
+</script>
+```
+
+## Best Practices for HTML Document Structure
+
+1. **Always include the essential elements**: DOCTYPE, html, head, and body
+2. **Use semantic HTML elements** to clearly define the structure of your content
+3. **Maintain a logical heading hierarchy** (h1 → h2 → h3, etc.)
+4. **Include proper meta tags** for character encoding, viewport, and description
+5. **Separate structure (HTML), presentation (CSS), and behavior (JavaScript)**
+6. **Use comments to document complex sections** of your HTML
+7. **Keep your HTML clean and well-indented** for better readability
+8. **Validate your HTML** using tools like the W3C Validator to ensure it's error-free
+9. **Consider accessibility** by using appropriate ARIA attributes and semantic elements
+10. **Optimize for performance** by placing CSS in the head and JavaScript at the end of the body (or use `defer`/`async` attributes)
+
+<Tip>
+  Remember that a well-structured HTML document is the foundation of a good website. It improves accessibility, SEO, and makes your code easier to maintain and update in the future.
+</Tip>

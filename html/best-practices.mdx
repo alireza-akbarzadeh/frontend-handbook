@@ -1,0 +1,820 @@
+---
+title: 'HTML Best Practices'
+description: 'Guidelines and recommendations for writing clean, maintainable, and accessible HTML'
+---
+
+## Introduction
+
+HTML (HyperText Markup Language) is the foundation of any web page. While browsers are forgiving of poorly written HTML, following best practices ensures your code is maintainable, accessible, and performs well. This guide covers essential HTML best practices that every frontend developer should follow.
+
+<Note>
+  These best practices are not just about code aesthetics—they directly impact
+  accessibility, SEO, performance, and maintainability of your websites.
+</Note>
+
+## Document Structure
+
+### Use the Correct DOCTYPE
+
+Always start your HTML documents with the proper DOCTYPE declaration:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Title</title>
+  </head>
+  <body>
+    <!-- Content goes here -->
+  </body>
+</html>
+```
+
+### Specify the Language
+
+Always specify the language of your document using the `lang` attribute on the `<html>` element. This helps screen readers pronounce content correctly and improves SEO.
+
+```html
+<html lang="en">
+  <!-- For English content -->
+</html>
+
+<html lang="es">
+  <!-- For Spanish content -->
+</html>
+
+<html lang="zh-Hans">
+  <!-- For Simplified Chinese content -->
+</html>
+```
+
+### Include Essential Meta Tags
+
+Include important meta tags in the `<head>` section:
+
+```html
+<head>
+  <!-- Character encoding -->
+  <meta charset="UTF-8" />
+
+  <!-- Viewport settings for responsive design -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Page description (important for SEO) -->
+  <meta
+    name="description"
+    content="A brief, compelling description of your page content"
+  />
+
+  <!-- Page title (important for SEO and usability) -->
+  <title>Descriptive and Concise Page Title</title>
+</head>
+```
+
+<Tip>
+  Keep your title under 60 characters and your description under 160 characters
+  for optimal display in search engine results.
+</Tip>
+
+## Semantic HTML
+
+### Use Semantic Elements
+
+Use semantic HTML elements that clearly describe their meaning to browsers, developers, and assistive technologies:
+
+```html
+<!-- Bad: Divs with no semantic meaning -->
+<div class="header">
+  <div class="navigation">
+    <div class="nav-item">Home</div>
+  </div>
+</div>
+
+<!-- Good: Semantic elements -->
+<header>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+    </ul>
+  </nav>
+</header>
+```
+
+<CardGroup cols={2}>
+  <Card title="Structural Elements" icon="section">
+    Use `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, and `<footer>` to define the structure of your document.
+  </Card>
+  <Card title="Text Elements" icon="font">
+    Use `<h1>` through `<h6>`, `<p>`, `<ul>`, `<ol>`, `<li>`, `<blockquote>`, etc., for text content.
+  </Card>
+  <Card title="Interactive Elements" icon="hand-pointer">
+    Use `<button>`, `<a>`, `<form>`, `<input>`, etc., for interactive elements.
+  </Card>
+  <Card title="Media Elements" icon="image">
+    Use `<img>`, `<video>`, `<audio>`, `<figure>`, `<figcaption>`, etc., for media content.
+  </Card>
+</CardGroup>
+
+### Use Headings Properly
+
+Create a logical document outline using heading elements (`<h1>` through `<h6>`):
+
+```html
+<!-- Bad: Skipping heading levels -->
+<h1>Website Title</h1>
+<h3>Section Title</h3>
+<!-- Skipped h2 -->
+
+<!-- Bad: Using headings for styling -->
+<h2>This text is not a heading but I want it big</h2>
+
+<!-- Good: Proper heading hierarchy -->
+<h1>Website Title</h1>
+<h2>Section Title</h2>
+<h3>Subsection Title</h3>
+```
+
+<Warning>
+  Don't skip heading levels (e.g., from `<h1>` to `<h3>`), as this confuses screen readers and breaks the document outline. Also, don't use heading elements just for styling purposes.
+</Warning>
+
+### Use Lists Appropriately
+
+Use the appropriate list type for your content:
+
+```html
+<!-- Unordered list for items with no specific order -->
+<ul>
+  <li>Item 1</li>
+  <li>Item 2</li>
+</ul>
+
+<!-- Ordered list for sequential items -->
+<ol>
+  <li>First step</li>
+  <li>Second step</li>
+</ol>
+
+<!-- Description list for name-value pairs -->
+<dl>
+  <dt>HTML</dt>
+  <dd>HyperText Markup Language</dd>
+  <dt>CSS</dt>
+  <dd>Cascading Style Sheets</dd>
+</dl>
+```
+
+## Accessibility
+
+### Provide Alternative Text for Images
+
+Always include the `alt` attribute for images:
+
+```html
+<!-- Informative image with descriptive alt text -->
+<img src="chart.png" alt="Bar chart showing sales growth from 2020 to 2023" />
+
+<!-- Decorative image with empty alt text -->
+<img src="decorative-divider.png" alt="" />
+```
+
+<Tip>
+  For decorative images that don't add meaning to the content, use an empty
+  `alt` attribute (`alt=""`) so screen readers will skip them.
+</Tip>
+
+### Use ARIA Attributes When Necessary
+
+When HTML semantics aren't sufficient, use ARIA (Accessible Rich Internet Applications) attributes to enhance accessibility:
+
+```html
+<!-- Custom toggle button -->
+<div role="button" tabindex="0" aria-pressed="false">Toggle Feature</div>
+
+<!-- Status message -->
+<div role="status" aria-live="polite">Your changes have been saved</div>
+
+<!-- Error message -->
+<div role="alert">Please correct the errors in the form</div>
+```
+
+<Warning>
+  The first rule of ARIA is: "If you can use a native HTML element with the
+  semantics and behavior you require already built in, instead of re-purposing
+  an element and adding an ARIA role, state or property to make it accessible,
+  then do so." Only use ARIA when necessary.
+</Warning>
+
+### Ensure Keyboard Accessibility
+
+Make sure all interactive elements are keyboard accessible:
+
+```html
+<!-- Bad: Div used as a button without keyboard support -->
+<div class="button" onclick="doSomething()">Click Me</div>
+
+<!-- Good: Native button element with keyboard support -->
+<button type="button" onclick="doSomething()">Click Me</button>
+
+<!-- Good: Custom element with keyboard support -->
+<div
+  role="button"
+  tabindex="0"
+  onclick="doSomething()"
+  onkeydown="handleKeydown(event)"
+>
+  Click Me
+</div>
+```
+
+### Use Labels for Form Controls
+
+Always associate labels with form controls:
+
+```html
+<!-- Bad: No label association -->
+<p>Name:</p>
+<input type="text" name="name" />
+
+<!-- Good: Label with for attribute -->
+<label for="name">Name:</label>
+<input type="text" id="name" name="name" />
+
+<!-- Also good: Label wrapping the input -->
+<label>
+  Email:
+  <input type="email" name="email" />
+</label>
+```
+
+## Performance
+
+### Optimize Resource Loading
+
+Use appropriate attributes to optimize how resources are loaded:
+
+```html
+<!-- Preload critical resources -->
+<link rel="preload" href="critical.css" as="style" />
+<link rel="preload" href="hero-image.jpg" as="image" />
+
+<!-- Defer non-critical JavaScript -->
+<script src="non-critical.js" defer></script>
+
+<!-- Load JavaScript asynchronously when it doesn't depend on DOM -->
+<script src="analytics.js" async></script>
+
+<!-- Lazy load images that are below the fold -->
+<img src="below-fold-image.jpg" loading="lazy" alt="Description" />
+```
+
+<CardGroup cols={2}>
+  <Card title="preload" icon="bolt">
+    Tells the browser to download a resource as soon as possible
+  </Card>
+  <Card title="defer" icon="clock">
+    Delays script execution until the HTML is fully parsed
+  </Card>
+  <Card title="async" icon="gauge-high">
+    Downloads the script asynchronously and executes it as soon as it's
+    available
+  </Card>
+  <Card title='loading="lazy"' icon="spinner">
+    Defers loading of images until they are near the viewport
+  </Card>
+</CardGroup>
+
+### Specify Image Dimensions
+
+Always specify the `width` and `height` attributes for images to prevent layout shifts during page load:
+
+```html
+<img src="image.jpg" alt="Description" width="800" height="600" />
+```
+
+<Note>
+  Modern browsers use these dimensions to calculate the aspect ratio and reserve
+  space for the image, even before it loads, reducing layout shifts.
+</Note>
+
+## Code Quality
+
+### Use Consistent Indentation and Formatting
+
+Maintain consistent indentation and formatting for better readability:
+
+```html
+<!-- Good: Consistent indentation and formatting -->
+<article>
+  <header>
+    <h2>Article Title</h2>
+    <p>Published on <time datetime="2023-06-15">June 15, 2023</time></p>
+  </header>
+
+  <section>
+    <p>First paragraph of content...</p>
+    <p>Second paragraph of content...</p>
+  </section>
+</article>
+```
+
+### Use Lowercase for Element Names and Attributes
+
+While HTML is case-insensitive, using lowercase is a widely accepted convention:
+
+```html
+<!-- Bad: Mixed case -->
+<div class="container">
+  <p>Content</p>
+</div>
+
+<!-- Good: Lowercase -->
+<div class="container">
+  <p>Content</p>
+</div>
+```
+
+### Quote Attribute Values
+
+Always quote attribute values, even when it's technically optional:
+
+```html
+<!-- Bad: Unquoted attribute values -->
+<div class=container id=main-content>
+  <a href=https://example.com>Link</a>
+</div>
+
+<!-- Good: Quoted attribute values -->
+<div class="container" id="main-content">
+  <a href="https://example.com">Link</a>
+</div>
+```
+
+<Tip>
+  Using quotes consistently helps avoid errors when attribute values contain
+  spaces or special characters.
+</Tip>
+
+### Close All Elements Properly
+
+Ensure all elements are properly closed:
+
+```html
+<!-- Bad: Unclosed or improperly closed elements -->
+<div>
+  <p>This paragraph is not closed</p>
+  <p>This creates ambiguity</p>
+</div>
+
+<!-- Good: Properly closed elements -->
+<div>
+  <p>This paragraph is properly closed</p>
+  <p>This creates clear structure</p>
+</div>
+```
+
+### Use Meaningful Class and ID Names
+
+Use descriptive, meaningful names for classes and IDs:
+
+```html
+<!-- Bad: Non-descriptive names -->
+<div class="div1">
+  <p class="p1">Content</p>
+</div>
+
+<!-- Good: Descriptive names -->
+<div class="product-card">
+  <p class="product-description">Content</p>
+</div>
+```
+
+<Tip>
+  Follow a consistent naming convention like BEM (Block Element Modifier) or
+  another methodology that works for your team.
+</Tip>
+
+## SEO
+
+### Use Descriptive Title and Meta Description
+
+Create unique, descriptive titles and meta descriptions for each page:
+
+```html
+<head>
+  <title>Beginner's Guide to HTML Best Practices | YourSite</title>
+  <meta
+    name="description"
+    content="Learn essential HTML best practices for writing clean, accessible, and SEO-friendly code. Perfect for beginners and experienced developers."
+  />
+</head>
+```
+
+### Structure Content with Headings
+
+Use headings to structure your content in a way that helps both users and search engines understand the hierarchy of information:
+
+```html
+<h1>Main Topic of the Page</h1>
+
+<h2>Important Subtopic</h2>
+<p>Content about the subtopic...</p>
+
+<h2>Another Important Subtopic</h2>
+<p>Content about this subtopic...</p>
+
+<h3>Detail of the Subtopic</h3>
+<p>More specific content...</p>
+```
+
+### Use Descriptive Link Text
+
+Avoid generic link text like "click here" or "read more". Instead, use descriptive text that indicates what the user will find when they click the link:
+
+```html
+<!-- Bad: Non-descriptive link text -->
+<p>To learn more about HTML, <a href="/html-guide">click here</a>.</p>
+
+<!-- Good: Descriptive link text -->
+<p>
+  Check out our <a href="/html-guide">comprehensive HTML guide</a> to learn
+  more.
+</p>
+```
+
+## Validation
+
+### Validate Your HTML
+
+Regularly validate your HTML using tools like the [W3C Markup Validation Service](https://validator.w3.org/) to catch errors and ensure compliance with standards.
+
+<Warning>
+  Even if your page looks correct in browsers, invalid HTML can cause unexpected
+  behavior, accessibility issues, and problems with future browser updates.
+</Warning>
+
+### Fix Validation Errors
+
+Common validation errors to watch for and fix:
+
+1. Missing required attributes (like `alt` for images)
+2. Unclosed elements
+3. Duplicate IDs
+4. Improper nesting of elements
+5. Using deprecated elements or attributes
+
+## Responsive Design
+
+### Use the Viewport Meta Tag
+
+Always include the viewport meta tag for responsive designs:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+```
+
+### Use Responsive Images
+
+Implement responsive images using the `srcset` and `sizes` attributes:
+
+```html
+<img
+  src="image-800w.jpg"
+  srcset="image-480w.jpg 480w, image-800w.jpg 800w, image-1200w.jpg 1200w"
+  sizes="(max-width: 600px) 480px,
+            (max-width: 900px) 800px,
+            1200px"
+  alt="Responsive image example"
+/>
+```
+
+Or use the `<picture>` element for art direction:
+
+```html
+<picture>
+  <source media="(max-width: 600px)" srcset="small-image.jpg" />
+  <source media="(max-width: 1200px)" srcset="medium-image.jpg" />
+  <img src="large-image.jpg" alt="Art-directed responsive image" />
+</picture>
+```
+
+## Security
+
+### Prevent XSS Attacks
+
+Protect against Cross-Site Scripting (XSS) attacks:
+
+```html
+<!-- Bad: Directly embedding user input -->
+<div id="userContent"></div>
+<script>
+  // DANGEROUS: Directly inserting user input into the DOM
+  document.getElementById('userContent').innerHTML = userProvidedContent;
+</script>
+
+<!-- Good: Using textContent instead of innerHTML for user-generated content -->
+<div id="userContent"></div>
+<script>
+  // SAFER: Using textContent prevents script execution
+  document.getElementById('userContent').textContent = userProvidedContent;
+</script>
+```
+
+### Use HTTPS for External Resources
+
+Always use HTTPS for external resources to prevent man-in-the-middle attacks:
+
+```html
+<!-- Bad: Using HTTP -->
+<script src="http://example.com/script.js"></script>
+
+<!-- Good: Using HTTPS -->
+<script src="https://example.com/script.js"></script>
+
+<!-- Also good: Protocol-relative URL (inherits the protocol of the page) -->
+<script src="//example.com/script.js"></script>
+```
+
+### Add Security Headers
+
+Implement security headers in your server configuration or through meta tags when possible:
+
+```html
+<!-- Content Security Policy -->
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; script-src 'self' https://trusted-cdn.com;"
+/>
+
+<!-- X-Frame-Options to prevent clickjacking -->
+<meta http-equiv="X-Frame-Options" content="DENY" />
+
+<!-- X-Content-Type-Options to prevent MIME type sniffing -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff" />
+```
+
+<Note>
+  While these meta tags can help, it's better to implement security headers at
+  the server level when possible.
+</Note>
+
+## Compatibility
+
+### Test Across Browsers and Devices
+
+Regularly test your HTML across different browsers, devices, and screen sizes to ensure compatibility.
+
+### Use Feature Detection
+
+When using newer HTML features, implement feature detection rather than browser detection:
+
+```html
+<script>
+  // Bad: Browser detection
+  if (navigator.userAgent.indexOf('Chrome') !== -1) {
+    // Chrome-specific code
+  }
+
+  // Good: Feature detection
+  if ('IntersectionObserver' in window) {
+    // Code for browsers that support IntersectionObserver
+  } else {
+    // Fallback code
+  }
+</script>
+```
+
+## Comments and Documentation
+
+### Use Comments Effectively
+
+Add comments to explain complex structures or non-obvious code:
+
+```html
+<!-- Navigation for mobile devices -->
+<nav class="mobile-nav">
+  <!-- ... -->
+</nav>
+
+<!--
+  This section uses a complex nested grid layout.
+  The outer grid has 3 columns, and the middle column
+  contains a nested 2-row grid.
+-->
+<div class="complex-layout">
+  <!-- ... -->
+</div>
+```
+
+<Tip>
+  Comments should explain "why" rather than "what" when the code itself clearly
+  shows what's happening.
+</Tip>
+
+### Document Third-Party Code
+
+When including third-party code or widgets, add comments explaining what they are and where they came from:
+
+```html
+<!--
+  Google Analytics tracking code
+  Added on: 2023-06-15
+  Documentation: https://developers.google.com/analytics/devguides/collection/analyticsjs
+-->
+<script>
+  (function(i,s,o,g,r,a,m){...})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-XXXXX-Y', 'auto');
+  ga('send', 'pageview');
+</script>
+```
+
+## Maintainability
+
+### Separate Structure, Presentation, and Behavior
+
+Keep HTML (structure), CSS (presentation), and JavaScript (behavior) separate:
+
+```html
+<!-- Bad: Mixing structure, presentation, and behavior -->
+<button
+  style="background-color: blue; color: white;"
+  onclick="alert('Button clicked!')"
+>
+  Click Me
+</button>
+
+<!-- Good: Separation of concerns -->
+<button class="primary-button" id="action-button">Click Me</button>
+
+<!-- CSS in a separate file -->
+<style>
+  .primary-button {
+    background-color: blue;
+    color: white;
+  }
+</style>
+
+<!-- JavaScript in a separate file -->
+<script>
+  document
+    .getElementById('action-button')
+    .addEventListener('click', function () {
+      alert('Button clicked!');
+    });
+</script>
+```
+
+### Use Templates for Repeated Content
+
+For repeated content patterns, consider using client-side or server-side templates:
+
+```html
+<!-- Template element for client-side templating -->
+<template id="product-card-template">
+  <div class="product-card">
+    <img class="product-image" src="" alt="" />
+    <h3 class="product-title"></h3>
+    <p class="product-price"></p>
+    <button class="add-to-cart-button">Add to Cart</button>
+  </div>
+</template>
+
+<script>
+  // Later, use the template to create product cards
+  const template = document.getElementById('product-card-template');
+  const products = [
+    { id: 1, title: 'Product 1', price: '$19.99', image: 'product1.jpg' },
+    { id: 2, title: 'Product 2', price: '$29.99', image: 'product2.jpg' },
+  ];
+
+  const productContainer = document.getElementById('products');
+
+  products.forEach((product) => {
+    const productCard = template.content.cloneNode(true);
+
+    productCard.querySelector('.product-title').textContent = product.title;
+    productCard.querySelector('.product-price').textContent = product.price;
+    productCard.querySelector('.product-image').src = product.image;
+    productCard.querySelector('.product-image').alt = product.title;
+
+    productContainer.appendChild(productCard);
+  });
+</script>
+```
+
+## HTML5 Features
+
+### Use HTML5 Form Features
+
+Take advantage of HTML5 form features for better user experience and validation:
+
+```html
+<form>
+  <!-- Email input with built-in validation -->
+  <input type="email" required />
+
+  <!-- Number input with range constraints -->
+  <input type="number" min="1" max="10" />
+
+  <!-- Date picker -->
+  <input type="date" />
+
+  <!-- Color picker -->
+  <input type="color" />
+
+  <!-- Pattern validation with regular expression -->
+  <input type="text" pattern="[0-9]{5}" placeholder="5-digit ZIP code" />
+
+  <!-- Autocomplete suggestions -->
+  <input list="browsers" name="browser" />
+  <datalist id="browsers">
+    <option value="Chrome"></option>
+    <option value="Firefox"></option>
+    <option value="Safari"></option>
+  </datalist>
+</form>
+```
+
+### Use HTML5 Semantic Elements
+
+Use HTML5 semantic elements to improve document structure:
+
+```html
+<body>
+  <header>
+    <h1>Website Title</h1>
+    <nav>
+      <!-- Navigation links -->
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <header>
+        <h2>Article Title</h2>
+        <time datetime="2023-06-15">June 15, 2023</time>
+      </header>
+
+      <section>
+        <h3>Section Title</h3>
+        <p>Content...</p>
+      </section>
+
+      <aside>
+        <h3>Related Information</h3>
+        <p>Sidebar content...</p>
+      </aside>
+
+      <footer>
+        <p>Article footer information...</p>
+      </footer>
+    </article>
+  </main>
+
+  <footer>
+    <p>Website footer information...</p>
+  </footer>
+</body>
+```
+
+## Checklist
+
+Use this checklist to ensure you're following HTML best practices:
+
+<Steps>
+  <Step title="Document Structure">
+    - [ ] Proper DOCTYPE declaration - [ ] Language specified with lang
+    attribute - [ ] Character encoding declared - [ ] Viewport meta tag included
+    - [ ] Descriptive title and meta description
+  </Step>
+  <Step title="Semantic HTML">
+    - [ ] Semantic elements used appropriately - [ ] Proper heading hierarchy -
+    [ ] Lists used appropriately - [ ] Tables used only for tabular data
+  </Step>
+  <Step title="Accessibility">
+    - [ ] Alternative text for images - [ ] Form controls have associated labels
+    - [ ] ARIA attributes used when necessary - [ ] Keyboard accessibility
+    ensured - [ ] Color not used as the only means of conveying information
+  </Step>
+  <Step title="Performance">
+    - [ ] Resources loaded optimally (defer, async, preload) - [ ] Images have
+    width and height attributes - [ ] Responsive images implemented
+  </Step>
+  <Step title="Code Quality">
+    - [ ] Consistent indentation and formatting - [ ] Lowercase element names
+    and attributes - [ ] Attribute values quoted - [ ] Elements properly closed
+    - [ ] Meaningful class and ID names
+  </Step>
+  <Step title="Validation">
+    - [ ] HTML validates without errors - [ ] No deprecated elements or
+    attributes
+  </Step>
+</Steps>
+
+## Conclusion
+
+Following these HTML best practices will help you create websites that are accessible, performant, maintainable, and SEO-friendly. Remember that HTML is the foundation of your web pages, and a solid foundation leads to a better overall user experience.
+
+As web standards evolve, stay updated with the latest best practices and recommendations from authoritative sources like the W3C, MDN Web Docs, and web.dev.

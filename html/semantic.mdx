@@ -1,0 +1,539 @@
+---
+title: 'Semantic HTML'
+description: 'Understanding and implementing semantic HTML for better accessibility, SEO, and code structure'
+---
+
+## Introduction to Semantic HTML
+
+Semantic HTML refers to the use of HTML markup that conveys meaning about the content, rather than just defining its appearance. By using semantic elements, you communicate the structure and purpose of your content to browsers, search engines, screen readers, and other developers.
+
+<Note>
+  The term "semantic" relates to meaning in language or logic. In HTML, semantic elements clearly describe their meaning to both the browser and the developer.
+</Note>
+
+## Why Semantic HTML Matters
+
+Using semantic HTML provides numerous benefits:
+
+<CardGroup cols={2}>
+  <Card title="Accessibility" icon="universal-access">
+    Screen readers and assistive technologies rely on semantic markup to properly interpret and navigate content.
+  </Card>
+  <Card title="SEO" icon="magnifying-glass-chart">
+    Search engines better understand your content and its importance when semantic elements are used.
+  </Card>
+  <Card title="Maintainability" icon="screwdriver-wrench">
+    Code is easier to read, understand, and maintain when elements describe their purpose.
+  </Card>
+  <Card title="Consistency" icon="arrows-repeat">
+    Semantic HTML encourages consistent document structures across websites.
+  </Card>
+</CardGroup>
+
+## Non-Semantic vs. Semantic HTML
+
+Let's compare non-semantic and semantic approaches to building a simple webpage:
+
+### Non-Semantic Approach
+
+```html
+<div class="header">
+  <div class="logo">My Website</div>
+  <div class="navigation">
+    <div class="nav-item"><a href="#">Home</a></div>
+    <div class="nav-item"><a href="#">About</a></div>
+    <div class="nav-item"><a href="#">Contact</a></div>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="article">
+    <div class="article-title">Article Title</div>
+    <div class="article-content">This is the content of the article...</div>
+  </div>
+  
+  <div class="sidebar">
+    <div class="sidebar-title">Related Links</div>
+    <div class="sidebar-content">Some related links here...</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="copyright">Copyright 2023</div>
+</div>
+```
+
+### Semantic Approach
+
+```html
+<header>
+  <h1>My Website</h1>
+  <nav>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <h2>Article Title</h2>
+    <p>This is the content of the article...</p>
+  </article>
+  
+  <aside>
+    <h3>Related Links</h3>
+    <p>Some related links here...</p>
+  </aside>
+</main>
+
+<footer>
+  <p>Copyright 2023</p>
+</footer>
+```
+
+<Tip>
+  Notice how the semantic version clearly communicates the purpose of each section without relying on class names. A screen reader or search engine can immediately understand the structure of the page.
+</Tip>
+
+## Key Semantic HTML5 Elements
+
+HTML5 introduced many semantic elements to help structure web pages. Here are the most important ones:
+
+### Document Structure Elements
+
+<CardGroup cols={2}>
+  <Card title="<header>" icon="heading">
+    Represents introductory content, typically a group of introductory or navigational aids
+  </Card>
+  <Card title="<nav>" icon="bars">
+    Represents a section of a page whose purpose is to provide navigation links
+  </Card>
+  <Card title="<main>" icon="square">
+    Represents the main content of the document
+  </Card>
+  <Card title="<article>" icon="newspaper">
+    Represents a self-contained composition in a document, which is intended to be independently distributable or reusable
+  </Card>
+  <Card title="<section>" icon="section">
+    Represents a standalone section of content
+  </Card>
+  <Card title="<aside>" icon="sidebar">
+    Represents content that is tangentially related to the content around it
+  </Card>
+  <Card title="<footer>" icon="shoe-prints">
+    Represents a footer for its nearest sectioning content or sectioning root element
+  </Card>
+</CardGroup>
+
+### Text Content Elements
+
+<CardGroup cols={2}>
+  <Card title="<h1> to <h6>" icon="heading">
+    Heading elements that represent six levels of section headings
+  </Card>
+  <Card title="<p>" icon="paragraph">
+    Represents a paragraph of text
+  </Card>
+  <Card title="<blockquote>" icon="quote-left">
+    Represents content that is quoted from another source
+  </Card>
+  <Card title="<figure>" icon="image">
+    Represents self-contained content, potentially with a caption
+  </Card>
+  <Card title="<figcaption>" icon="caption">
+    Represents a caption or legend for a figure
+  </Card>
+  <Card title="<address>" icon="address-book">
+    Provides contact information for a person or organization
+  </Card>
+</CardGroup>
+
+### Inline Semantic Elements
+
+<CardGroup cols={2}>
+  <Card title="<time>" icon="clock">
+    Represents a specific period in time
+  </Card>
+  <Card title="<mark>" icon="highlighter">
+    Represents text which is marked or highlighted for reference
+  </Card>
+  <Card title="<cite>" icon="book">
+    Represents the title of a work
+  </Card>
+  <Card title="<abbr>" icon="a">
+    Represents an abbreviation or acronym
+  </Card>
+  <Card title="<code>" icon="code">
+    Represents computer code
+  </Card>
+  <Card title="<em>" icon="italic">
+    Represents emphasized text
+  </Card>
+  <Card title="<strong>" icon="bold">
+    Represents important text
+  </Card>
+</CardGroup>
+
+## Practical Examples of Semantic HTML
+
+### Blog Post
+
+```html
+<article>
+  <header>
+    <h1>Understanding Semantic HTML</h1>
+    <p>Published on <time datetime="2023-06-15">June 15, 2023</time> by <address class="author">Jane Smith</address></p>
+  </header>
+  
+  <section>
+    <h2>Introduction</h2>
+    <p>Semantic HTML is important because...</p>
+  </section>
+  
+  <section>
+    <h2>Key Elements</h2>
+    <p>Here are some key semantic elements:</p>
+    <ul>
+      <li><code>&lt;article&gt;</code> - For self-contained content</li>
+      <li><code>&lt;section&gt;</code> - For grouping related content</li>
+      <li><code>&lt;nav&gt;</code> - For navigation menus</li>
+    </ul>
+  </section>
+  
+  <section>
+    <h2>Example</h2>
+    <figure>
+      <pre><code>// Example code here</code></pre>
+      <figcaption>Example of semantic HTML structure</figcaption>
+    </figure>
+  </section>
+  
+  <footer>
+    <p>Tags: <a href="#">HTML</a>, <a href="#">Semantic Web</a>, <a href="#">Accessibility</a></p>
+  </footer>
+</article>
+
+<aside>
+  <h3>Related Articles</h3>
+  <ul>
+    <li><a href="#">HTML5 Best Practices</a></li>
+    <li><a href="#">Improving Website Accessibility</a></li>
+  </ul>
+</aside>
+```
+
+### Product Page
+
+```html
+<main>
+  <section class="product-overview">
+    <h1>Wireless Headphones</h1>
+    <p>High-quality wireless headphones with noise cancellation.</p>
+    
+    <figure>
+      <img src="headphones.jpg" alt="Black wireless headphones with cushioned ear cups">
+      <figcaption>Model XYZ-100 in Black</figcaption>
+    </figure>
+  </section>
+  
+  <section class="product-details">
+    <h2>Product Features</h2>
+    <ul>
+      <li>40-hour battery life</li>
+      <li>Active noise cancellation</li>
+      <li>Bluetooth 5.0 connectivity</li>
+    </ul>
+    
+    <h2>Technical Specifications</h2>
+    <table>
+      <caption>Technical Details</caption>
+      <tr>
+        <th>Weight</th>
+        <td>250g</td>
+      </tr>
+      <tr>
+        <th>Dimensions</th>
+        <td>18 x 15 x 8 cm</td>
+      </tr>
+    </table>
+  </section>
+  
+  <section class="customer-reviews">
+    <h2>Customer Reviews</h2>
+    <article class="review">
+      <h3>Great sound quality</h3>
+      <p>By <cite>John D.</cite> on <time datetime="2023-05-10">May 10, 2023</time></p>
+      <p>These headphones have amazing sound quality and the battery lasts forever!</p>
+    </article>
+  </section>
+</main>
+
+<aside>
+  <h2>Recommended Products</h2>
+  <!-- Related products here -->
+</aside>
+```
+
+## Semantic Forms
+
+Forms also benefit from semantic HTML elements that make them more accessible and user-friendly:
+
+```html
+<form>
+  <fieldset>
+    <legend>Personal Information</legend>
+    
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+  </fieldset>
+  
+  <fieldset>
+    <legend>Subscription Options</legend>
+    
+    <div>
+      <input type="radio" id="basic" name="subscription" value="basic">
+      <label for="basic">Basic Plan</label>
+    </div>
+    
+    <div>
+      <input type="radio" id="premium" name="subscription" value="premium">
+      <label for="premium">Premium Plan</label>
+    </div>
+  </fieldset>
+  
+  <button type="submit">Subscribe</button>
+</form>
+```
+
+<Note>
+  The `<fieldset>` element groups related form controls, while `<legend>` provides a caption for the fieldset. Using proper `<label>` elements associated with form controls is crucial for accessibility.
+</Note>
+
+## Semantic Tables
+
+Tables should be used for tabular data only, not for layout. Semantic table elements improve accessibility and structure:
+
+```html
+<table>
+  <caption>Quarterly Sales Report</caption>
+  
+  <thead>
+    <tr>
+      <th scope="col">Product</th>
+      <th scope="col">Q1</th>
+      <th scope="col">Q2</th>
+      <th scope="col">Q3</th>
+      <th scope="col">Q4</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <tr>
+      <th scope="row">Widgets</th>
+      <td>$10,000</td>
+      <td>$12,000</td>
+      <td>$15,000</td>
+      <td>$20,000</td>
+    </tr>
+    <tr>
+      <th scope="row">Gadgets</th>
+      <td>$8,000</td>
+      <td>$9,000</td>
+      <td>$10,000</td>
+      <td>$12,000</td>
+    </tr>
+  </tbody>
+  
+  <tfoot>
+    <tr>
+      <th scope="row">Total</th>
+      <td>$18,000</td>
+      <td>$21,000</td>
+      <td>$25,000</td>
+      <td>$32,000</td>
+    </tr>
+  </tfoot>
+</table>
+```
+
+<CardGroup cols={2}>
+  <Card title="<caption>" icon="caption">
+    Provides a title or explanation for the table
+  </Card>
+  <Card title="<thead>" icon="table-columns">
+    Groups header content in a table
+  </Card>
+  <Card title="<tbody>" icon="table-list">
+    Groups the body content in a table
+  </Card>
+  <Card title="<tfoot>" icon="shoe-prints">
+    Groups footer content in a table
+  </Card>
+  <Card title="<th>" icon="table-cells">
+    Defines a header cell with the scope attribute indicating whether it's a row or column header
+  </Card>
+</CardGroup>
+
+## ARIA and Semantic HTML
+
+While semantic HTML is the foundation of accessible web pages, sometimes you need additional information for assistive technologies. Accessible Rich Internet Applications (ARIA) attributes can enhance semantics when needed.
+
+```html
+<!-- Navigation with ARIA landmarks -->
+<nav aria-label="Main Navigation">
+  <ul role="menubar">
+    <li role="menuitem"><a href="#">Home</a></li>
+    <li role="menuitem"><a href="#">Products</a></li>
+  </ul>
+</nav>
+
+<!-- Tab interface -->
+<div role="tablist">
+  <button role="tab" aria-selected="true" aria-controls="panel1">Tab 1</button>
+  <button role="tab" aria-selected="false" aria-controls="panel2">Tab 2</button>
+</div>
+
+<div id="panel1" role="tabpanel">
+  <p>Content for Tab 1</p>
+</div>
+
+<div id="panel2" role="tabpanel" hidden>
+  <p>Content for Tab 2</p>
+</div>
+```
+
+<Warning>
+  Always prioritize native semantic HTML elements over ARIA attributes when possible. ARIA should be used to enhance semantics, not replace them. As the first rule of ARIA states: "If you can use a native HTML element or attribute with the semantics and behavior you require already built in, instead of re-purposing an element and adding an ARIA role, state or property to make it accessible, then do so."
+</Warning>
+
+## Common Semantic HTML Patterns
+
+### Navigation Menu
+
+```html
+<nav aria-label="Main Navigation">
+  <ul>
+    <li><a href="/" aria-current="page">Home</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/services">Services</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+</nav>
+```
+
+### Article with Metadata
+
+```html
+<article>
+  <header>
+    <h1>Article Title</h1>
+    <p>
+      By <address class="author">Author Name</address>
+      Published <time datetime="2023-06-15T14:30:00Z">June 15, 2023</time>
+    </p>
+  </header>
+  
+  <p>Article content goes here...</p>
+  
+  <footer>
+    <p>Tags: <a rel="tag" href="#">HTML</a>, <a rel="tag" href="#">Semantic Web</a></p>
+  </footer>
+</article>
+```
+
+### Product Card
+
+```html
+<article class="product">
+  <h2><a href="/product/123">Product Name</a></h2>
+  
+  <figure>
+    <img src="product.jpg" alt="Detailed description of the product">
+    <figcaption>Product shown from front angle</figcaption>
+  </figure>
+  
+  <p>Product description goes here...</p>
+  
+  <data value="59.99">$59.99</data>
+  
+  <form>
+    <button type="submit">Add to Cart</button>
+  </form>
+</article>
+```
+
+## Best Practices for Semantic HTML
+
+1. **Use the right element for the right job**
+   - Choose elements based on their meaning, not their default styling
+   - Don't use headings just to make text bigger or tables for layout
+
+2. **Create a logical document outline**
+   - Use heading elements (`<h1>` through `<h6>`) to create a hierarchical structure
+   - Don't skip heading levels (e.g., from `<h1>` to `<h3>`)
+
+3. **Use landmarks appropriately**
+   - Include one main `<main>` element per page
+   - Use `<header>`, `<footer>`, `<nav>`, and `<aside>` to define major page areas
+
+4. **Enhance with ARIA when necessary**
+   - Add ARIA roles, states, and properties when HTML semantics aren't sufficient
+   - Test with screen readers to ensure your content is accessible
+
+5. **Provide text alternatives**
+   - Use `alt` attributes for images
+   - Use `<figcaption>` for figures
+   - Use `<caption>` for tables
+
+6. **Make interactive elements accessible**
+   - Ensure all interactive elements are keyboard accessible
+   - Use proper form labels and button text
+
+7. **Test with accessibility tools**
+   - Use tools like axe, WAVE, or Lighthouse to check for accessibility issues
+   - Test with screen readers like NVDA, JAWS, or VoiceOver
+
+<Tip>
+  Remember that semantic HTML is not just about following rules—it's about communicating meaning. Always ask yourself: "Does this element accurately represent the meaning of my content?"
+</Tip>
+
+## Common Mistakes to Avoid
+
+1. **Using `<div>` and `<span>` when semantic elements would be more appropriate**
+2. **Using heading elements for styling rather than structure**
+3. **Using `<table>` for layout instead of tabular data**
+4. **Creating "click here" or "read more" links without context**
+5. **Nesting block-level elements inside inline elements**
+6. **Using multiple `<h1>` elements on a single page (in HTML5 it's allowed but still not recommended for most cases)**
+7. **Overriding semantic meaning with CSS (e.g., making a `<span>` display as a block)**
+
+## Browser Support and Compatibility
+
+All modern browsers fully support HTML5 semantic elements. However, for older browsers (particularly IE8 and below), you might need to include a polyfill like HTML5Shiv or use JavaScript to create and style these elements properly.
+
+```html
+<!-- Include this in the <head> for older IE browsers -->
+<!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+<![endif]-->
+```
+
+<Note>
+  With the decline of older browsers, the need for these polyfills has decreased significantly. However, it's good to be aware of them for projects that need to support legacy browsers.
+</Note>
+
+## Conclusion
+
+Semantic HTML is not just a best practice—it's a fundamental aspect of building accessible, SEO-friendly, and maintainable websites. By using the right elements for the right purpose, you create a solid foundation for your web projects that benefits all users, regardless of how they access your content.
+
+Remember that semantics go beyond just using the right tags—they're about conveying meaning and structure in a way that both humans and machines can understand. As you develop your HTML skills, continually ask yourself if your markup truly represents the meaning of your content.

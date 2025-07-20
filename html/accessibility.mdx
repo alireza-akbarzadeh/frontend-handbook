@@ -1,0 +1,624 @@
+---
+title: 'HTML Accessibility'
+description: 'Best practices for creating accessible HTML content for all users'
+---
+
+## Introduction to Web Accessibility
+
+Web accessibility means designing and developing websites that can be used by everyone, including people with disabilities. Accessibility is not just a nice-to-have feature—it's a fundamental aspect of web development that ensures equal access to information and functionality for all users.
+
+<Note>
+  According to the World Health Organization, over 1 billion people (about 15%
+  of the world's population) live with some form of disability. Creating
+  accessible websites ensures that these users can access and interact with your
+  content.
+</Note>
+
+## Why Accessibility Matters
+
+<CardGroup cols={2}>
+  <Card title="Inclusivity" icon="universal-access">
+    Accessible websites can be used by people with various disabilities,
+    including visual, auditory, physical, speech, cognitive, and neurological
+    disabilities.
+  </Card>
+  <Card title="Legal Requirements" icon="scale-balanced">
+    Many countries have laws requiring websites to be accessible, such as the
+    Americans with Disabilities Act (ADA) in the US and the European
+    Accessibility Act in the EU.
+  </Card>
+  <Card title="Better User Experience" icon="users">
+    Accessibility improvements often benefit all users, not just those with
+    disabilities.
+  </Card>
+  <Card title="SEO Benefits" icon="magnifying-glass-chart">
+    Many accessibility practices also improve search engine optimization.
+  </Card>
+</CardGroup>
+
+## Web Content Accessibility Guidelines (WCAG)
+
+The Web Content Accessibility Guidelines (WCAG) are the internationally recognized standards for web accessibility. WCAG is organized around four principles, often referred to as POUR:
+
+<Steps>
+  <Step title="Perceivable">
+    Information and user interface components must be presentable to users in
+    ways they can perceive. This means providing text alternatives for non-text
+    content and creating content that can be presented in different ways.
+  </Step>
+  <Step title="Operable">
+    User interface components and navigation must be operable. This means making
+    all functionality available from a keyboard and giving users enough time to
+    read and use content.
+  </Step>
+  <Step title="Understandable">
+    Information and the operation of the user interface must be understandable.
+    This means making text readable and predictable, and helping users avoid and
+    correct mistakes.
+  </Step>
+  <Step title="Robust">
+    Content must be robust enough to be interpreted reliably by a wide variety
+    of user agents, including assistive technologies. This means maximizing
+    compatibility with current and future tools.
+  </Step>
+</Steps>
+
+WCAG has three levels of conformance: A (minimum), AA (recommended), and AAA (enhanced). Most organizations aim for WCAG 2.1 AA compliance as a baseline.
+
+## Semantic HTML and Accessibility
+
+Semantic HTML is the foundation of web accessibility. Using the right HTML elements for their intended purpose provides built-in accessibility benefits.
+
+### Document Structure
+
+A proper document structure helps assistive technologies navigate and understand your content:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessible Webpage</title>
+  </head>
+  <body>
+    <header>
+      <h1>Website Title</h1>
+      <nav>
+        <!-- Navigation content -->
+      </nav>
+    </header>
+
+    <main>
+      <article>
+        <h2>Article Title</h2>
+        <p>Article content...</p>
+      </article>
+
+      <aside>
+        <h2>Related Information</h2>
+        <!-- Aside content -->
+      </aside>
+    </main>
+
+    <footer>
+      <p>Copyright information</p>
+    </footer>
+  </body>
+</html>
+```
+
+<Tip>
+  Using semantic elements like `<header>`, `<nav>`, `<main>`, `<article>`, `<aside>`, and `<footer>` creates landmarks that help screen reader users navigate your page more efficiently.
+</Tip>
+
+### Headings
+
+Headings create a hierarchical structure that helps users understand the organization of your content:
+
+```html
+<h1>Main Page Title</h1>
+
+<section>
+  <h2>Section Title</h2>
+  <p>Section content...</p>
+
+  <h3>Subsection Title</h3>
+  <p>Subsection content...</p>
+</section>
+```
+
+<Warning>
+  Always maintain a proper heading hierarchy. Don't skip levels (like going from `<h1>` to `<h3>`), and don't use headings just for styling purposes. Screen reader users often navigate by headings, so a proper hierarchy is crucial.
+</Warning>
+
+## Text Alternatives for Non-Text Content
+
+### Images
+
+All images should have appropriate alternative text that conveys the purpose or content of the image:
+
+```html
+<!-- Informative image -->
+<img src="chart.png" alt="Bar chart showing sales growth from 2020 to 2023" />
+
+<!-- Decorative image -->
+<img src="decorative-line.png" alt="" />
+
+<!-- Image with adjacent text description -->
+<figure>
+  <img src="complex-diagram.png" alt="" />
+  <figcaption>
+    Diagram showing the water cycle process: evaporation, condensation,
+    precipitation, and collection.
+  </figcaption>
+</figure>
+```
+
+<CardGroup cols={2}>
+  <Card title="Informative Images" icon="image">
+    Should have alt text that conveys the same information as the image
+  </Card>
+  <Card title="Decorative Images" icon="image">
+    Should have empty alt text (`alt=""`) so screen readers skip them
+  </Card>
+  <Card title="Complex Images" icon="image">
+    May need a longer description in addition to alt text
+  </Card>
+  <Card title="Functional Images" icon="image">
+    Should have alt text that describes the function (e.g., "Search" for a
+    search icon button)
+  </Card>
+</CardGroup>
+
+### SVG
+
+SVG images should also be made accessible:
+
+```html
+<svg role="img" aria-labelledby="chart-title chart-desc">
+  <title id="chart-title">Quarterly Sales 2023</title>
+  <desc id="chart-desc">
+    Bar chart showing sales increasing each quarter, with Q4 being the highest
+    at $1.2M
+  </desc>
+  <!-- SVG content -->
+</svg>
+```
+
+### Audio and Video
+
+Multimedia content needs alternatives:
+
+```html
+<!-- Audio with transcript -->
+<audio controls>
+  <source src="podcast.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
+<a href="podcast-transcript.html">Read the transcript</a>
+
+<!-- Video with captions and audio description -->
+<video controls>
+  <source src="video.mp4" type="video/mp4" />
+  <track
+    kind="captions"
+    src="captions.vtt"
+    srclang="en"
+    label="English"
+    default
+  />
+  <track
+    kind="descriptions"
+    src="descriptions.vtt"
+    srclang="en"
+    label="English"
+  />
+  Your browser does not support the video element.
+</video>
+```
+
+## Keyboard Accessibility
+
+Many users navigate websites using only a keyboard. All interactive elements should be keyboard accessible:
+
+### Focus Management
+
+```html
+<!-- Ensure all interactive elements are focusable -->
+<button>Click Me</button>
+
+<!-- Don't use divs for buttons unless you add proper ARIA and keyboard support -->
+<div
+  role="button"
+  tabindex="0"
+  onclick="handleClick()"
+  onkeydown="handleKeydown(event)"
+>
+  Bad Practice Button
+</div>
+
+<!-- Better: use the native button element -->
+<button onclick="handleClick()">Good Practice Button</button>
+```
+
+### Skip Links
+
+Skip links allow keyboard users to bypass repetitive navigation:
+
+```html
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <!-- Header content -->
+  </header>
+
+  <main id="main-content">
+    <!-- Main content -->
+  </main>
+</body>
+```
+
+With CSS to style the skip link:
+
+```css
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  padding: 8px;
+  background-color: #fff;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+```
+
+## Forms
+
+Forms are often challenging for users with disabilities. Here's how to make them more accessible:
+
+### Labels
+
+Every form control should have a label:
+
+```html
+<!-- Using the for attribute to associate the label with the input -->
+<label for="name">Name:</label>
+<input type="text" id="name" name="name" />
+
+<!-- Wrapping the input with the label -->
+<label>
+  Email:
+  <input type="email" name="email" />
+</label>
+```
+
+### Fieldsets and Legends
+
+Group related form controls with fieldset and legend:
+
+```html
+<fieldset>
+  <legend>Shipping Address</legend>
+
+  <div>
+    <label for="street">Street:</label>
+    <input type="text" id="street" name="street" />
+  </div>
+
+  <div>
+    <label for="city">City:</label>
+    <input type="text" id="city" name="city" />
+  </div>
+</fieldset>
+```
+
+### Error Messages
+
+Provide clear error messages and associate them with the relevant form controls:
+
+```html
+<label for="password">Password:</label>
+<input
+  type="password"
+  id="password"
+  name="password"
+  aria-describedby="password-error"
+/>
+<p id="password-error" class="error">
+  Password must be at least 8 characters long.
+</p>
+```
+
+### Required Fields
+
+Clearly indicate required fields:
+
+```html
+<label for="username">Username: <span class="required">*</span></label>
+<input
+  type="text"
+  id="username"
+  name="username"
+  required
+  aria-required="true"
+/>
+```
+
+## ARIA (Accessible Rich Internet Applications)
+
+ARIA attributes can enhance accessibility when HTML alone isn't sufficient:
+
+### ARIA Roles
+
+```html
+<div role="alert">Your form has been submitted successfully!</div>
+
+<div role="tablist">
+  <button role="tab" aria-selected="true" aria-controls="panel1">Tab 1</button>
+  <button role="tab" aria-selected="false" aria-controls="panel2">Tab 2</button>
+</div>
+
+<div id="panel1" role="tabpanel">Content for Tab 1</div>
+<div id="panel2" role="tabpanel" hidden>Content for Tab 2</div>
+```
+
+### ARIA States and Properties
+
+```html
+<!-- Indicate the current state of a toggle button -->
+<button aria-pressed="false">Toggle Feature</button>
+
+<!-- Provide additional description for a form field -->
+<label for="password">Password:</label>
+<input type="password" id="password" aria-describedby="password-help" />
+<p id="password-help">
+  Password must include at least 8 characters with a number and a special
+  character.
+</p>
+
+<!-- Indicate that an element is expanded or collapsed -->
+<button aria-expanded="false">Show Details</button>
+<div hidden>Additional details here...</div>
+```
+
+<Warning>
+  The first rule of ARIA is: "If you can use a native HTML element or attribute
+  with the semantics and behavior you require already built in, instead of
+  re-purposing an element and adding an ARIA role, state or property to make it
+  accessible, then do so." Only use ARIA when necessary.
+</Warning>
+
+## Color and Contrast
+
+Color should not be the only means of conveying information, and text should have sufficient contrast against its background:
+
+```html
+<!-- Bad: using only color to indicate required fields -->
+<label style="color: red;">Name:</label>
+<input type="text" required />
+
+<!-- Good: using both color and an asterisk symbol -->
+<label style="color: red;">Name: <span aria-label="required">*</span></label>
+<input type="text" required aria-required="true" />
+
+<!-- Good: using an icon with proper text alternative -->
+<label>
+  Name:
+  <svg aria-label="required" role="img" width="10" height="10">
+    <!-- SVG content for a star icon -->
+  </svg>
+</label>
+<input type="text" required aria-required="true" />
+```
+
+<Tip>
+  WCAG 2.1 AA requires a contrast ratio of at least 4.5:1 for normal text and
+  3:1 for large text. You can use tools like the WebAIM Contrast Checker to
+  verify your color combinations.
+</Tip>
+
+## Tables
+
+Tables should be used for tabular data only and need proper structure for accessibility:
+
+```html
+<table>
+  <caption>
+    Monthly Sales by Region
+  </caption>
+
+  <thead>
+    <tr>
+      <th scope="col">Region</th>
+      <th scope="col">January</th>
+      <th scope="col">February</th>
+      <th scope="col">March</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <th scope="row">North</th>
+      <td>$10,000</td>
+      <td>$12,000</td>
+      <td>$15,000</td>
+    </tr>
+    <tr>
+      <th scope="row">South</th>
+      <td>$8,000</td>
+      <td>$9,000</td>
+      <td>$10,000</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+<CardGroup cols={2}>
+  <Card title="caption" icon="caption">
+    Provides a title or description for the table
+  </Card>
+  <Card title="th" icon="table-cells">
+    Defines header cells with scope attribute indicating row or column headers
+  </Card>
+  <Card title="thead, tbody, tfoot" icon="table-list">
+    Group header, body, and footer rows
+  </Card>
+  <Card title="scope" icon="arrows-to-dot">
+    Indicates whether a header cell is for a row or column
+  </Card>
+</CardGroup>
+
+## Dynamic Content and AJAX
+
+When content changes dynamically, users with assistive technology need to be informed:
+
+```html
+<!-- Alert users of important updates -->
+<div role="alert" id="notification"></div>
+
+<script>
+  function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    // The role="alert" will cause screen readers to announce this message
+  }
+
+  // Later, when something happens:
+  showNotification('Your form has been submitted successfully!');
+</script>
+
+<!-- For less urgent updates -->
+<div aria-live="polite" id="status">Loading results...</div>
+
+<script>
+  // When results are loaded:
+  document.getElementById('status').textContent = '10 results found';
+  // Screen readers will announce this when they're not busy with other content
+</script>
+```
+
+<CardGroup cols={2}>
+  <Card title='aria-live="assertive"' icon="bullhorn">
+    For important updates that should interrupt the user
+  </Card>
+  <Card title='aria-live="polite"' icon="volume-low">
+    For updates that shouldn't interrupt the user
+  </Card>
+  <Card title='role="alert""' icon="bell">
+    Equivalent to aria-live="assertive" with aria-atomic="true"
+  </Card>
+  <Card title='role="status""' icon="circle-info">
+    Equivalent to aria-live="polite" with aria-atomic="true"
+  </Card>
+</CardGroup>
+
+## Testing for Accessibility
+
+Accessibility testing should be part of your development process:
+
+### Automated Testing
+
+Use tools like:
+
+- [axe DevTools](https://www.deque.com/axe/)
+- [WAVE](https://wave.webaim.org/)
+- [Lighthouse](https://developers.google.com/web/tools/lighthouse)
+
+### Manual Testing
+
+1. **Keyboard testing**: Navigate your site using only the keyboard
+2. **Screen reader testing**: Test with screen readers like NVDA, JAWS, or VoiceOver
+3. **Zoom testing**: Test your site at 200% zoom
+4. **Color contrast checking**: Verify text contrast meets WCAG requirements
+
+## Common Accessibility Issues and Solutions
+
+<CardGroup cols={2}>
+  <Card title="Missing Alt Text" icon="image">
+    <strong>Issue:</strong> Images without alt text
+    <strong>Solution:</strong> Add descriptive alt text to all informative images
+  </Card>
+  <Card title="Keyboard Traps" icon="keyboard">
+    <strong>Issue:</strong> Users can't navigate away from an element using
+    keyboard
+    <strong>Solution:</strong> Ensure all interactive elements can be navigated to
+    and away from using keyboard
+  </Card>
+  <Card title="Low Contrast" icon="circle-half-stroke">
+    <strong>Issue:</strong> Text with insufficient contrast against background
+    <strong>Solution:</strong> Ensure text meets WCAG contrast requirements (4.5:1
+    for normal text, 3:1 for large text)
+  </Card>
+  <Card title="Missing Form Labels" icon="tags">
+    <strong>Issue:</strong> Form controls without associated labels
+    <strong>Solution:</strong> Add proper labels for all form controls
+  </Card>
+  <Card title="Inaccessible Custom Controls" icon="sliders">
+    <strong>Issue:</strong> Custom widgets that don't work with keyboard or
+    screen readers
+    <strong>Solution:</strong> Use native elements when possible, or add proper ARIA
+    roles, states, and keyboard support
+  </Card>
+  <Card title="Missing Document Language" icon="language">
+    <strong>Issue:</strong> HTML without lang attribute
+    <strong>Solution:</strong> Add lang attribute to the html element
+  </Card>
+</CardGroup>
+
+## Accessibility Checklist
+
+Use this checklist to ensure your HTML is accessible:
+
+<Steps>
+  <Step title="Document Structure">
+    - [ ] HTML has a valid doctype - [ ] HTML has a lang attribute - [ ] Page
+    has a descriptive title - [ ] Proper heading hierarchy (h1-h6) - [ ]
+    Semantic landmarks (header, nav, main, etc.)
+  </Step>
+  <Step title="Text Alternatives">
+    - [ ] All images have appropriate alt text - [ ] Decorative images have
+    empty alt text - [ ] Complex images have detailed descriptions - [ ]
+    Audio/video has captions or transcripts
+  </Step>
+  <Step title="Keyboard Accessibility">
+    - [ ] All functionality is available via keyboard - [ ] Focus order is
+    logical and intuitive - [ ] Focus styles are visible - [ ] No keyboard traps
+    - [ ] Skip links for navigation
+  </Step>
+  <Step title="Forms">
+    - [ ] All form controls have labels - [ ] Required fields are indicated - [
+    ] Error messages are clear and accessible - [ ] Related fields are grouped
+    with fieldset/legend
+  </Step>
+  <Step title="Color and Contrast">
+    - [ ] Text has sufficient contrast - [ ] Information is not conveyed by
+    color alone - [ ] UI components have sufficient contrast
+  </Step>
+  <Step title="Tables">
+    - [ ] Tables used only for tabular data - [ ] Tables have captions - [ ]
+    Tables have proper headers - [ ] Complex tables have appropriate markup
+  </Step>
+  <Step title="Dynamic Content">
+    - [ ] ARIA live regions for dynamic content - [ ] Status messages are
+    announced to screen readers - [ ] Modal dialogs trap focus appropriately
+  </Step>
+</Steps>
+
+## Resources for Learning More
+
+- [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/standards-guidelines/wcag/)
+- [MDN Web Docs: Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
+- [WebAIM](https://webaim.org/)
+- [The A11Y Project](https://www.a11yproject.com/)
+- [Deque University](https://dequeuniversity.com/)
+
+<Tip>
+  Accessibility is an ongoing process, not a one-time task. Regularly test your
+  websites with real users who have disabilities and with assistive technologies
+  to ensure they remain accessible as you add new features and content.
+</Tip>
