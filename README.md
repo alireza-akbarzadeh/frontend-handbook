@@ -3,32 +3,6 @@
 > 📚 A comprehensive, no-fluff guide to advanced frontend development practices — from semantic HTML to modern patterns.
 
 ---
-
-## 🧭 Table of Contents
-
-1. [💡 Why This Guide?](#-why-this-guide)
-2. [📚 Semantic HTML for Senior Developers](#-semantic-html-for-senior-developers)
-3. [🚀 Next Steps & Features to Add](#-next-steps--features-to-add)
-4. [📦 Project Structure](#-project-structure)
-5. [🤝 Contributing](#-contributing)
-
----
-
-## 💡 Why This Guide?
-
-> “**Being senior** isn’t about using big words — it’s about using the *right* words (and tags).”
-
-Frontend development has evolved. It’s no longer just about putting pixels on screen. This guide dives into what separates the average developer from the expert:
-
-* 🎯 Using **semantic HTML** to make code accessible, maintainable, and future-proof.
-* 🧱 Building robust component structures
-* 🧩 Leveraging advanced frontend patterns
-* 🧠 Understanding what happens “under the hood”
-
-You already know how to build UIs. This book helps you build them **better**.
-
----
-
 ## 📚 Semantic HTML for Senior Developers
 
 > Think of semantic tags like choosing the right tools from a workshop. A `<div>` is duct tape — but senior devs know when to grab the torque wrench 🛠️.
