@@ -3,51 +3,152 @@
   "theme": "mint",
   "name": "Frontend Handbook",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#3B82F6",
+    "light": "#60A5FA",
+    "dark": "#2563EB"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Getting Started",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Introduction",
             "pages": ["index", "quickstart", "development"]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "HTML",
+        "groups": [
           {
-            "group": "Frontend Handbook",
-            "pages": ["essentials/html"]
-          },
-          {
-            "group": "Essentials",
+            "group": "Fundamentals",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "html/introduction",
+              "html/elements",
+              "html/attributes",
+              "html/structure"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "html/semantic",
+              "html/accessibility",
+              "html/forms",
+              "html/best-practices"
             ]
           }
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "CSS",
         "groups": [
           {
-            "group": "API Documentation",
-            "pages": ["api-reference/introduction"]
+            "group": "Basics",
+            "pages": [
+              "css/introduction",
+              "css/selectors",
+              "css/box-model",
+              "css/typography"
+            ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Layout",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "css/flexbox",
+              "css/grid",
+              "css/responsive",
+              "css/positioning"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "css/animations",
+              "css/variables",
+              "css/preprocessors",
+              "css/frameworks"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "JavaScript",
+        "groups": [
+          {
+            "group": "Fundamentals",
+            "pages": [
+              "javascript/introduction",
+              "javascript/syntax",
+              "javascript/variables",
+              "javascript/functions",
+              "javascript/objects",
+              "javascript/arrays"
+            ]
+          },
+          {
+            "group": "DOM",
+            "pages": [
+              "javascript/dom-manipulation",
+              "javascript/events",
+              "javascript/forms"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "javascript/async",
+              "javascript/fetch-api",
+              "javascript/modules",
+              "javascript/es6-features"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Tools & Frameworks",
+        "groups": [
+          {
+            "group": "Development Tools",
+            "pages": [
+              "tools/git",
+              "tools/package-managers",
+              "tools/bundlers",
+              "tools/devtools"
+            ]
+          },
+          {
+            "group": "Frameworks",
+            "pages": [
+              "frameworks/react",
+              "frameworks/vue",
+              "frameworks/angular",
+              "frameworks/svelte"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Best Practices",
+        "groups": [
+          {
+            "group": "Code Quality",
+            "pages": [
+              "best-practices/clean-code",
+              "best-practices/performance",
+              "best-practices/accessibility",
+              "best-practices/security"
+            ]
+          },
+          {
+            "group": "Workflow",
+            "pages": [
+              "best-practices/testing",
+              "best-practices/deployment",
+              "best-practices/documentation",
+              "best-practices/collaboration"
             ]
           }
         ]

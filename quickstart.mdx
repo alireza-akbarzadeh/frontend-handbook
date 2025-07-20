@@ -1,62 +1,135 @@
 ---
-title: "Quickstart"
-description: "Start using the Frontend Handbook in under 5 minutes"
+title: 'Quickstart Guide'
+description: 'Get started with the Frontend Handbook and set up your development environment'
 ---
 
-## Set up your environment
+## Setting Up Your Development Environment
 
-Learn how to get started with your Frontend Handbook locally and customize it to your needs.
+Before diving into frontend development, you'll need to set up your environment with the right tools. This guide will help you get started quickly.
 
-### Clone and run locally
+### Essential Tools for Frontend Development
 
 <AccordionGroup>
-  <Accordion icon="github" title="Clone the project">
-    First, clone the repository containing your handbook files. Run the following in your terminal:
+  <Accordion icon="code-editor" title="Code Editor">
+    A good code editor is essential for productive development. Here are some popular options:
 
-    ```bash
-    git clone https://github.com/alireza-akbarzadeh/frontend-handbook
-    cd frontend-handbook
-    ```
+    - **Visual Studio Code** - Free, powerful, and widely used with excellent extension support
+    - **Sublime Text** - Fast and lightweight editor with great performance
+    - **WebStorm** - Full-featured IDE specifically for web development
 
-    Make sure you have Node.js installed. You can download it from [nodejs.org](https://nodejs.org).
+    We recommend starting with **Visual Studio Code** as it offers an excellent balance of features, performance, and community support.
+
+    [Download VS Code](https://code.visualstudio.com/)
 
   </Accordion>
 
-  <Accordion icon="rectangle-terminal" title="Install dependencies and start development server">
-    Install the dependencies and start the development server using the following commands:
+  <Accordion icon="browser" title="Web Browsers & DevTools">
+    You'll need modern browsers for testing and their built-in developer tools for debugging:
+
+    - **Chrome** - Widely used with powerful DevTools
+    - **Firefox** - Excellent rendering engine with strong privacy features
+    - **Edge** - Microsoft's Chromium-based browser
+    - **Safari** - Important for testing on macOS/iOS
+
+    Make sure to familiarize yourself with browser DevTools by pressing `F12` or `Ctrl+Shift+I` (Windows/Linux) or `Cmd+Option+I` (Mac) in your browser.
+
+  </Accordion>
+
+  <Accordion icon="git" title="Version Control with Git">
+    Git is essential for tracking changes and collaborating with others:
+
+    1. Install Git from [git-scm.com](https://git-scm.com/downloads)
+    2. Set up a GitHub account at [github.com](https://github.com/)
+    3. Configure Git with your credentials:
 
     ```bash
-    npm install -g mintlify
-    mintlify dev
+    git config --global user.name "Your Name"
+    git config --global user.email "your.email@example.com"
     ```
 
-    This will launch your handbook locally at `http://localhost:3000` (or another port depending on your setup).
+    Basic Git commands you'll use frequently:
+    ```bash
+    git clone <repository-url>   # Clone a repository
+    git add .                    # Stage all changes
+    git commit -m "Message"      # Commit changes
+    git push                     # Push to remote repository
+    git pull                     # Pull latest changes
+    ```
+
+  </Accordion>
+
+  <Accordion icon="node-js" title="Node.js and npm">
+    Node.js and npm (Node Package Manager) are essential for modern frontend development:
+
+    1. Install Node.js from [nodejs.org](https://nodejs.org/) (npm comes included)
+    2. Verify installation with:
+
+    ```bash
+    node --version
+    npm --version
+    ```
+
+    npm allows you to install and manage JavaScript packages. Some basic commands:
+    ```bash
+    npm init                     # Initialize a new project
+    npm install <package-name>   # Install a package
+    npm install -g <package>     # Install globally
+    npm start                    # Run the start script
+    ```
 
   </Accordion>
 </AccordionGroup>
 
-### Customize and preview
+### First Project Setup
 
+<Steps>
+  <Step title="Create a new project folder">
+    ```bash
+    mkdir my-frontend-project
+    cd my-frontend-project
+    ```
+  </Step>
+
+{' '}
+
+<Step title="Initialize Git repository">
+  ```bash git init ``` Create a `.gitignore` file to exclude unnecessary files:
+  ``` node_modules/ .DS_Store .env ```
+</Step>
+
+{' '}
+
+<Step title="Set up basic project structure">
+  Create these essential files and folders: ``` index.html css/styles.css
+  js/script.js images/ ```
+</Step>
+
+  <Step title="Create a basic HTML template">
+    Add this starter code to your `index.html`:
+  ```html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>My Frontend Project</title>
+      <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+      <h1>Hello, Frontend World!</h1>
+
+      <script src="js/script.js"></script>
+    </body>
+    </html>
+    ```
+
+  </Step>
+</Steps>
 <AccordionGroup>
-  <Accordion icon="pen-to-square" title="Edit your content">
-    Edit the `.mdx` files inside the `html/`, `css/`, `javascript/`, or `git/` folders to update or add new topics.
-
-    For example:
-    - `html/introduction.mdx`
-    - `css/flexbox.mdx`
-
-    Use Markdown with React components to build interactive content.
-
-  </Accordion>
-
   <Accordion icon="eye" title="Preview your changes">
     Your changes will be hot-reloaded in the browser. Just refresh or navigate to the page you're editing to see updates instantly.
   </Accordion>
-</AccordionGroup>
 
-## Deploy your handbook
-
-<AccordionGroup>
   <Accordion icon="rocket" title="Deploy using GitHub Pages / Vercel / Netlify">
     You can deploy your handbook using a static site hosting provider:
 
@@ -81,6 +154,8 @@ Learn how to get started with your Frontend Handbook locally and customize it to
 
   </Accordion>
 </AccordionGroup>
+
+## Deploy your handbook
 
 ## Update your handbook
 

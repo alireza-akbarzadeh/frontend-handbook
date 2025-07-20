@@ -1,0 +1,444 @@
+---
+title: "Git for Frontend Developers"
+description: "Learn how to use Git for version control in your frontend projects"
+---
+
+## What is Git?
+
+Git is a distributed version control system that helps you track changes in your code, collaborate with other developers, and maintain different versions of your project. It was created by Linus Torvalds in 2005 and has become the standard for version control in software development.
+
+<Note>
+Git is different from GitHub. Git is the version control system, while GitHub is a cloud-based hosting service that lets you manage Git repositories. Other similar services include GitLab and Bitbucket.
+</Note>
+
+## Why Use Git for Frontend Development?
+
+<CardGroup cols={2}>
+  <Card title="Track Changes" icon="code-branch">
+    Keep a complete history of your code changes, making it easy to understand how your project evolved over time.
+  </Card>
+  
+  <Card title="Collaboration" icon="users">
+    Work with other developers simultaneously without overwriting each other's changes.
+  </Card>
+  
+  <Card title="Experimentation" icon="flask">
+    Create branches to experiment with new features or designs without affecting the main codebase.
+  </Card>
+  
+  <Card title="Backup" icon="cloud">
+    Store your code in remote repositories, ensuring you never lose your work.
+  </Card>
+</CardGroup>
+
+## Git Basics
+
+### Setting Up Git
+
+Before using Git, you need to set it up with your identity:
+
+```bash
+# Set your username
+git config --global user.name "Your Name"
+
+# Set your email address
+git config --global user.email "your.email@example.com"
+```
+
+### Core Git Concepts
+
+<Steps>
+  <Step title="Repository (Repo)">
+    A repository is a collection of files and folders that you want to track with Git, along with the history of changes made to those files.
+    
+    ```bash
+    # Initialize a new repository
+    git init
+    
+    # Clone an existing repository
+    git clone https://github.com/username/repository.git
+    ```
+  </Step>
+  
+  <Step title="Staging Area">
+    The staging area is where you prepare changes before committing them to the repository.
+    
+    ```bash
+    # Add specific files to the staging area
+    git add filename.js
+    
+    # Add all changed files
+    git add .
+    
+    # Check what's in the staging area
+    git status
+    ```
+  </Step>
+  
+  <Step title="Commits">
+    A commit is a snapshot of your repository at a specific point in time.
+    
+    ```bash
+    # Commit staged changes with a message
+    git commit -m "Add navigation component"
+    
+    # Commit all changes (skipping the staging area)
+    git commit -am "Fix responsive layout issues"
+    ```
+  </Step>
+  
+  <Step title="Branches">
+    Branches allow you to develop features, fix bugs, or experiment with new ideas in isolation.
+    
+    ```bash
+    # Create a new branch
+    git branch feature/new-header
+    
+    # Switch to a branch
+    git checkout feature/new-header
+    
+    # Create and switch to a new branch in one command
+    git checkout -b feature/new-footer
+    ```
+  </Step>
+</Steps>
+
+## Common Git Workflows
+
+### Basic Workflow
+
+The simplest Git workflow involves making changes, staging them, and committing them:
+
+```bash
+# Make changes to your files
+
+# Stage the changes
+git add .
+
+# Commit the changes
+git commit -m "Add responsive navbar"
+```
+
+### Working with Remote Repositories
+
+Remote repositories allow you to back up your code and collaborate with others:
+
+```bash
+# Add a remote repository
+git remote add origin https://github.com/username/repository.git
+
+# Push your changes to the remote repository
+git push origin main
+
+# Get the latest changes from the remote repository
+git pull origin main
+```
+
+### Feature Branch Workflow
+
+A common workflow for developing new features:
+
+<Steps>
+  <Step title="Create a feature branch">
+    ```bash
+    git checkout -b feature/new-carousel
+    ```
+  </Step>
+  
+  <Step title="Make changes and commit them">
+    ```bash
+    # Make your changes
+    git add .
+    git commit -m "Implement basic carousel structure"
+    
+    # Make more changes
+    git add .
+    git commit -m "Add carousel navigation controls"
+    ```
+  </Step>
+  
+  <Step title="Push the feature branch to the remote repository">
+    ```bash
+    git push origin feature/new-carousel
+    ```
+  </Step>
+  
+  <Step title="Create a pull request">
+    Go to GitHub (or similar platform) and create a pull request to merge your feature branch into the main branch.
+  </Step>
+  
+  <Step title="After the pull request is approved and merged">
+    ```bash
+    # Switch back to the main branch
+    git checkout main
+    
+    # Pull the latest changes (including your merged feature)
+    git pull origin main
+    
+    # Delete the feature branch locally
+    git branch -d feature/new-carousel
+    
+    # Delete the feature branch remotely
+    git push origin --delete feature/new-carousel
+    ```
+  </Step>
+</Steps>
+
+## Essential Git Commands
+
+### Basic Commands
+
+```bash
+# Check the status of your repository
+git status
+
+# View commit history
+git log
+
+# View a simplified commit history
+git log --oneline
+
+# Discard changes in working directory
+git checkout -- filename.js
+
+# Unstage a file
+git reset HEAD filename.js
+```
+
+### Working with Branches
+
+```bash
+# List all branches
+git branch
+
+# Merge a branch into the current branch
+git merge feature/new-header
+
+# Rebase the current branch onto another branch
+git rebase main
+```
+
+### Handling Conflicts
+
+When Git can't automatically merge changes, you'll need to resolve conflicts manually:
+
+```bash
+# During a merge or rebase with conflicts
+# 1. Open the conflicted files and resolve the conflicts
+# 2. Stage the resolved files
+git add filename.js
+
+# 3. Continue the merge or rebase
+git merge --continue
+# or
+git rebase --continue
+```
+
+## Advanced Git Features
+
+### Stashing Changes
+
+Stashing allows you to temporarily save changes without committing them:
+
+```bash
+# Stash your changes
+git stash
+
+# List all stashes
+git stash list
+
+# Apply the most recent stash
+git stash apply
+
+# Apply a specific stash
+git stash apply stash@{2}
+
+# Remove the most recent stash after applying it
+git stash pop
+
+# Clear all stashes
+git stash clear
+```
+
+### Git Tags
+
+Tags are used to mark specific points in history, typically for releases:
+
+```bash
+# Create a lightweight tag
+git tag v1.0.0
+
+# Create an annotated tag with a message
+git tag -a v1.0.0 -m "Version 1.0.0 release"
+
+# List all tags
+git tag
+
+# Push tags to the remote repository
+git push origin --tags
+```
+
+### Interactive Rebase
+
+Interactive rebase allows you to modify your commit history:
+
+```bash
+# Start an interactive rebase for the last 3 commits
+git rebase -i HEAD~3
+```
+
+This opens an editor where you can:
+- Reorder commits
+- Edit commit messages
+- Squash multiple commits into one
+- Split commits
+- Delete commits
+
+## Git Best Practices for Frontend Projects
+
+### Commit Messages
+
+Write clear, descriptive commit messages that explain what changes were made and why:
+
+```
+# Good commit message format
+feat: add responsive navigation component
+
+Implement a collapsible navigation bar that works on mobile devices.
+Closes #42.
+```
+
+Consider using conventional commits format: `type(scope): message`
+
+Common types include:
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code changes that neither fix bugs nor add features
+- `test`: Adding or updating tests
+- `chore`: Changes to the build process or auxiliary tools
+
+### .gitignore
+
+Create a proper `.gitignore` file to exclude unnecessary files from your repository:
+
+```
+# Node.js dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage reports
+coverage/
+```
+
+### Branch Strategy
+
+Adopt a consistent branching strategy for your team:
+
+- **Main/Master**: Production-ready code
+- **Develop**: Integration branch for features
+- **Feature branches**: For new features (`feature/feature-name`)
+- **Hotfix branches**: For urgent fixes (`hotfix/issue-description`)
+- **Release branches**: For preparing releases (`release/v1.2.0`)
+
+## Git Tools and Integrations
+
+### Git GUI Clients
+
+If you prefer a visual interface over the command line:
+
+- **GitHub Desktop**: Simple and integrates well with GitHub
+- **GitKraken**: Powerful cross-platform Git client
+- **Sourcetree**: Feature-rich client for Windows and Mac
+- **VS Code**: Built-in Git integration
+
+### Git Hooks
+
+Git hooks are scripts that run automatically when certain Git events occur:
+
+- **pre-commit**: Run linters or tests before committing
+- **pre-push**: Verify code quality before pushing
+- **post-merge**: Update dependencies after pulling changes
+
+Tools like Husky make it easy to set up Git hooks in your project:
+
+```json
+// package.json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "*.js": ["eslint --fix", "prettier --write"]
+  }
+}
+```
+
+## Common Git Issues and Solutions
+
+### Accidentally Committed to the Wrong Branch
+
+```bash
+# Save the commit hash
+git log -n 1 --pretty=format:"%H"
+
+# Undo the commit but keep the changes staged
+git reset --soft HEAD~1
+
+# Switch to the correct branch
+git checkout correct-branch
+
+# Commit the changes
+git commit -m "Your commit message"
+```
+
+### Undo the Last Commit
+
+```bash
+# Undo commit but keep changes staged
+git reset --soft HEAD~1
+
+# Undo commit and unstage changes
+git reset HEAD~1
+
+# Undo commit and discard changes (be careful!)
+git reset --hard HEAD~1
+```
+
+### Fix a Typo in the Last Commit Message
+
+```bash
+git commit --amend -m "Corrected commit message"
+```
+
+## Next Steps
+
+Now that you understand Git basics, you can:
+
+- Learn about [Package Managers](/tools/package-managers) like npm and Yarn
+- Explore [Bundlers](/tools/bundlers) for optimizing your frontend assets
+- Master [Browser DevTools](/tools/devtools) for debugging and performance optimization

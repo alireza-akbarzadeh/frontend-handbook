@@ -1,0 +1,783 @@
+---
+title: "Frontend Performance Optimization"
+description: "Learn how to optimize your frontend applications for better speed and user experience"
+---
+
+## Why Performance Matters
+
+Performance is a critical aspect of frontend development that directly impacts user experience, engagement, and conversion rates. Studies have shown that:
+
+- 53% of mobile users abandon sites that take longer than 3 seconds to load
+- Every 100ms of latency costs Amazon 1% in sales
+- Google uses page speed as a ranking factor for both desktop and mobile searches
+
+<Note>
+Performance optimization is not just about making your site fast—it's about creating a smooth, responsive experience that keeps users engaged and satisfied.
+</Note>
+
+## Performance Metrics
+
+Before optimizing, it's important to understand what to measure. Here are key performance metrics to track:
+
+<CardGroup cols={2}>
+  <Card title="First Contentful Paint (FCP)" icon="paint-roller">
+    Time until the browser renders the first bit of content from the DOM.
+    
+    **Good target:** Under 1.8 seconds
+  </Card>
+  
+  <Card title="Largest Contentful Paint (LCP)" icon="image">
+    Time until the largest text or image element is rendered.
+    
+    **Good target:** Under 2.5 seconds
+  </Card>
+  
+  <Card title="First Input Delay (FID)" icon="hand-pointer">
+    Time from when a user first interacts with your site to when the browser responds.
+    
+    **Good target:** Under 100 milliseconds
+  </Card>
+  
+  <Card title="Cumulative Layout Shift (CLS)" icon="arrows-up-down-left-right">
+    Measures visual stability and unexpected layout shifts.
+    
+    **Good target:** Under 0.1
+  </Card>
+  
+  <Card title="Time to Interactive (TTI)" icon="mouse-pointer">
+    Time until the page is fully interactive.
+    
+    **Good target:** Under 3.8 seconds
+  </Card>
+  
+  <Card title="Total Blocking Time (TBT)" icon="clock-stop">
+    Sum of all time periods between FCP and TTI when the main thread was blocked.
+    
+    **Good target:** Under 200 milliseconds
+  </Card>
+</CardGroup>
+
+## Measuring Performance
+
+### Tools for Performance Measurement
+
+<Steps>
+  <Step title="Lighthouse">
+    Chrome's built-in auditing tool that provides performance scores and suggestions.
+    
+    Access it through Chrome DevTools > Lighthouse tab or run it from the command line:
+    ```bash
+    npm install -g lighthouse
+    lighthouse https://example.com --view
+    ```
+  </Step>
+  
+  <Step title="WebPageTest">
+    Provides detailed performance analysis from multiple locations and browsers.
+    
+    Visit [WebPageTest.org](https://www.webpagetest.org/) to run tests.
+  </Step>
+  
+  <Step title="Chrome DevTools Performance Panel">
+    Offers detailed runtime performance analysis including CPU usage, rendering, and network activity.
+    
+    1. Open Chrome DevTools (F12)
+    2. Go to the Performance tab
+    3. Click Record and interact with your site
+    4. Stop recording and analyze the results
+  </Step>
+  
+  <Step title="Core Web Vitals Report">
+    Google's report on real-user performance metrics.
+    
+    Access it through Google Search Console.
+  </Step>
+</Steps>
+
+### Real User Monitoring (RUM)
+
+While lab testing is valuable, measuring performance with real users provides the most accurate data:
+
+```javascript
+// Using the Web Vitals library
+import {getLCP, getFID, getCLS} from 'web-vitals';
+
+function sendToAnalytics({name, delta, id}) {
+  // Send metrics to your analytics service
+  console.log(`Metric: ${name} | Value: ${delta} | ID: ${id}`);
+}
+
+// Monitor Core Web Vitals
+getCLS(sendToAnalytics);
+getFID(sendToAnalytics);
+getLCP(sendToAnalytics);
+```
+
+## Optimizing Asset Delivery
+
+### Image Optimization
+
+Images often account for the largest portion of page weight. Here's how to optimize them:
+
+<AccordionGroup>
+  <Accordion icon="compress" title="Compress and resize images">
+    Use tools like ImageOptim, TinyPNG, or Sharp to compress images without significant quality loss.
+    
+    ```bash
+    # Using Sharp in Node.js
+    const sharp = require('sharp');
+    
+    sharp('input.jpg')
+      .resize(800) // Resize to 800px width
+      .jpeg({ quality: 80 }) // Compress with 80% quality
+      .toFile('output.jpg');
+    ```
+    
+    Always serve images at the appropriate size for their display dimensions.
+  </Accordion>
+  
+  <Accordion icon="photo-film" title="Use modern image formats">
+    WebP, AVIF, and JPEG XL offer better compression than older formats like JPEG and PNG.
+    
+    ```html
+    <picture>
+      <source srcset="image.avif" type="image/avif">
+      <source srcset="image.webp" type="image/webp">
+      <img src="image.jpg" alt="Description" loading="lazy">
+    </picture>
+    ```
+  </Accordion>
+  
+  <Accordion icon="wand-magic-sparkles" title="Implement lazy loading">
+    Only load images when they're about to enter the viewport.
+    
+    ```html
+    <!-- Native lazy loading -->
+    <img src="image.jpg" alt="Description" loading="lazy">
+    ```
+    
+    For broader browser support, use a library like lazysizes:
+    
+    ```html
+    <img data-src="image.jpg" class="lazyload" alt="Description">
+    ```
+  </Accordion>
+  
+  <Accordion icon="crop" title="Use responsive images">
+    Serve different image sizes based on the device's screen size.
+    
+    ```html
+    <img 
+      srcset="small.jpg 500w, medium.jpg 1000w, large.jpg 1500w" 
+      sizes="(max-width: 600px) 500px, (max-width: 1200px) 1000px, 1500px"
+      src="medium.jpg" 
+      alt="Description"
+    >
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### JavaScript Optimization
+
+<AccordionGroup>
+  <Accordion icon="box-archive" title="Code splitting">
+    Split your JavaScript into smaller chunks that load on demand.
+    
+    ```javascript
+    // Using dynamic imports in modern JavaScript
+    button.addEventListener('click', async () => {
+      const module = await import('./heavy-feature.js');
+      module.initFeature();
+    });
+    ```
+    
+    With webpack:
+    ```javascript
+    // webpack.config.js
+    module.exports = {
+      entry: './src/index.js',
+      output: {
+        filename: '[name].[contenthash].js',
+        chunkFilename: '[name].[contenthash].js',
+      },
+      optimization: {
+        splitChunks: {
+          chunks: 'all',
+        },
+      },
+    };
+    ```
+  </Accordion>
+  
+  <Accordion icon="minimize" title="Minification and compression">
+    Reduce file size by removing unnecessary characters and compressing the code.
+    
+    ```bash
+    # Using Terser for minification
+    npx terser script.js -o script.min.js -c -m
+    ```
+    
+    Enable Gzip or Brotli compression on your server:
+    
+    ```nginx
+    # Nginx configuration for Gzip
+    gzip on;
+    gzip_types text/plain text/css application/javascript;
+    gzip_min_length 1000;
+    ```
+  </Accordion>
+  
+  <Accordion icon="hourglass-half" title="Defer non-critical JavaScript">
+    Prevent JavaScript from blocking the page render.
+    
+    ```html
+    <!-- Defer loading until HTML parsing is complete -->
+    <script src="non-critical.js" defer></script>
+    
+    <!-- Load after everything else is done -->
+    <script src="analytics.js" async></script>
+    ```
+  </Accordion>
+  
+  <Accordion icon="broom" title="Tree shaking">
+    Remove unused code from your bundles.
+    
+    ```javascript
+    // webpack.config.js
+    module.exports = {
+      mode: 'production', // Enables tree shaking
+      optimization: {
+        usedExports: true,
+      },
+    };
+    ```
+    
+    Use ES modules to enable tree shaking:
+    ```javascript
+    // Import only what you need
+    import { Button } from 'ui-library';
+    // Instead of
+    // import * from 'ui-library';
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### CSS Optimization
+
+<AccordionGroup>
+  <Accordion icon="file-code" title="Critical CSS">
+    Inline critical styles in the `<head>` and load the rest asynchronously.
+    
+    ```html
+    <head>
+      <style>
+        /* Critical CSS for above-the-fold content */
+        header { /* styles */ }
+        .hero { /* styles */ }
+      </style>
+      <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      <noscript><link rel="stylesheet" href="styles.css"></noscript>
+    </head>
+    ```
+    
+    Tools like Critical or CriticalCSS can automate this process.
+  </Accordion>
+  
+  <Accordion icon="scissors" title="Reduce unused CSS">
+    Remove unused styles to reduce file size.
+    
+    ```bash
+    # Using PurgeCSS
+    npx purgecss --css style.css --content index.html --output style.purged.css
+    ```
+  </Accordion>
+  
+  <Accordion icon="layer-group" title="Minimize render-blocking CSS">
+    Load non-critical CSS asynchronously.
+    
+    ```html
+    <link rel="preload" href="non-critical.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    ```
+  </Accordion>
+  
+  <Accordion icon="sitemap" title="Optimize CSS selectors">
+    Use efficient selectors to improve rendering performance.
+    
+    ```css
+    /* Avoid deeply nested selectors */
+    .header .navigation .list .item a { /* slow */ }
+    
+    /* Better approach */
+    .nav-link { /* fast */ }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Fonts Optimization
+
+<AccordionGroup>
+  <Accordion icon="font" title="Use system fonts when possible">
+    System fonts load instantly because they're already installed.
+    
+    ```css
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    }
+    ```
+  </Accordion>
+  
+  <Accordion icon="font-awesome" title="Optimize web fonts loading">
+    Use `font-display` to control how fonts are displayed while loading.
+    
+    ```css
+    @font-face {
+      font-family: 'CustomFont';
+      src: url('custom-font.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap; /* Show fallback font until custom font loads */
+    }
+    ```
+    
+    Preload important fonts:
+    ```html
+    <link rel="preload" href="custom-font.woff2" as="font" type="font/woff2" crossorigin>
+    ```
+  </Accordion>
+  
+  <Accordion icon="text-width" title="Subset fonts">
+    Only include the characters you need.
+    
+    ```html
+    <!-- For Latin characters only -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&subset=latin" rel="stylesheet">
+    ```
+    
+    Use tools like glyphhanger to create custom subsets.
+  </Accordion>
+  
+  <Accordion icon="weight-hanging" title="Limit font weights and styles">
+    Each font weight and style is a separate download.
+    
+    ```css
+    /* Instead of loading many weights */
+    body {
+      /* Only load what you need */
+      font-family: 'Roboto';
+      font-weight: 400; /* Regular */
+    }
+    
+    h1, h2, h3 {
+      font-weight: 700; /* Bold */
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Rendering Performance
+
+### Optimizing the Critical Rendering Path
+
+<Steps>
+  <Step title="Minimize render-blocking resources">
+    Move non-critical CSS and JavaScript out of the critical rendering path.
+    
+    ```html
+    <!-- For CSS -->
+    <link rel="preload" href="non-critical.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- For JavaScript -->
+    <script src="non-critical.js" defer></script>
+    ```
+  </Step>
+  
+  <Step title="Optimize DOM size">
+    Keep the DOM tree small and shallow.
+    
+    ```html
+    <!-- Avoid -->
+    <div>
+      <div>
+        <div>
+          <div>
+            <p>Deeply nested content</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Better -->
+    <p class="content">Flatter DOM structure</p>
+    ```
+  </Step>
+  
+  <Step title="Avoid layout thrashing">
+    Batch DOM reads and writes to prevent forced reflows.
+    
+    ```javascript
+    // Bad: Interleaving reads and writes
+    const width = element.offsetWidth; // Read
+    element.style.width = (width + 10) + 'px'; // Write
+    const height = element.offsetHeight; // Read (forces reflow)
+    element.style.height = (height + 10) + 'px'; // Write
+    
+    // Good: Batch reads, then writes
+    const width = element.offsetWidth; // Read
+    const height = element.offsetHeight; // Read
+    element.style.width = (width + 10) + 'px'; // Write
+    element.style.height = (height + 10) + 'px'; // Write
+    ```
+  </Step>
+  
+  <Step title="Use efficient CSS animations">
+    Prefer properties that only affect compositing.
+    
+    ```css
+    /* Expensive (triggers layout) */
+    .expensive {
+      animation: move 1s infinite;
+    }
+    @keyframes move {
+      from { width: 100px; height: 100px; }
+      to { width: 200px; height: 200px; }
+    }
+    
+    /* Efficient (only compositing) */
+    .efficient {
+      animation: slide 1s infinite;
+    }
+    @keyframes slide {
+      from { transform: translateX(0); }
+      to { transform: translateX(100px); }
+    }
+    ```
+  </Step>
+</Steps>
+
+### Preventing Layout Shifts
+
+Layout shifts create a poor user experience and negatively impact your CLS score.
+
+```html
+<!-- Bad: Image without dimensions -->
+<img src="image.jpg" alt="Description">
+
+<!-- Good: Image with dimensions -->
+<img src="image.jpg" alt="Description" width="800" height="600">
+```
+
+```css
+/* Reserve space for dynamic content */
+.comments-container {
+  min-height: 200px;
+}
+
+/* Use content-visibility for off-screen content */
+.below-fold-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1000px; /* Estimate height */
+}
+```
+
+## Network Optimization
+
+### Caching Strategies
+
+<AccordionGroup>
+  <Accordion icon="server" title="HTTP caching">
+    Configure proper cache headers to reduce server requests.
+    
+    ```nginx
+    # Nginx configuration for static assets
+    location /static/ {
+      expires 1y;
+      add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+    
+    # For HTML files
+    location / {
+      add_header Cache-Control "no-cache, must-revalidate";
+    }
+    ```
+  </Accordion>
+  
+  <Accordion icon="database" title="Service Workers">
+    Implement offline caching with service workers.
+    
+    ```javascript
+    // Register a service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+    
+    // In sw.js
+    self.addEventListener('install', (event) => {
+      event.waitUntil(
+        caches.open('v1').then((cache) => {
+          return cache.addAll([
+            '/',
+            '/styles.css',
+            '/script.js',
+            '/offline.html'
+          ]);
+        })
+      );
+    });
+    
+    self.addEventListener('fetch', (event) => {
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          return response || fetch(event.request);
+        })
+      );
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="memory" title="Memory cache">
+    Use browser memory cache for frequently accessed data.
+    
+    ```javascript
+    // Simple in-memory cache
+    const cache = new Map();
+    
+    async function fetchWithCache(url) {
+      if (cache.has(url)) {
+        return cache.get(url);
+      }
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      cache.set(url, data);
+      return data;
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Resource Hints
+
+Use resource hints to inform the browser about resources it should load or connect to:
+
+```html
+<!-- Preconnect to important third-party domains -->
+<link rel="preconnect" href="https://api.example.com">
+
+<!-- DNS prefetch for older browsers -->
+<link rel="dns-prefetch" href="https://api.example.com">
+
+<!-- Preload critical resources -->
+<link rel="preload" href="critical-script.js" as="script">
+<link rel="preload" href="hero-image.jpg" as="image">
+
+<!-- Prefetch resources needed for the next page -->
+<link rel="prefetch" href="next-page.html">
+
+<!-- Prerender the next page (use with caution) -->
+<link rel="prerender" href="likely-next-page.html">
+```
+
+## Framework-Specific Optimizations
+
+### React
+
+```jsx
+// Use React.memo for component memoization
+const MemoizedComponent = React.memo(function MyComponent(props) {
+  // Only re-renders if props change
+  return <div>{props.name}</div>;
+});
+
+// Use useMemo for expensive calculations
+function SearchResults({ query, data }) {
+  const filteredData = React.useMemo(() => {
+    return data.filter(item => item.name.includes(query));
+  }, [query, data]);
+  
+  return (
+    <ul>
+      {filteredData.map(item => <li key={item.id}>{item.name}</li>)}
+    </ul>
+  );
+}
+
+// Use useCallback for stable function references
+function Parent() {
+  const [count, setCount] = useState(0);
+  
+  const handleClick = React.useCallback(() => {
+    console.log('Clicked!');
+  }, []); // Empty dependency array = stable reference
+  
+  return <Child onClick={handleClick} />;
+}
+```
+
+### Vue.js
+
+```vue
+<template>
+  <div>
+    <!-- Use v-once for content that never changes -->
+    <header v-once>
+      <h1>{{ title }}</h1>
+    </header>
+    
+    <!-- Use v-show instead of v-if for elements that toggle frequently -->
+    <div v-show="isVisible">Toggled content</div>
+    
+    <!-- Use key with v-for -->
+    <ul>
+      <li v-for="item in items" :key="item.id">{{ item.name }}</li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      title: 'My App',
+      isVisible: true,
+      items: []
+    };
+  },
+  // Use computed properties for derived values
+  computed: {
+    filteredItems() {
+      return this.items.filter(item => item.isActive);
+    }
+  }
+};
+</script>
+```
+
+### Angular
+
+```typescript
+// Use OnPush change detection strategy
+@Component({
+  selector: 'app-item',
+  template: `<div>{{ item.name }}</div>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ItemComponent {
+  @Input() item: any;
+}
+
+// Use trackBy with ngFor
+@Component({
+  selector: 'app-list',
+  template: `
+    <div *ngFor="let item of items; trackBy: trackByFn">
+      {{ item.name }}
+    </div>
+  `
+})
+export class ListComponent {
+  items: any[] = [];
+  
+  trackByFn(index: number, item: any): number {
+    return item.id;
+  }
+}
+
+// Lazy load modules
+const routes: Routes = [
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
+  }
+];
+```
+
+## Performance Budgets
+
+Set performance budgets to maintain performance standards as your project evolves:
+
+```javascript
+// webpack.config.js
+module.exports = {
+  performance: {
+    maxAssetSize: 250000, // 250 KB
+    maxEntrypointSize: 250000,
+    hints: 'error'
+  }
+};
+```
+
+In your CI/CD pipeline, you can use tools like Lighthouse CI to enforce performance budgets:
+
+```json
+// lighthouserc.json
+{
+  "ci": {
+    "collect": {
+      "url": ["https://example.com"],
+      "numberOfRuns": 3
+    },
+    "assert": {
+      "assertions": {
+        "first-contentful-paint": ["warn", {"minScore": 0.8}],
+        "interactive": ["error", {"maxNumericValue": 3000}],
+        "max-potential-fid": ["error", {"maxNumericValue": 100}],
+        "cumulative-layout-shift": ["error", {"maxNumericValue": 0.1}],
+        "largest-contentful-paint": ["error", {"maxNumericValue": 2500}]
+      }
+    }
+  }
+}
+```
+
+## Checklist for Performance Optimization
+
+Use this checklist to ensure you've covered the most important performance optimizations:
+
+<Steps>
+  <Step title="Measure current performance">
+    - Run Lighthouse audits
+    - Set up real user monitoring
+    - Identify the biggest performance bottlenecks
+  </Step>
+  
+  <Step title="Optimize asset delivery">
+    - Compress and optimize images
+    - Minify and compress JavaScript and CSS
+    - Implement code splitting
+    - Use tree shaking
+    - Optimize fonts
+  </Step>
+  
+  <Step title="Improve rendering performance">
+    - Minimize render-blocking resources
+    - Optimize the critical rendering path
+    - Prevent layout shifts
+    - Use efficient animations
+  </Step>
+  
+  <Step title="Implement caching strategies">
+    - Configure HTTP caching
+    - Implement service workers
+    - Use resource hints
+  </Step>
+  
+  <Step title="Apply framework-specific optimizations">
+    - Use memoization techniques
+    - Implement lazy loading
+    - Optimize rendering cycles
+  </Step>
+  
+  <Step title="Set up performance monitoring">
+    - Establish performance budgets
+    - Integrate performance testing in CI/CD
+    - Monitor real user metrics
+  </Step>
+</Steps>
+
+## Next Steps
+
+Now that you understand frontend performance optimization, you can:
+
+- Learn about [Accessibility](/best-practices/accessibility) to make your sites usable by everyone
+- Explore [Security](/best-practices/security) best practices to protect your applications
+- Study [Testing](/best-practices/testing) strategies to ensure your optimizations don't break functionality

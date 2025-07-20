@@ -1,0 +1,301 @@
+---
+title: "Introduction to CSS"
+description: "Learn the fundamentals of CSS, the styling language of the web"
+---
+
+## What is CSS?
+
+CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation of a document written in HTML. While HTML provides the structure of a webpage, CSS controls its visual appearance, including layout, colors, fonts, and animations.
+
+<Note>
+CSS separates content from presentation, allowing you to maintain and update the look of your website without changing the underlying HTML structure.
+</Note>
+
+## How CSS Works
+
+CSS works by selecting HTML elements and applying styles to them. The browser reads the CSS rules and renders the HTML elements according to the specified styles.
+
+<Frame caption="Basic CSS syntax">
+```css
+selector {
+  property: value;
+  another-property: another-value;
+}
+```
+</Frame>
+
+- **Selector**: Targets the HTML element(s) to style
+- **Property**: The aspect of the element you want to change
+- **Value**: The specific setting you want to apply
+
+## Ways to Include CSS
+
+There are three ways to include CSS in your HTML documents:
+
+<Steps>
+  <Step title="Inline CSS">
+    Applied directly to individual HTML elements using the `style` attribute.
+    
+    ```html
+    <p style="color: blue; font-size: 16px;">This is a blue paragraph.</p>
+    ```
+    
+    <Warning>
+    Inline styles have the highest specificity but make your HTML cluttered and difficult to maintain. Use sparingly.
+    </Warning>
+  </Step>
+  
+  <Step title="Internal CSS">
+    Defined within a `<style>` element in the `<head>` section of an HTML document.
+    
+    ```html
+    <head>
+      <style>
+        p {
+          color: blue;
+          font-size: 16px;
+        }
+      </style>
+    </head>
+    ```
+  </Step>
+  
+  <Step title="External CSS (Recommended)">
+    Stored in a separate .css file and linked to the HTML document using the `<link>` element.
+    
+    ```html
+    <head>
+      <link rel="stylesheet" href="styles.css">
+    </head>
+    ```
+    
+    And in your styles.css file:
+    ```css
+    p {
+      color: blue;
+      font-size: 16px;
+    }
+    ```
+    
+    <Tip>
+    External CSS is the best practice for most websites as it promotes separation of concerns, reusability, and easier maintenance.
+    </Tip>
+  </Step>
+</Steps>
+
+## CSS Selectors
+
+Selectors are patterns used to select and style HTML elements. Here are some common types:
+
+### Basic Selectors
+
+<CardGroup cols={2}>
+  <Card title="Element Selector" icon="code">
+    Selects all elements of a specified type.
+    
+    ```css
+    p {
+      color: blue;
+    }
+    ```
+  </Card>
+  
+  <Card title="Class Selector" icon="layer-group">
+    Selects elements with a specific class attribute.
+    
+    ```css
+    .highlight {
+      background-color: yellow;
+    }
+    ```
+  </Card>
+  
+  <Card title="ID Selector" icon="fingerprint">
+    Selects a single element with a specific id attribute.
+    
+    ```css
+    #header {
+      background-color: black;
+      color: white;
+    }
+    ```
+  </Card>
+  
+  <Card title="Universal Selector" icon="asterisk">
+    Selects all elements.
+    
+    ```css
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ```
+  </Card>
+</CardGroup>
+
+### Combinators
+
+Combinators explain the relationship between selectors:
+
+```css
+/* Descendant selector (space) */
+div p {
+  color: red; /* Selects all <p> inside any <div> */
+}
+
+/* Child selector (>) */
+div > p {
+  color: blue; /* Selects all <p> that are direct children of <div> */
+}
+
+/* Adjacent sibling selector (+) */
+h1 + p {
+  font-weight: bold; /* Selects <p> that directly follows an <h1> */
+}
+
+/* General sibling selector (~) */
+h1 ~ p {
+  color: green; /* Selects all <p> that follow an <h1> */
+}
+```
+
+## CSS Properties
+
+CSS offers hundreds of properties to style elements. Here are some essential categories:
+
+### Text Styling
+
+```css
+p {
+  color: #333;              /* Text color */
+  font-family: Arial, sans-serif; /* Font family */
+  font-size: 16px;          /* Font size */
+  font-weight: bold;        /* Font weight */
+  text-align: center;       /* Text alignment */
+  line-height: 1.5;         /* Line height */
+  text-decoration: underline; /* Text decoration */
+}
+```
+
+### Box Model
+
+Every HTML element is represented as a rectangular box with content, padding, border, and margin areas.
+
+```css
+div {
+  width: 300px;           /* Content width */
+  height: 200px;          /* Content height */
+  padding: 20px;          /* Space between content and border */
+  border: 2px solid #000; /* Border around the padding */
+  margin: 30px;           /* Space outside the border */
+}
+```
+
+### Colors and Backgrounds
+
+```css
+div {
+  color: #0066cc;                  /* Text color */
+  background-color: #f0f0f0;        /* Background color */
+  background-image: url('bg.jpg');  /* Background image */
+  background-repeat: no-repeat;     /* Control image repetition */
+  background-position: center;      /* Position background image */
+  opacity: 0.8;                     /* Element transparency */
+}
+```
+
+## The Cascade and Specificity
+
+The "cascading" in CSS refers to the way styles are applied to elements. When multiple rules target the same element, the browser uses these principles to determine which styles to apply:
+
+1. **Importance**: Styles marked with `!important` override other styles
+2. **Specificity**: More specific selectors override less specific ones
+3. **Source Order**: Later styles override earlier ones
+
+<Tip>
+Specificity hierarchy (from lowest to highest):
+- Element selectors (`p`, `div`)
+- Class selectors (`.class`), attribute selectors (`[type="text"]`), pseudo-classes (`:hover`)
+- ID selectors (`#id`)
+- Inline styles (`style=""` attribute)
+</Tip>
+
+## Responsive Design with CSS
+
+Responsive design ensures your website looks good on all devices. Key techniques include:
+
+### Media Queries
+
+```css
+/* Styles for screens smaller than 768px */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .container {
+    width: 100%;
+  }
+}
+```
+
+### Flexible Layouts
+
+```css
+/* Using percentages for responsive widths */
+.container {
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Using viewport units */
+.hero {
+  height: 100vh; /* 100% of viewport height */
+  width: 100vw;  /* 100% of viewport width */
+}
+```
+
+## CSS Units
+
+CSS provides various units for expressing lengths:
+
+<CardGroup cols={2}>
+  <Card title="Absolute Units" icon="ruler">
+    - `px` (pixels)
+    - `pt` (points)
+    - `in` (inches)
+    - `cm` (centimeters)
+    - `mm` (millimeters)
+  </Card>
+  
+  <Card title="Relative Units" icon="arrows-left-right">
+    - `%` (percentage of parent)
+    - `em` (relative to font-size)
+    - `rem` (relative to root font-size)
+    - `vw` (viewport width)
+    - `vh` (viewport height)
+  </Card>
+</CardGroup>
+
+<Tip>
+For responsive design, prefer relative units like `rem`, `em`, and `%` over absolute units like `px`.
+</Tip>
+
+## Best Practices
+
+- Use external CSS files to separate content from presentation
+- Follow a consistent naming convention for classes (e.g., BEM methodology)
+- Organize your CSS with comments and logical grouping
+- Minimize specificity conflicts by keeping selectors simple
+- Use responsive design techniques for multi-device compatibility
+- Consider using CSS preprocessors like Sass or Less for larger projects
+
+## Next Steps
+
+Now that you understand the basics of CSS, you can:
+
+- Learn more about [CSS Selectors](/css/selectors) and their power
+- Explore the [CSS Box Model](/css/box-model) in depth
+- Study [CSS Typography](/css/typography) for better text styling
+- Master [CSS Flexbox](/css/flexbox) and [CSS Grid](/css/grid) for advanced layouts

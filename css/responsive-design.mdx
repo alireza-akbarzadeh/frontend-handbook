@@ -1,0 +1,1102 @@
+---
+title: "Responsive Web Design"
+description: "Learn how to create websites that work well on all devices and screen sizes"
+---
+
+## What is Responsive Web Design?
+
+Responsive Web Design (RWD) is an approach to web design that makes web pages render well on a variety of devices and window or screen sizes. It's about creating websites that provide an optimal viewing experience—easy reading and navigation with minimal resizing, panning, and scrolling—across a wide range of devices from desktop computer monitors to mobile phones.
+
+<Note>
+Responsive design is not just about adjusting layouts for different screen sizes. It's a comprehensive approach that considers user experience across all devices.
+</Note>
+
+## Why Responsive Design Matters
+
+<CardGroup cols={2}>
+  <Card title="Mobile Traffic" icon="mobile">
+    More than 50% of global web traffic comes from mobile devices. Without responsive design, you're potentially alienating half your audience.
+  </Card>
+  
+  <Card title="User Experience" icon="user">
+    Users expect websites to work well on whatever device they're using. Poor mobile experiences lead to higher bounce rates.
+  </Card>
+  
+  <Card title="SEO Benefits" icon="magnifying-glass">
+    Google uses mobile-first indexing, meaning it predominantly uses the mobile version of a site's content for indexing and ranking.
+  </Card>
+  
+  <Card title="Maintenance Efficiency" icon="gear">
+    Managing a single responsive website is more efficient than maintaining separate mobile and desktop versions.
+  </Card>
+</CardGroup>
+
+## Core Principles of Responsive Design
+
+### Fluid Layouts
+
+Fluid layouts use relative units (like percentages) instead of fixed units (like pixels) to allow content to resize based on the viewport size.
+
+```css
+/* Fixed width layout (not responsive) */
+.container {
+  width: 960px;
+}
+
+/* Fluid layout (responsive) */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+```
+
+### Flexible Images
+
+Images should resize within their containing elements to prevent them from overflowing on small screens.
+
+```css
+img {
+  max-width: 100%;
+  height: auto;
+}
+```
+
+### Media Queries
+
+Media queries allow you to apply different CSS styles based on characteristics of the device, most commonly the width of the viewport.
+
+```css
+/* Base styles for all devices */
+body {
+  font-size: 16px;
+}
+
+/* Styles for tablets */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Styles for mobile phones */
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+}
+```
+
+## The Viewport Meta Tag
+
+The viewport meta tag is crucial for responsive design. It instructs the browser how to control the page's dimensions and scaling.
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+```
+
+This tag tells the browser to:
+- Set the width of the viewport to the device width
+- Set the initial zoom level to 1.0 (no zoom)
+
+Without this tag, mobile browsers will render the page at a typical desktop screen width and then scale it down, which defeats the purpose of responsive design.
+
+## CSS Units for Responsive Design
+
+<AccordionGroup>
+  <Accordion icon="percentage" title="Percentage (%)">
+    Percentages are relative to the parent element's size.
+    
+    ```css
+    .container {
+      width: 80%; /* 80% of the parent element's width */
+    }
+    ```
+    
+    Use percentages for layouts and container widths to create fluid designs.
+  </Accordion>
+  
+  <Accordion icon="text-size" title="Em">
+    Relative to the font-size of the element.
+    
+    ```css
+    .title {
+      font-size: 2em; /* 2 times the element's font-size */
+      margin-bottom: 1.5em; /* 1.5 times the element's font-size */
+    }
+    ```
+    
+    Good for maintaining proportional spacing within components.
+  </Accordion>
+  
+  <Accordion icon="text-size" title="Rem">
+    Relative to the font-size of the root element (html).
+    
+    ```css
+    html {
+      font-size: 16px;
+    }
+    
+    .title {
+      font-size: 2rem; /* 2 times the root font-size (32px) */
+      margin-bottom: 1.5rem; /* 1.5 times the root font-size (24px) */
+    }
+    ```
+    
+    Excellent for consistent spacing and typography throughout the site.
+  </Accordion>
+  
+  <Accordion icon="window" title="Viewport Width (vw)">
+    1vw equals 1% of the viewport width.
+    
+    ```css
+    .hero-title {
+      font-size: 5vw; /* 5% of the viewport width */
+    }
+    ```
+    
+    Useful for elements that should scale directly with the viewport.
+  </Accordion>
+  
+  <Accordion icon="window" title="Viewport Height (vh)">
+    1vh equals 1% of the viewport height.
+    
+    ```css
+    .hero-section {
+      height: 80vh; /* 80% of the viewport height */
+    }
+    ```
+    
+    Great for full-height sections and vertical layouts.
+  </Accordion>
+  
+  <Accordion icon="minimize" title="Viewport Minimum (vmin)">
+    1vmin equals 1% of the viewport's smaller dimension (width or height).
+    
+    ```css
+    .square {
+      width: 50vmin;
+      height: 50vmin;
+    }
+    ```
+    
+    Useful for elements that should maintain proportion regardless of whether the device is in portrait or landscape mode.
+  </Accordion>
+  
+  <Accordion icon="maximize" title="Viewport Maximum (vmax)">
+    1vmax equals 1% of the viewport's larger dimension (width or height).
+    
+    ```css
+    .cover-element {
+      width: 50vmax;
+      height: 50vmax;
+    }
+    ```
+    
+    Can be used for elements that need to be prominent in both orientations.
+  </Accordion>
+</AccordionGroup>
+
+## Mobile-First Approach
+
+Mobile-first is a design strategy that prioritizes designing for the smallest screen first, then progressively enhancing the design for larger screens.
+
+### Benefits of Mobile-First
+
+- Forces you to focus on essential content and functionality
+- Aligns with how CSS naturally works (styles cascade and can be overridden)
+- Typically results in faster-loading sites on mobile devices
+- Matches Google's mobile-first indexing approach
+
+### Mobile-First CSS Example
+
+```css
+/* Base styles for mobile devices */
+.container {
+  padding: 15px;
+}
+
+.nav {
+  display: none; /* Hide traditional navigation on small screens */
+}
+
+.mobile-nav {
+  display: block; /* Show mobile navigation */
+}
+
+/* Tablet styles */
+@media (min-width: 768px) {
+  .container {
+    padding: 30px;
+  }
+  
+  .nav {
+    display: block; /* Show traditional navigation */
+  }
+  
+  .mobile-nav {
+    display: none; /* Hide mobile navigation */
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  .container {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+```
+
+## Common Breakpoints
+
+Breakpoints are viewport widths where the layout changes to accommodate different screen sizes. While there are no universal "correct" breakpoints, these are commonly used:
+
+<Steps>
+  <Step title="Small Mobile Devices">
+    Up to 480px
+    
+    ```css
+    /* Small mobile styles */
+    @media (max-width: 480px) {
+      /* CSS rules */
+    }
+    ```
+  </Step>
+  
+  <Step title="Medium Mobile Devices">
+    481px to 767px
+    
+    ```css
+    /* Medium mobile styles */
+    @media (min-width: 481px) and (max-width: 767px) {
+      /* CSS rules */
+    }
+    ```
+  </Step>
+  
+  <Step title="Tablets">
+    768px to 1023px
+    
+    ```css
+    /* Tablet styles */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      /* CSS rules */
+    }
+    ```
+  </Step>
+  
+  <Step title="Desktops">
+    1024px to 1199px
+    
+    ```css
+    /* Desktop styles */
+    @media (min-width: 1024px) and (max-width: 1199px) {
+      /* CSS rules */
+    }
+    ```
+  </Step>
+  
+  <Step title="Large Desktops">
+    1200px and above
+    
+    ```css
+    /* Large desktop styles */
+    @media (min-width: 1200px) {
+      /* CSS rules */
+    }
+    ```
+  </Step>
+</Steps>
+
+<Note>
+Instead of trying to target specific devices, focus on where your design naturally breaks and needs adjustment. This creates a more flexible design that works across a wider range of devices.
+</Note>
+
+## Responsive Layout Techniques
+
+### CSS Flexbox
+
+Flexbox is a one-dimensional layout method designed for laying out items in rows or columns.
+
+```css
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.item {
+  flex: 1 1 300px; /* grow, shrink, basis */
+  margin: 10px;
+}
+
+/* On smaller screens, let items take full width */
+@media (max-width: 600px) {
+  .item {
+    flex: 1 1 100%;
+  }
+}
+```
+
+### CSS Grid
+
+CSS Grid is a two-dimensional layout system designed for complex layouts.
+
+```css
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* On smaller screens, use a single column */
+@media (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+```
+
+### Multi-Column Layout
+
+The CSS multi-column layout allows content to flow into multiple columns.
+
+```css
+.content {
+  column-count: 3;
+  column-gap: 20px;
+}
+
+/* Reduce columns on smaller screens */
+@media (max-width: 768px) {
+  .content {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    column-count: 1;
+  }
+}
+```
+
+## Responsive Typography
+
+Typography should adapt to different screen sizes for optimal readability.
+
+### Fluid Typography
+
+Fluid typography automatically scales text size based on the viewport width, without using media queries.
+
+```css
+/* Basic fluid typography using calc() */
+body {
+  font-size: calc(16px + 0.5vw);
+}
+
+h1 {
+  font-size: calc(24px + 2vw);
+}
+
+/* More advanced fluid typography using clamp() */
+body {
+  font-size: clamp(16px, 1rem + 0.5vw, 22px);
+}
+
+h1 {
+  font-size: clamp(28px, 1.5rem + 3vw, 60px);
+}
+```
+
+The `clamp()` function takes three values: a minimum size, a preferred size, and a maximum size. This ensures text is never too small or too large.
+
+### Responsive Line Heights
+
+Line heights should also adjust for different screen sizes.
+
+```css
+body {
+  line-height: 1.5; /* For most text */
+}
+
+h1 {
+  line-height: 1.2; /* Tighter for headings */
+}
+
+@media (max-width: 480px) {
+  body {
+    line-height: 1.6; /* Slightly more space on small screens */
+  }
+}
+```
+
+## Responsive Images
+
+### Basic Responsive Images
+
+The simplest approach is to make images scale with their container:
+
+```css
+img {
+  max-width: 100%;
+  height: auto;
+}
+```
+
+### The Picture Element
+
+The `<picture>` element allows you to specify different image sources for different viewport sizes or device capabilities.
+
+```html
+<picture>
+  <!-- Image for small screens -->
+  <source srcset="small.jpg" media="(max-width: 600px)">
+  
+  <!-- Image for medium screens -->
+  <source srcset="medium.jpg" media="(max-width: 1024px)">
+  
+  <!-- Default image for large screens -->
+  <img src="large.jpg" alt="Responsive image example">
+</picture>
+```
+
+### Srcset and Sizes Attributes
+
+The `srcset` and `sizes` attributes allow browsers to choose the most appropriate image based on the device's characteristics.
+
+```html
+<img 
+  src="default.jpg" 
+  srcset="small.jpg 500w, medium.jpg 1000w, large.jpg 1500w" 
+  sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw" 
+  alt="Responsive image example"
+>
+```
+
+This tells the browser:
+- `srcset`: Available image files and their widths
+- `sizes`: How much space the image will take up at different viewport widths
+
+## Responsive Navigation
+
+Navigation is one of the most challenging elements to make responsive. Here are common patterns:
+
+### Hamburger Menu
+
+A hamburger menu hides navigation links behind a toggle button on small screens.
+
+```html
+<nav class="navigation">
+  <button class="menu-toggle" aria-expanded="false" aria-controls="menu">
+    <span class="hamburger-icon">☰</span>
+    <span class="sr-only">Menu</span>
+  </button>
+  
+  <ul id="menu" class="menu">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</nav>
+```
+
+```css
+/* Default styles for larger screens */
+.menu-toggle {
+  display: none;
+}
+
+.menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu li {
+  margin-right: 20px;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+  
+  .menu {
+    display: none;
+    flex-direction: column;
+  }
+  
+  .menu.active {
+    display: flex;
+  }
+  
+  .menu li {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}
+```
+
+```javascript
+document.querySelector('.menu-toggle').addEventListener('click', function() {
+  const menu = document.querySelector('.menu');
+  const expanded = this.getAttribute('aria-expanded') === 'true';
+  
+  menu.classList.toggle('active');
+  this.setAttribute('aria-expanded', !expanded);
+});
+```
+
+### Priority Plus Pattern
+
+The priority plus pattern shows the most important navigation items and hides the rest behind a "more" button.
+
+```html
+<nav class="priority-nav">
+  <ul class="visible-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <!-- More important links -->
+  </ul>
+  
+  <button class="more-button" aria-expanded="false" aria-controls="more-menu">
+    More
+  </button>
+  
+  <ul id="more-menu" class="hidden-links">
+    <!-- Less important links -->
+    <li><a href="#">Blog</a></li>
+    <li><a href="#">FAQ</a></li>
+  </ul>
+</nav>
+```
+
+## Testing Responsive Designs
+
+### Browser Developer Tools
+
+All modern browsers include responsive design mode in their developer tools, allowing you to test different viewport sizes.
+
+<Steps>
+  <Step title="Chrome DevTools">
+    1. Open DevTools (F12 or Ctrl+Shift+I / Cmd+Option+I)
+    2. Click the "Toggle device toolbar" button or press Ctrl+Shift+M / Cmd+Option+M
+    3. Select from preset device sizes or set custom dimensions
+  </Step>
+  
+  <Step title="Firefox Responsive Design Mode">
+    1. Open DevTools (F12 or Ctrl+Shift+I / Cmd+Option+I)
+    2. Click the "Responsive Design Mode" button or press Ctrl+Shift+M / Cmd+Option+M
+    3. Test various screen sizes and orientations
+  </Step>
+</Steps>
+
+### Physical Device Testing
+
+Always test on real devices when possible, as emulators can't perfectly replicate the experience of using a site on an actual device.
+
+Consider testing on:
+- Different operating systems (iOS, Android, etc.)
+- Different browsers (Chrome, Safari, Firefox, etc.)
+- Different screen sizes and resolutions
+- Both portrait and landscape orientations
+
+### Online Testing Tools
+
+- [Responsively App](https://responsively.app/) - View and test your website across multiple devices simultaneously
+- [BrowserStack](https://www.browserstack.com/) - Test on real devices in the cloud
+- [Screenfly](https://bluetree.ai/screenfly/) - Quick online responsive testing tool
+
+## Common Responsive Design Patterns
+
+### Mostly Fluid
+
+The mostly fluid pattern consists of a fluid grid that remains the same on larger screens but stacks columns vertically on smaller screens.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+
+.header {
+  grid-column: span 12;
+}
+
+.main-content {
+  grid-column: span 8;
+}
+
+.sidebar {
+  grid-column: span 4;
+}
+
+.footer {
+  grid-column: span 12;
+}
+
+@media (max-width: 768px) {
+  .main-content,
+  .sidebar {
+    grid-column: span 12;
+  }
+}
+```
+
+### Column Drop
+
+The column drop pattern starts with a multi-column layout and drops columns as the screen width narrows, eventually stacking all columns.
+
+```css
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.column {
+  flex: 1 1 33%;
+  min-width: 250px;
+}
+
+/* As the screen narrows, columns will naturally wrap */
+```
+
+### Layout Shifter
+
+The layout shifter pattern uses different layouts (not just stacking) for different screen sizes.
+
+```css
+.container {
+  display: grid;
+}
+
+/* Desktop layout */
+@media (min-width: 1024px) {
+  .container {
+    grid-template-areas:
+      "header header header"
+      "sidebar main main"
+      "footer footer footer";
+    grid-template-columns: 1fr 2fr 1fr;
+  }
+}
+
+/* Tablet layout */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    grid-template-areas:
+      "header header"
+      "sidebar main"
+      "footer footer";
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* Mobile layout */
+@media (max-width: 767px) {
+  .container {
+    grid-template-areas:
+      "header"
+      "main"
+      "sidebar"
+      "footer";
+    grid-template-columns: 1fr;
+  }
+}
+
+.header { grid-area: header; }
+.main { grid-area: main; }
+.sidebar { grid-area: sidebar; }
+.footer { grid-area: footer; }
+```
+
+## Advanced Responsive Techniques
+
+### Container Queries
+
+Container queries allow you to style elements based on the size of their container rather than the viewport. This is particularly useful for reusable components.
+
+```css
+/* Define a container */
+.card-container {
+  container-type: inline-size;
+  container-name: card;
+}
+
+/* Style based on container width */
+@container card (min-width: 400px) {
+  .card {
+    display: flex;
+  }
+  
+  .card-image {
+    width: 40%;
+  }
+  
+  .card-content {
+    width: 60%;
+  }
+}
+
+@container card (max-width: 399px) {
+  .card {
+    display: block;
+  }
+  
+  .card-image,
+  .card-content {
+    width: 100%;
+  }
+}
+```
+
+<Note>
+Container queries are a newer CSS feature. Check browser compatibility before using in production.
+</Note>
+
+### Feature Queries
+
+Feature queries allow you to apply styles based on browser support for specific CSS features.
+
+```css
+/* Base styles for all browsers */
+.grid {
+  display: block;
+}
+
+/* Enhanced styles for browsers that support CSS Grid */
+@supports (display: grid) {
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+}
+```
+
+### Responsive Design for Print
+
+Don't forget to optimize your website for printing.
+
+```css
+/* Print styles */
+@media print {
+  /* Hide navigation, ads, and other non-essential elements */
+  nav, .ads, .social-buttons, .comments {
+    display: none;
+  }
+  
+  /* Ensure text is black on white background */
+  body {
+    color: #000;
+    background: #fff;
+  }
+  
+  /* Make links more useful in print */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+  }
+  
+  /* Avoid page breaks inside important elements */
+  h1, h2, h3, img {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* Force page breaks where appropriate */
+  h1 {
+    page-break-before: always;
+  }
+}
+```
+
+## Responsive Design Best Practices
+
+<AccordionGroup>
+  <Accordion icon="mobile" title="Design for mobile first">
+    Start with the mobile design and progressively enhance for larger screens. This forces you to focus on the essential content and functionality.
+  </Accordion>
+  
+  <Accordion icon="text-size" title="Use relative units">
+    Prefer relative units (%, em, rem, vw, vh) over fixed units (px) for most measurements to create more flexible layouts.
+  </Accordion>
+  
+  <Accordion icon="image" title="Optimize images">
+    Use responsive image techniques and ensure images are appropriately sized and compressed for different devices.
+    
+    Consider using modern image formats like WebP with fallbacks for older browsers.
+  </Accordion>
+  
+  <Accordion icon="keyboard" title="Ensure touch-friendly interfaces">
+    Make interactive elements (buttons, links, form controls) large enough for touch interaction (minimum 44×44px according to WCAG guidelines).
+    
+    Provide adequate spacing between interactive elements to prevent accidental taps.
+  </Accordion>
+  
+  <Accordion icon="universal-access" title="Maintain accessibility">
+    Ensure your responsive design maintains accessibility across all screen sizes.
+    
+    Test keyboard navigation and screen reader compatibility at different breakpoints.
+  </Accordion>
+  
+  <Accordion icon="gauge-high" title="Monitor performance">
+    Regularly test your site's performance, especially on mobile devices and slower connections.
+    
+    Use tools like Google's PageSpeed Insights or Lighthouse to identify performance issues.
+  </Accordion>
+  
+  <Accordion icon="browser" title="Test across browsers and devices">
+    Test your responsive design on multiple browsers, devices, and screen sizes.
+    
+    Don't forget to test both portrait and landscape orientations.
+  </Accordion>
+</AccordionGroup>
+
+## Common Responsive Design Mistakes
+
+<Steps>
+  <Step title="Not using the viewport meta tag">
+    Without the viewport meta tag, mobile browsers will render the page at a typical desktop width and then scale it down, resulting in a poor user experience.
+    
+    ```html
+    <!-- Always include this in your HTML head -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ```
+  </Step>
+  
+  <Step title="Using fixed widths">
+    Fixed-width elements can cause horizontal scrolling on small screens.
+    
+    ```css
+    /* Problematic */
+    .container {
+      width: 1000px;
+    }
+    
+    /* Better */
+    .container {
+      width: 100%;
+      max-width: 1000px;
+    }
+    ```
+  </Step>
+  
+  <Step title="Forgetting touch users">
+    Small tap targets and hover-dependent interactions can frustrate mobile users.
+    
+    ```css
+    /* Too small for touch */
+    .button {
+      padding: 5px;
+      font-size: 12px;
+    }
+    
+    /* Better for touch */
+    .button {
+      padding: 12px 16px;
+      font-size: 16px;
+      min-height: 44px;
+      min-width: 44px;
+    }
+    ```
+  </Step>
+  
+  <Step title="Hiding content on mobile">
+    Rather than hiding important content on mobile, consider reorganizing it.
+    
+    ```css
+    /* Problematic approach */
+    @media (max-width: 768px) {
+      .secondary-content {
+        display: none;
+      }
+    }
+    
+    /* Better approach */
+    @media (max-width: 768px) {
+      .secondary-content {
+        order: 3; /* Using flexbox to reorder content */
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Not testing on real devices">
+    Emulators and responsive design mode in browsers can't replace testing on actual devices.
+    
+    Create a testing checklist that includes various devices, browsers, and orientations.
+  </Step>
+</Steps>
+
+## Responsive Design Frameworks
+
+CSS frameworks can help you build responsive websites more quickly.
+
+<CardGroup cols={2}>
+  <Card title="Bootstrap" icon="bootstrap">
+    A popular framework with a comprehensive grid system and pre-styled components.
+    
+    ```html
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-md-6 col-lg-4">Column 1</div>
+        <div class="col-12 col-md-6 col-lg-4">Column 2</div>
+        <div class="col-12 col-md-12 col-lg-4">Column 3</div>
+      </div>
+    </div>
+    ```
+    
+    [Bootstrap Documentation](https://getbootstrap.com/)
+  </Card>
+  
+  <Card title="Tailwind CSS" icon="wind">
+    A utility-first CSS framework that lets you build custom designs without leaving your HTML.
+    
+    ```html
+    <div class="container mx-auto px-4">
+      <div class="flex flex-wrap -mx-4">
+        <div class="w-full md:w-1/2 lg:w-1/3 px-4">Column 1</div>
+        <div class="w-full md:w-1/2 lg:w-1/3 px-4">Column 2</div>
+        <div class="w-full md:w-full lg:w-1/3 px-4">Column 3</div>
+      </div>
+    </div>
+    ```
+    
+    [Tailwind CSS Documentation](https://tailwindcss.com/)
+  </Card>
+  
+  <Card title="Foundation" icon="layer-group">
+    An advanced responsive front-end framework with a focus on professional applications.
+    
+    ```html
+    <div class="grid-container">
+      <div class="grid-x grid-margin-x">
+        <div class="cell small-12 medium-6 large-4">Column 1</div>
+        <div class="cell small-12 medium-6 large-4">Column 2</div>
+        <div class="cell small-12 medium-12 large-4">Column 3</div>
+      </div>
+    </div>
+    ```
+    
+    [Foundation Documentation](https://get.foundation/)
+  </Card>
+  
+  <Card title="Bulma" icon="leaf">
+    A modern CSS framework based on Flexbox with no JavaScript dependencies.
+    
+    ```html
+    <div class="container">
+      <div class="columns">
+        <div class="column is-12-mobile is-6-tablet is-4-desktop">Column 1</div>
+        <div class="column is-12-mobile is-6-tablet is-4-desktop">Column 2</div>
+        <div class="column is-12-mobile is-12-tablet is-4-desktop">Column 3</div>
+      </div>
+    </div>
+    ```
+    
+    [Bulma Documentation](https://bulma.io/)
+  </Card>
+</CardGroup>
+
+## Future of Responsive Design
+
+Responsive design continues to evolve with new CSS features and changing device landscapes.
+
+### Emerging Techniques
+
+<AccordionGroup>
+  <Accordion icon="box" title="Container Queries">
+    Container queries allow you to style elements based on their parent container's size rather than the viewport size, enabling truly reusable components.
+    
+    ```css
+    .card-container {
+      container-type: inline-size;
+    }
+    
+    @container (min-width: 400px) {
+      .card {
+        display: flex;
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion icon="wand-magic-sparkles" title="CSS Houdini">
+    Houdini is a set of APIs that gives developers direct access to the CSS Object Model, enabling more powerful and performant CSS capabilities.
+    
+    ```javascript
+    if ('paintWorklet' in CSS) {
+      CSS.paintWorklet.addModule('my-paint-worklet.js');
+    }
+    ```
+  </Accordion>
+  
+  <Accordion icon="display" title="Responsive to User Preferences">
+    Designing for user preferences like reduced motion, color schemes, and contrast preferences.
+    
+    ```css
+    /* Respect user's preference for reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    
+    /* Respect user's preference for dark mode */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #121212;
+        color: #f0f0f0;
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion icon="vr-cardboard" title="Responsive Design for New Interfaces">
+    Adapting responsive design principles for VR, AR, and other emerging interfaces.
+    
+    This includes considering 3D space, user proximity, and new interaction models beyond traditional screens.
+  </Accordion>
+</AccordionGroup>
+
+## Conclusion
+
+Responsive web design is no longer optional—it's a fundamental aspect of modern web development. By embracing fluid layouts, flexible images, and media queries, you can create websites that provide an optimal experience across all devices.
+
+Remember these key principles:
+
+1. Start with a mobile-first approach
+2. Use relative units for flexible layouts
+3. Test on real devices whenever possible
+4. Consider performance implications, especially for mobile users
+5. Stay updated with emerging responsive design techniques
+
+## Resources
+
+### Tools
+
+- [Responsively App](https://responsively.app/) - Test your responsive designs across multiple devices simultaneously
+- [Am I Responsive?](http://ami.responsivedesign.is/) - Quick visual test of your site on different devices
+- [Responsive Design Checker](https://responsivedesignchecker.com/) - Test your website on different screen sizes
+
+### Further Reading
+
+- [Responsive Web Design Basics](https://web.dev/responsive-web-design-basics/) by web.dev
+- [Responsive Design in 2023](https://ishadeed.com/article/responsive-design/) by Ahmad Shadeed
+- [Designing for Different Screen Sizes](https://www.smashingmagazine.com/2022/06/designing-better-responsive-websites/) by Smashing Magazine
+
+### Courses and Tutorials
+
+- [Conquering Responsive Layouts](https://courses.kevinpowell.co/conquering-responsive-layouts) by Kevin Powell
+- [Responsive Web Design](https://www.freecodecamp.org/learn/responsive-web-design/) by freeCodeCamp
+- [Advanced Responsive Design Techniques](https://frontendmasters.com/courses/responsive-design/) by Frontend Masters

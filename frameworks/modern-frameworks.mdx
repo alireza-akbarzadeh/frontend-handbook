@@ -1,0 +1,1152 @@
+---
+title: "Modern JavaScript Frameworks"
+description: "An overview of popular frontend frameworks and how to choose the right one for your project"
+---
+
+## Introduction to Frontend Frameworks
+
+Frontend frameworks are collections of pre-written, standardized code that help developers build web applications more efficiently. They provide structure, patterns, and reusable components that solve common challenges in web development.
+
+<Note>
+Frameworks are different from libraries. Libraries provide specific functionality that you can call when needed, while frameworks provide a complete structure that calls your code when appropriate (inversion of control).
+</Note>
+
+### Why Use a Framework?
+
+<CardGroup cols={2}>
+  <Card title="Productivity" icon="rocket">
+    Frameworks provide ready-made solutions for common tasks, allowing developers to focus on application-specific features rather than reinventing the wheel.
+  </Card>
+  
+  <Card title="Structure" icon="sitemap">
+    Frameworks enforce consistent patterns and architecture, making code more maintainable and easier for teams to collaborate on.
+  </Card>
+  
+  <Card title="Community" icon="users">
+    Popular frameworks have large communities, extensive documentation, and ecosystems of plugins and tools.
+  </Card>
+  
+  <Card title="Performance" icon="gauge-high">
+    Modern frameworks implement optimized rendering techniques like virtual DOM diffing, code splitting, and tree shaking.
+  </Card>
+  
+  <Card title="Testing" icon="vial">
+    Frameworks typically provide or integrate with testing utilities that make it easier to write unit and integration tests.
+  </Card>
+  
+  <Card title="Scalability" icon="arrow-up-right-dots">
+    Frameworks are designed to handle growth in application size and complexity while maintaining performance.
+  </Card>
+</CardGroup>
+
+## Popular Frontend Frameworks
+
+### React
+
+<img src="/images/react-logo.svg" alt="React Logo" width="100" />
+
+React is a JavaScript library for building user interfaces, particularly single-page applications. While technically a library rather than a framework, it's commonly grouped with frameworks due to its ecosystem and approach.
+
+**Key Features:**
+- Component-based architecture
+- Virtual DOM for efficient updates
+- JSX syntax for combining HTML and JavaScript
+- Unidirectional data flow
+- Large ecosystem of libraries and tools
+
+**When to Choose React:**
+- For highly interactive UIs
+- When you want flexibility in your tech stack
+- For large-scale applications with frequent data changes
+- When you have a team familiar with JavaScript
+
+**Example Component:**
+
+```jsx
+import React, { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    <div>
+      <h2>Counter: {count}</h2>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>
+  );
+}
+
+export default Counter;
+```
+
+**Popular Libraries in the React Ecosystem:**
+- **React Router** - For routing and navigation
+- **Redux/Zustand/Jotai** - For state management
+- **React Query** - For data fetching and caching
+- **Styled Components/Emotion** - For CSS-in-JS styling
+- **Next.js** - For server-side rendering and static site generation
+
+### Vue.js
+
+<img src="/images/vue-logo.svg" alt="Vue.js Logo" width="100" />
+
+Vue.js is a progressive JavaScript framework for building user interfaces. It's designed to be incrementally adoptable, allowing you to use as much or as little of the framework as you need.
+
+**Key Features:**
+- Component-based architecture
+- Reactive and composable view system
+- HTML-based template syntax
+- Two-way data binding (optional)
+- Built-in state management and routing solutions
+
+**When to Choose Vue:**
+- For projects that need a gentle learning curve
+- When you want a more opinionated framework with official solutions
+- For applications that need to integrate with traditional server-rendered pages
+- When you prefer HTML templates over JSX
+
+**Example Component:**
+
+```vue
+<template>
+  <div>
+    <h2>Counter: {{ count }}</h2>
+    <button @click="increment">Increment</button>
+    <button @click="decrement">Decrement</button>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      count: 0
+    };
+  },
+  methods: {
+    increment() {
+      this.count++;
+    },
+    decrement() {
+      this.count--;
+    }
+  }
+};
+</script>
+
+<style scoped>
+/* Component-specific styles */
+h2 {
+  color: #42b883;
+}
+</style>
+```
+
+**Vue 3 Composition API Example:**
+
+```vue
+<template>
+  <div>
+    <h2>Counter: {{ count }}</h2>
+    <button @click="increment">Increment</button>
+    <button @click="decrement">Decrement</button>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+
+const count = ref(0);
+
+function increment() {
+  count.value++;
+}
+
+function decrement() {
+  count.value--;
+}
+</script>
+```
+
+**Popular Libraries in the Vue Ecosystem:**
+- **Vue Router** - Official routing library
+- **Pinia** - State management library (successor to Vuex)
+- **Nuxt.js** - Framework for server-side rendering and static site generation
+- **Vuetify/Quasar** - UI component libraries
+
+### Angular
+
+<img src="/images/angular-logo.svg" alt="Angular Logo" width="100" />
+
+Angular is a platform and framework for building single-page client applications using HTML and TypeScript. It's a complete rewrite of AngularJS (Angular 1.x) and is maintained by Google.
+
+**Key Features:**
+- Full-featured framework with built-in solutions
+- TypeScript-based development
+- Two-way data binding
+- Dependency injection system
+- RxJS for reactive programming
+- Comprehensive CLI tools
+
+**When to Choose Angular:**
+- For large enterprise applications
+- When you want a comprehensive, opinionated framework
+- For teams familiar with TypeScript and object-oriented programming
+- When you need strong consistency and tooling
+
+**Example Component:**
+
+```typescript
+// counter.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-counter',
+  template: `
+    <div>
+      <h2>Counter: {{ count }}</h2>
+      <button (click)="increment()">Increment</button>
+      <button (click)="decrement()">Decrement</button>
+    </div>
+  `,
+  styles: [`
+    h2 { color: #dd0031; }
+  `]
+})
+export class CounterComponent {
+  count = 0;
+  
+  increment() {
+    this.count++;
+  }
+  
+  decrement() {
+    this.count--;
+  }
+}
+```
+
+**Popular Libraries in the Angular Ecosystem:**
+- **Angular Material** - Official UI component library
+- **NgRx** - State management based on Redux pattern
+- **Angular Universal** - Server-side rendering
+- **Nx** - Extensible dev tools for monorepos
+
+### Svelte
+
+<img src="/images/svelte-logo.svg" alt="Svelte Logo" width="100" />
+
+Svelte is a radical new approach to building user interfaces. Whereas traditional frameworks like React and Vue do the bulk of their work in the browser, Svelte shifts that work into a compile step that happens when you build your app.
+
+**Key Features:**
+- Compile-time framework with no runtime library
+- No virtual DOM
+- Truly reactive with fine-grained updates
+- Less boilerplate code
+- Built-in transitions and animations
+
+**When to Choose Svelte:**
+- For highly performant applications
+- When bundle size is a critical concern
+- For projects where you want to write less code
+- When you prefer a more traditional HTML/CSS/JS approach
+
+**Example Component:**
+
+```svelte
+<script>
+  let count = 0;
+  
+  function increment() {
+    count += 1;
+  }
+  
+  function decrement() {
+    count -= 1;
+  }
+</script>
+
+<div>
+  <h2>Counter: {count}</h2>
+  <button on:click={increment}>Increment</button>
+  <button on:click={decrement}>Decrement</button>
+</div>
+
+<style>
+  h2 {
+    color: #ff3e00;
+  }
+</style>
+```
+
+**Popular Libraries in the Svelte Ecosystem:**
+- **SvelteKit** - Application framework with SSR and routing
+- **Svelte Store** - Built-in state management
+- **Svelte Motion** - Animation library
+- **Svelte Material UI** - Material Design components
+
+### Solid.js
+
+<img src="/images/solid-logo.svg" alt="Solid.js Logo" width="100" />
+
+Solid.js is a declarative JavaScript library for creating user interfaces that draws inspiration from React but with a more efficient reactivity system similar to MobX or Vue.
+
+**Key Features:**
+- Fine-grained reactivity without a virtual DOM
+- JSX syntax similar to React
+- No component re-rendering
+- Small bundle size
+- Excellent performance
+
+**When to Choose Solid:**
+- For high-performance applications
+- When you like React's JSX but want better performance
+- For projects where reactivity and efficiency are critical
+- When you want a modern framework with minimal overhead
+
+**Example Component:**
+
+```jsx
+import { createSignal } from 'solid-js';
+
+function Counter() {
+  const [count, setCount] = createSignal(0);
+  
+  return (
+    <div>
+      <h2>Counter: {count()}</h2>
+      <button onClick={() => setCount(count() + 1)}>Increment</button>
+      <button onClick={() => setCount(count() - 1)}>Decrement</button>
+    </div>
+  );
+}
+
+export default Counter;
+```
+
+**Popular Libraries in the Solid Ecosystem:**
+- **Solid Router** - Routing library
+- **Solid Start** - Meta-framework with SSR
+- **Solid Primitives** - Collection of reactive primitives
+- **Solid UI** - UI component libraries
+
+## Meta-Frameworks
+
+Meta-frameworks build on top of existing frameworks to provide additional features like server-side rendering, static site generation, and file-based routing.
+
+### Next.js (React)
+
+Next.js is a React framework that enables server-side rendering, static site generation, and other advanced features.
+
+**Key Features:**
+- Server-side rendering (SSR)
+- Static site generation (SSG)
+- Incremental static regeneration
+- File-based routing
+- API routes
+- Image optimization
+
+**Example Page:**
+
+```jsx
+// pages/index.js
+import { useState } from 'react';
+
+export default function Home() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    <div>
+      <h1>Welcome to Next.js</h1>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+
+// This function runs on the server
+export async function getStaticProps() {
+  // Fetch data from an API
+  const res = await fetch('https://api.example.com/data');
+  const data = await res.json();
+  
+  return {
+    props: {
+      data
+    },
+    // Re-generate the page at most once per 10 seconds
+    revalidate: 10
+  };
+}
+```
+
+### Nuxt.js (Vue)
+
+Nuxt.js is a higher-level framework built on top of Vue that simplifies the development of Vue applications.
+
+**Key Features:**
+- Server-side rendering
+- Static site generation
+- Automatic route generation
+- Code splitting
+- Module system
+- SEO optimization
+
+**Example Page:**
+
+```vue
+<!-- pages/index.vue -->
+<template>
+  <div>
+    <h1>Welcome to Nuxt.js</h1>
+    <p>Count: {{ count }}</p>
+    <button @click="increment">Increment</button>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      count: 0
+    };
+  },
+  methods: {
+    increment() {
+      this.count++;
+    }
+  },
+  // This function runs on the server
+  async asyncData({ $fetch }) {
+    const data = await $fetch('https://api.example.com/data');
+    return { data };
+  }
+};
+</script>
+```
+
+### SvelteKit (Svelte)
+
+SvelteKit is an application framework powered by Svelte, similar to Next.js for React or Nuxt for Vue.
+
+**Key Features:**
+- Server-side rendering
+- Static site generation
+- File-based routing
+- API routes
+- Optimized builds
+- Adapter-based deployment
+
+**Example Page:**
+
+```svelte
+<!-- src/routes/index.svelte -->
+<script>
+  import { onMount } from 'svelte';
+  
+  let count = 0;
+  let data = {};
+  
+  onMount(async () => {
+    const response = await fetch('/api/data');
+    data = await response.json();
+  });
+  
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<h1>Welcome to SvelteKit</h1>
+<p>Count: {count}</p>
+<button on:click={increment}>Increment</button>
+
+<!-- Server-side load function -->
+<script context="module">
+  export async function load({ fetch }) {
+    const res = await fetch('/api/data');
+    
+    if (res.ok) {
+      return {
+        props: {
+          data: await res.json()
+        }
+      };
+    }
+    
+    return {
+      status: res.status,
+      error: new Error('Could not load data')
+    };
+  }
+</script>
+```
+
+### Remix (React)
+
+Remix is a full stack web framework that lets you focus on the user interface and work back through web fundamentals to deliver a fast, slick, and resilient user experience.
+
+**Key Features:**
+- Nested routing
+- Server-side rendering
+- Progressive enhancement
+- Error boundaries
+- Data loading and mutations
+- Optimistic UI updates
+
+**Example Page:**
+
+```jsx
+// app/routes/index.jsx
+import { useState } from 'react';
+import { json, useLoaderData } from 'remix';
+
+// This runs on the server
+export async function loader() {
+  const data = await fetchSomeData();
+  return json(data);
+}
+
+// This handles form submissions
+export async function action({ request }) {
+  const formData = await request.formData();
+  const name = formData.get('name');
+  
+  await saveToDatabase(name);
+  
+  return json({ success: true });
+}
+
+export default function Index() {
+  const data = useLoaderData();
+  const [count, setCount] = useState(0);
+  
+  return (
+    <div>
+      <h1>Welcome to Remix</h1>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      
+      <form method="post">
+        <input type="text" name="name" />
+        <button type="submit">Submit</button>
+      </form>
+      
+      <div>
+        <h2>Data from loader:</h2>
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      </div>
+    </div>
+  );
+}
+```
+
+## Comparing Frameworks
+
+### Performance
+
+<AccordionGroup>
+  <Accordion icon="bolt" title="Bundle Size">
+    Smaller bundle sizes lead to faster initial load times. Here's how the frameworks compare (approximate minimal bundle sizes):
+    
+    1. **Svelte**: ~3KB
+    2. **Solid**: ~7KB
+    3. **Vue**: ~20KB
+    4. **React**: ~40KB
+    5. **Angular**: ~100KB
+    
+    Remember that real-world applications will have larger bundles due to additional libraries and application code.
+  </Accordion>
+  
+  <Accordion icon="gauge-high" title="Runtime Performance">
+    Runtime performance affects how smoothly your application runs, especially with complex UIs and frequent updates:
+    
+    1. **Solid**: Excellent (fine-grained reactivity, no virtual DOM)
+    2. **Svelte**: Excellent (compiled away, minimal runtime)
+    3. **Vue**: Very good (optimized virtual DOM)
+    4. **React**: Good (virtual DOM with optimizations)
+    5. **Angular**: Good (change detection with optimizations)
+    
+    Performance can vary significantly based on implementation details and use cases.
+  </Accordion>
+  
+  <Accordion icon="server" title="Server-Side Rendering">
+    All major frameworks support server-side rendering through their meta-frameworks:
+    
+    - **React**: Next.js, Remix
+    - **Vue**: Nuxt.js
+    - **Svelte**: SvelteKit
+    - **Angular**: Angular Universal
+    - **Solid**: Solid Start
+    
+    SSR improves initial load performance and SEO by rendering HTML on the server before sending it to the client.
+  </Accordion>
+</AccordionGroup>
+
+### Developer Experience
+
+<AccordionGroup>
+  <Accordion icon="graduation-cap" title="Learning Curve">
+    From easiest to most challenging to learn:
+    
+    1. **Svelte**: Minimal API surface, close to vanilla HTML/CSS/JS
+    2. **Vue**: Progressive learning curve, intuitive template syntax
+    3. **React**: Moderate learning curve, JSX and hooks concepts
+    4. **Solid**: Similar to React but with different reactivity model
+    5. **Angular**: Steepest learning curve, many concepts to master
+  </Accordion>
+  
+  <Accordion icon="toolbox" title="Tooling">
+    All frameworks have CLI tools for project scaffolding, but they differ in comprehensiveness:
+    
+    - **Angular**: Most comprehensive CLI with code generation
+    - **Vue**: Vue CLI with good defaults and plugin system
+    - **React**: Create React App for simple setups, more complex for advanced needs
+    - **Svelte**: Simple but effective tooling
+    - **Solid**: Growing tooling ecosystem
+    
+    IDE support is generally good for all frameworks, with Angular and Vue having the most mature tooling.
+  </Accordion>
+  
+  <Accordion icon="users" title="Community and Ecosystem">
+    Community size affects the availability of resources, libraries, and support:
+    
+    1. **React**: Largest community and ecosystem
+    2. **Vue**: Large and active community
+    3. **Angular**: Strong enterprise community
+    4. **Svelte**: Growing community
+    5. **Solid**: Smaller but enthusiastic community
+    
+    A larger ecosystem means more third-party components, tutorials, and solutions to common problems.
+  </Accordion>
+</AccordionGroup>
+
+### Use Cases
+
+<AccordionGroup>
+  <Accordion icon="building" title="Enterprise Applications">
+    For large-scale enterprise applications:
+    
+    - **Angular**: Excellent for enterprise with its comprehensive structure and TypeScript integration
+    - **React**: Good with proper architecture and state management
+    - **Vue**: Good with Nuxt.js and proper organization
+    
+    Enterprise applications benefit from strong typing, comprehensive tooling, and established patterns.
+  </Accordion>
+  
+  <Accordion icon="store" title="E-commerce">
+    For e-commerce sites:
+    
+    - **Next.js (React)**: Excellent for SEO and performance
+    - **Nuxt.js (Vue)**: Great balance of features and performance
+    - **SvelteKit**: Good performance with less code
+    
+    E-commerce sites need good SEO, fast initial load times, and smooth user experiences.
+  </Accordion>
+  
+  <Accordion icon="mobile" title="Progressive Web Apps">
+    For PWAs:
+    
+    - **React**: Good with workbox and service workers
+    - **Vue**: Excellent with PWA plugin
+    - **Angular**: Strong PWA support built-in
+    
+    PWAs need offline support, push notifications, and responsive designs.
+  </Accordion>
+  
+  <Accordion icon="chart-line" title="Data-Heavy Dashboards">
+    For applications with complex data visualization:
+    
+    - **React**: Excellent with libraries like recharts, visx
+    - **Angular**: Good with ngx-charts
+    - **Solid**: Excellent performance for real-time updates
+    
+    Data dashboards need efficient updates and good integration with visualization libraries.
+  </Accordion>
+</AccordionGroup>
+
+## How to Choose a Framework
+
+Selecting the right framework depends on various factors. Here's a decision-making framework:
+
+<Steps>
+  <Step title="Assess your team's expertise">
+    Choose a framework that aligns with your team's existing skills when possible. If your team knows JavaScript well but not TypeScript, Angular might have a steeper learning curve.
+  </Step>
+  
+  <Step title="Consider project requirements">
+    - **Project size and complexity**: Larger projects benefit from more structured frameworks like Angular
+    - **Performance needs**: If performance is critical, consider Svelte or Solid
+    - **SEO requirements**: If SEO is important, ensure good SSR support
+    - **Time constraints**: Simpler frameworks like Vue or Svelte might enable faster development
+  </Step>
+  
+  <Step title="Evaluate ecosystem and community">
+    Check if the framework has libraries and tools for your specific needs:
+    - Authentication solutions
+    - UI component libraries
+    - State management options
+    - Testing utilities
+  </Step>
+  
+  <Step title="Consider long-term maintenance">
+    - How stable is the framework?
+    - How frequent are breaking changes?
+    - Is there corporate backing or a sustainable community?
+    - How easy is it to hire developers for this framework?
+  </Step>
+  
+  <Step title="Build a prototype">
+    If time permits, build a small prototype with the top contenders to evaluate:
+    - Development speed
+    - Learning curve in practice
+    - Performance with your specific use cases
+    - Team satisfaction and productivity
+  </Step>
+</Steps>
+
+## Framework Trends and Future
+
+<AccordionGroup>
+  <Accordion icon="code" title="Islands Architecture">
+    The islands architecture (popularized by Astro) allows different parts of a page to use different frameworks or no framework at all. This enables:
+    
+    - Using the best tool for each component
+    - Shipping less JavaScript
+    - Better performance for content-heavy sites
+    
+    ```html
+    <!-- Example from Astro -->
+    <html>
+      <body>
+        <header>Static content</header>
+        
+        <!-- React island -->
+        <ReactComponent client:visible />
+        
+        <!-- Vue island -->
+        <VueComponent client:idle />
+        
+        <footer>More static content</footer>
+      </body>
+    </html>
+    ```
+  </Accordion>
+  
+  <Accordion icon="server" title="Server Components">
+    Server Components (pioneered by React) allow components to run exclusively on the server, reducing client-side JavaScript:
+    
+    ```jsx
+    // A server component in React
+    async function ProductDetails({ id }) {
+      // This code only runs on the server
+      const product = await db.query(`SELECT * FROM products WHERE id = ${id}`);
+      
+      return (
+        <div>
+          <h1>{product.name}</h1>
+          <p>{product.description}</p>
+          <ClientComponent productId={product.id} />
+        </div>
+      );
+    }
+    ```
+    
+    This approach combines the benefits of server-side rendering with component-based architecture.
+  </Accordion>
+  
+  <Accordion icon="wand-magic-sparkles" title="Resumability">
+    Resumability (used by Qwik) is an approach where the application is delivered without JavaScript and then "resumes" where the server left off, rather than re-rendering or hydrating:
+    
+    ```jsx
+    // Qwik component example
+    export const Counter = component$(() => {
+      const count = useSignal(0);
+      
+      return (
+        <div>
+          <p>Count: {count.value}</p>
+          <button onClick$={() => count.value++}>Increment</button>
+        </div>
+      );
+    });
+    ```
+    
+    This approach aims to deliver instant-loading applications with minimal JavaScript.
+  </Accordion>
+  
+  <Accordion icon="microchip" title="WebAssembly Integration">
+    WebAssembly (Wasm) allows running code written in languages like Rust, C++, or Go in the browser at near-native speed. Frameworks are beginning to leverage this for performance-critical parts of applications.
+    
+    ```rust
+    // Rust code that compiles to WebAssembly
+    #[wasm_bindgen]
+    pub fn fibonacci(n: u32) -> u32 {
+        match n {
+            0 => 0,
+            1 => 1,
+            _ => fibonacci(n - 1) + fibonacci(n - 2),
+        }
+    }
+    ```
+    
+    This can be called from any JavaScript framework for computationally intensive tasks.
+  </Accordion>
+</AccordionGroup>
+
+## Getting Started with Frameworks
+
+### Setting Up a React Project
+
+```bash
+# Using Create React App
+npx create-react-app my-react-app
+cd my-react-app
+npm start
+
+# Using Vite (faster)
+npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+npm run dev
+
+# Using Next.js
+npx create-next-app my-next-app
+cd my-next-app
+npm run dev
+```
+
+### Setting Up a Vue Project
+
+```bash
+# Using Vue CLI
+npm install -g @vue/cli
+vue create my-vue-app
+cd my-vue-app
+npm run serve
+
+# Using Vite (recommended for Vue 3)
+npm create vite@latest my-vue-app -- --template vue
+cd my-vue-app
+npm install
+npm run dev
+
+# Using Nuxt.js
+npx nuxi init my-nuxt-app
+cd my-nuxt-app
+npm install
+npm run dev
+```
+
+### Setting Up an Angular Project
+
+```bash
+# Using Angular CLI
+npm install -g @angular/cli
+ng new my-angular-app
+cd my-angular-app
+ng serve
+```
+
+### Setting Up a Svelte Project
+
+```bash
+# Using Vite
+npm create vite@latest my-svelte-app -- --template svelte
+cd my-svelte-app
+npm install
+npm run dev
+
+# Using SvelteKit
+npm create svelte@latest my-sveltekit-app
+cd my-sveltekit-app
+npm install
+npm run dev
+```
+
+### Setting Up a Solid Project
+
+```bash
+# Using Vite
+npm create vite@latest my-solid-app -- --template solid
+cd my-solid-app
+npm install
+npm run dev
+
+# Using SolidStart
+npx create-solid my-solidstart-app
+cd my-solidstart-app
+npm install
+npm run dev
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="folder-tree" title="Project Structure">
+    Organize your project for maintainability:
+    
+    ```
+    src/
+    ├── assets/         # Static assets like images
+    ├── components/     # Reusable UI components
+    │   ├── common/     # Shared across features
+    │   └── features/   # Feature-specific components
+    ├── hooks/          # Custom hooks (React) or composables (Vue)
+    ├── pages/          # Route components
+    ├── services/       # API calls and business logic
+    ├── store/          # State management
+    ├── styles/         # Global styles
+    ├── types/          # TypeScript type definitions
+    └── utils/          # Helper functions
+    ```
+    
+    Adapt this structure to your framework's conventions and project needs.
+  </Accordion>
+  
+  <Accordion icon="code-branch" title="Component Design">
+    Design components with these principles in mind:
+    
+    1. **Single Responsibility**: Each component should do one thing well
+    2. **Composability**: Prefer composition over inheritance
+    3. **Reusability**: Extract common patterns into reusable components
+    4. **Testability**: Design components to be easily testable
+    
+    Example of a well-designed button component:
+    
+    ```jsx
+    // React example
+    function Button({ 
+      children, 
+      variant = 'primary', 
+      size = 'medium',
+      isLoading = false,
+      disabled = false,
+      onClick,
+      ...props 
+    }) {
+      return (
+        <button
+          className={`btn btn-${variant} btn-${size} ${isLoading ? 'loading' : ''}`}
+          disabled={disabled || isLoading}
+          onClick={onClick}
+          {...props}
+        >
+          {isLoading ? <Spinner size="small" /> : null}
+          {children}
+        </button>
+      );
+    }
+    ```
+  </Accordion>
+  
+  <Accordion icon="database" title="State Management">
+    Choose the right state management approach:
+    
+    1. **Component State**: For local UI state (useState in React, data in Vue)
+    2. **Context/Provide-Inject**: For sharing state between related components
+    3. **State Management Libraries**: For complex application state
+    
+    Don't over-engineer - start simple and add complexity only when needed.
+    
+    ```jsx
+    // React Context example
+    const ThemeContext = createContext('light');
+    
+    function App() {
+      const [theme, setTheme] = useState('light');
+      
+      return (
+        <ThemeContext.Provider value={{ theme, setTheme }}>
+          <MainContent />
+        </ThemeContext.Provider>
+      );
+    }
+    
+    function ThemedButton() {
+      const { theme, setTheme } = useContext(ThemeContext);
+      
+      return (
+        <button
+          className={`btn-${theme}`}
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        >
+          Toggle Theme
+        </button>
+      );
+    }
+    ```
+  </Accordion>
+  
+  <Accordion icon="arrows-to-circle" title="Data Fetching">
+    Modern approaches to data fetching:
+    
+    1. **Custom hooks/composables**: Encapsulate fetch logic
+    2. **Data fetching libraries**: React Query, SWR, Apollo Client
+    3. **Server components**: Fetch directly in server components
+    
+    Example using React Query:
+    
+    ```jsx
+    import { useQuery, useMutation, QueryClient, QueryClientProvider } from 'react-query';
+    
+    // Set up the client
+    const queryClient = new QueryClient();
+    
+    function App() {
+      return (
+        <QueryClientProvider client={queryClient}>
+          <Products />
+        </QueryClientProvider>
+      );
+    }
+    
+    function Products() {
+      // Fetch data with caching, retries, and revalidation
+      const { data, isLoading, error } = useQuery('products', fetchProducts);
+      
+      // Mutation for creating a product
+      const mutation = useMutation(createProduct, {
+        onSuccess: () => {
+          // Invalidate and refetch
+          queryClient.invalidateQueries('products');
+        },
+      });
+      
+      if (isLoading) return <div>Loading...</div>;
+      if (error) return <div>Error: {error.message}</div>;
+      
+      return (
+        <div>
+          <ul>
+            {data.map(product => (
+              <li key={product.id}>{product.name}</li>
+            ))}
+          </ul>
+          
+          <button
+            onClick={() => {
+              mutation.mutate({ name: 'New Product' });
+            }}
+          >
+            Add Product
+          </button>
+        </div>
+      );
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Framework Interoperability
+
+Sometimes you need to use multiple frameworks together or migrate from one to another.
+
+### Web Components
+
+Web Components provide a standard way to create custom, reusable elements that work across frameworks.
+
+```javascript
+// Define a web component
+class HelloWorld extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+  
+  connectedCallback() {
+    const name = this.getAttribute('name') || 'World';
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+          font-family: sans-serif;
+        }
+        .greeting {
+          color: blue;
+        }
+      </style>
+      <div class="greeting">Hello, ${name}!</div>
+    `;
+  }
+}
+
+// Register the component
+customElements.define('hello-world', HelloWorld);
+```
+
+This component can now be used in any framework:
+
+```jsx
+// React
+function App() {
+  return <hello-world name="React"></hello-world>;
+}
+
+// Vue
+<template>
+  <hello-world name="Vue"></hello-world>
+</template>
+
+// Angular
+<hello-world name="Angular"></hello-world>
+```
+
+### Micro-Frontends
+
+Micro-frontends allow different parts of an application to be built with different frameworks.
+
+```html
+<!-- Container application -->
+<html>
+  <body>
+    <header id="vue-header"></header>
+    <main id="react-content"></main>
+    <footer id="angular-footer"></footer>
+    
+    <script type="module">
+      // Load each micro-frontend
+      import './vue-header.js';
+      import './react-content.js';
+      import './angular-footer.js';
+    </script>
+  </body>
+</html>
+```
+
+## Conclusion
+
+Choosing a frontend framework is an important decision that depends on your project requirements, team expertise, and long-term goals. Each framework has its strengths and weaknesses:
+
+- **React**: Flexible, widely adopted, with a large ecosystem
+- **Vue**: Intuitive, progressive, with a gentle learning curve
+- **Angular**: Comprehensive, opinionated, with strong typing
+- **Svelte**: Innovative, efficient, with less code
+- **Solid**: High-performance, React-like, with fine-grained reactivity
+
+Remember that the framework is just a tool to help you build great user experiences. Focus on understanding the core principles of frontend development, and you'll be able to adapt to any framework.
+
+## Resources
+
+### Official Documentation
+
+- [React Documentation](https://reactjs.org/docs/getting-started.html)
+- [Vue.js Documentation](https://vuejs.org/guide/introduction.html)
+- [Angular Documentation](https://angular.io/docs)
+- [Svelte Documentation](https://svelte.dev/docs)
+- [Solid Documentation](https://www.solidjs.com/docs/latest/)
+
+### Learning Resources
+
+- [Frontend Masters](https://frontendmasters.com/) - In-depth courses on all major frameworks
+- [Egghead.io](https://egghead.io/) - Bite-sized video tutorials
+- [freeCodeCamp](https://www.freecodecamp.org/) - Free courses covering various frameworks
+- [The State of JavaScript](https://stateofjs.com/) - Annual survey of JavaScript trends
+
+### Tools
+
+- [Vite](https://vitejs.dev/) - Fast build tool that works with multiple frameworks
+- [Stackblitz](https://stackblitz.com/) - Online IDE for quick prototyping
+- [CodeSandbox](https://codesandbox.io/) - Online code editor for framework projects
+- [Bit](https://bit.dev/) - Tool for component sharing across projects and frameworks

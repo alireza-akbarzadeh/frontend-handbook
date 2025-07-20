@@ -1,0 +1,470 @@
+---
+title: "Introduction to JavaScript"
+description: "Learn the fundamentals of JavaScript, the programming language of the web"
+---
+
+## What is JavaScript?
+
+JavaScript is a high-level, interpreted programming language that allows you to implement complex features on web pages. While HTML provides structure and CSS handles presentation, JavaScript adds interactivity and dynamic behavior to websites.
+
+<Note>
+Despite the similar name, JavaScript is completely different from Java. JavaScript was created by Brendan Eich in 1995 and was originally called Mocha, then LiveScript, before settling on its current name.
+</Note>
+
+## Why Learn JavaScript?
+
+JavaScript has evolved from a simple scripting language to a powerful programming language that can be used for:
+
+<CardGroup cols={2}>
+  <Card title="Frontend Web Development" icon="browser">
+    Create interactive user interfaces, form validation, animations, and dynamic content updates without page reloads.
+  </Card>
+  
+  <Card title="Backend Development" icon="server">
+    Build server-side applications with Node.js, handling HTTP requests, database operations, and business logic.
+  </Card>
+  
+  <Card title="Mobile App Development" icon="mobile">
+    Develop cross-platform mobile applications using frameworks like React Native or Ionic.
+  </Card>
+  
+  <Card title="Desktop Applications" icon="desktop">
+    Create desktop applications with Electron, which powers apps like Visual Studio Code and Slack.
+  </Card>
+</CardGroup>
+
+## How JavaScript Works
+
+JavaScript runs directly in the browser, interpreting code line by line. Modern browsers include JavaScript engines that compile JavaScript code into machine code for faster execution.
+
+<Steps>
+  <Step title="Loading">
+    The browser loads the HTML document and encounters a JavaScript file or inline script.
+  </Step>
+  
+  <Step title="Parsing">
+    The JavaScript engine parses the code, checking for syntax errors.
+  </Step>
+  
+  <Step title="Compilation">
+    The engine compiles the code into an optimized form (just-in-time compilation).
+  </Step>
+  
+  <Step title="Execution">
+    The compiled code runs, manipulating the DOM, handling events, or performing calculations.
+  </Step>
+</Steps>
+
+## Adding JavaScript to HTML
+
+There are three ways to include JavaScript in your HTML documents:
+
+### 1. Inline JavaScript
+
+```html
+<button onclick="alert('Hello, World!')">Click Me</button>
+```
+
+### 2. Internal JavaScript
+
+```html
+<head>
+  <script>
+    function greet() {
+      alert('Hello, World!');
+    }
+  </script>
+</head>
+<body>
+  <button onclick="greet()">Click Me</button>
+</body>
+```
+
+### 3. External JavaScript (Recommended)
+
+```html
+<head>
+  <script src="script.js" defer></script>
+</head>
+```
+
+And in your script.js file:
+```javascript
+function greet() {
+  alert('Hello, World!');
+}
+
+document.querySelector('button').addEventListener('click', greet);
+```
+
+<Tip>
+The `defer` attribute tells the browser to continue parsing the HTML while the script is being downloaded, and to execute the script only after the HTML parsing is complete. This improves page load performance.
+</Tip>
+
+## JavaScript Syntax Basics
+
+### Variables and Data Types
+
+JavaScript has several ways to declare variables:
+
+```javascript
+// Using let (block-scoped, can be reassigned)
+let age = 25;
+age = 26; // Valid reassignment
+
+// Using const (block-scoped, cannot be reassigned)
+const PI = 3.14159;
+// PI = 3; // Error: Assignment to constant variable
+
+// Using var (function-scoped, older way, less recommended)
+var name = "John";
+```
+
+JavaScript has several primitive data types:
+
+```javascript
+// String
+let name = "John Doe";
+let greeting = 'Hello';
+let template = `Hello, ${name}`; // Template literal with variable interpolation
+
+// Number
+let age = 25;
+let price = 19.99;
+
+// Boolean
+let isActive = true;
+let isCompleted = false;
+
+// Undefined
+let undefinedVar;
+console.log(undefinedVar); // undefined
+
+// Null
+let emptyValue = null;
+
+// Symbol (ES6)
+let uniqueId = Symbol('id');
+
+// BigInt (ES2020)
+let bigNumber = 9007199254740991n;
+```
+
+And complex data types:
+
+```javascript
+// Object
+let person = {
+  name: "John",
+  age: 30,
+  isEmployed: true,
+  greet: function() {
+    console.log(`Hello, my name is ${this.name}`);
+  }
+};
+
+// Array
+let colors = ["red", "green", "blue"];
+let mixed = [1, "text", true, { key: "value" }];
+```
+
+### Operators
+
+JavaScript includes various operators for different operations:
+
+```javascript
+// Arithmetic operators
+let sum = 5 + 3;       // Addition: 8
+let difference = 10 - 4; // Subtraction: 6
+let product = 3 * 4;    // Multiplication: 12
+let quotient = 12 / 4;  // Division: 3
+let remainder = 10 % 3; // Modulus: 1
+let power = 2 ** 3;     // Exponentiation: 8
+
+// Assignment operators
+let x = 5;              // Basic assignment
+x += 3;                 // x = x + 3 (8)
+x -= 2;                 // x = x - 2 (6)
+
+// Comparison operators
+let isEqual = 5 === 5;        // Strict equality: true
+let isNotEqual = 5 !== "5";   // Strict inequality: true
+let isGreater = 10 > 5;       // Greater than: true
+let isLessOrEqual = 5 <= 5;   // Less than or equal: true
+
+// Logical operators
+let andResult = true && false; // Logical AND: false
+let orResult = true || false;  // Logical OR: true
+let notResult = !true;         // Logical NOT: false
+```
+
+### Control Flow
+
+JavaScript provides several structures for controlling the flow of execution:
+
+#### Conditional Statements
+
+```javascript
+// if statement
+let age = 18;
+
+if (age >= 18) {
+  console.log("You are an adult");
+} else if (age >= 13) {
+  console.log("You are a teenager");
+} else {
+  console.log("You are a child");
+}
+
+// switch statement
+let day = "Monday";
+
+switch (day) {
+  case "Monday":
+    console.log("Start of the work week");
+    break;
+  case "Friday":
+    console.log("End of the work week");
+    break;
+  default:
+    console.log("Another day");
+}
+
+// Ternary operator
+let status = age >= 18 ? "adult" : "minor";
+```
+
+#### Loops
+
+```javascript
+// for loop
+for (let i = 0; i < 5; i++) {
+  console.log(`Iteration ${i}`);
+}
+
+// while loop
+let count = 0;
+while (count < 5) {
+  console.log(`Count: ${count}`);
+  count++;
+}
+
+// do-while loop
+let num = 0;
+do {
+  console.log(`Number: ${num}`);
+  num++;
+} while (num < 5);
+
+// for...of loop (for iterables like arrays)
+let fruits = ["apple", "banana", "orange"];
+for (let fruit of fruits) {
+  console.log(fruit);
+}
+
+// for...in loop (for object properties)
+let person = { name: "John", age: 30, job: "developer" };
+for (let key in person) {
+  console.log(`${key}: ${person[key]}`);
+}
+```
+
+### Functions
+
+Functions are reusable blocks of code that perform specific tasks:
+
+```javascript
+// Function declaration
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+// Function expression
+const sayGoodbye = function(name) {
+  return `Goodbye, ${name}!`;
+};
+
+// Arrow function (ES6)
+const multiply = (a, b) => a * b;
+
+// Function with default parameters
+function createUser(name, age = 25, role = "user") {
+  return { name, age, role };
+}
+
+// Calling functions
+console.log(greet("Alice"));                // Hello, Alice!
+console.log(sayGoodbye("Bob"));             // Goodbye, Bob!
+console.log(multiply(4, 5));                // 20
+console.log(createUser("Charlie", 30));      // {name: "Charlie", age: 30, role: "user"}
+```
+
+## DOM Manipulation
+
+One of JavaScript's most powerful features is its ability to manipulate the Document Object Model (DOM), allowing dynamic changes to web page content and structure.
+
+```javascript
+// Selecting elements
+const heading = document.getElementById('main-heading');
+const paragraphs = document.getElementsByTagName('p');
+const buttons = document.getElementsByClassName('btn');
+const firstLink = document.querySelector('a');
+const allLinks = document.querySelectorAll('a');
+
+// Modifying content
+heading.textContent = 'New Heading Text';  // Text only
+heading.innerHTML = 'New <span>Heading</span> Text';  // HTML content
+
+// Changing styles
+heading.style.color = 'blue';
+heading.style.fontSize = '24px';
+
+// Adding/removing classes
+heading.classList.add('highlight');
+heading.classList.remove('old-class');
+heading.classList.toggle('active');
+
+// Creating new elements
+const newParagraph = document.createElement('p');
+newParagraph.textContent = 'This is a new paragraph.';
+document.body.appendChild(newParagraph);
+
+// Removing elements
+const oldElement = document.getElementById('old-element');
+oldElement.parentNode.removeChild(oldElement);
+// Or with newer syntax
+oldElement.remove();
+```
+
+## Event Handling
+
+JavaScript can respond to user interactions through event handling:
+
+```javascript
+const button = document.querySelector('button');
+
+// Method 1: addEventListener
+button.addEventListener('click', function(event) {
+  console.log('Button clicked!');
+  console.log(event); // The event object contains information about the event
+});
+
+// Method 2: Using arrow functions
+button.addEventListener('click', (event) => {
+  console.log('Button clicked with arrow function!');
+});
+
+// Method 3: Named function reference
+function handleClick(event) {
+  console.log('Button clicked with named function!');
+}
+button.addEventListener('click', handleClick);
+
+// Removing event listeners
+button.removeEventListener('click', handleClick);
+
+// Common events
+document.addEventListener('DOMContentLoaded', () => console.log('DOM fully loaded'));
+window.addEventListener('load', () => console.log('Page fully loaded'));
+button.addEventListener('mouseover', () => console.log('Mouse over button'));
+form.addEventListener('submit', (e) => {
+  e.preventDefault(); // Prevent form submission
+  console.log('Form submitted');
+});
+```
+
+## Modern JavaScript Features (ES6+)
+
+Modern JavaScript (ECMAScript 2015 and later) introduced many powerful features:
+
+### Template Literals
+
+```javascript
+const name = 'Alice';
+const greeting = `Hello, ${name}! Today is ${new Date().toLocaleDateString()}.`;
+```
+
+### Destructuring
+
+```javascript
+// Array destructuring
+const colors = ['red', 'green', 'blue'];
+const [firstColor, secondColor] = colors;
+
+// Object destructuring
+const person = { name: 'John', age: 30, job: 'developer' };
+const { name, job } = person;
+```
+
+### Spread and Rest Operators
+
+```javascript
+// Spread operator
+const arr1 = [1, 2, 3];
+const arr2 = [...arr1, 4, 5]; // [1, 2, 3, 4, 5]
+
+const obj1 = { x: 1, y: 2 };
+const obj2 = { ...obj1, z: 3 }; // { x: 1, y: 2, z: 3 }
+
+// Rest operator
+function sum(...numbers) {
+  return numbers.reduce((total, num) => total + num, 0);
+}
+
+console.log(sum(1, 2, 3, 4)); // 10
+```
+
+### Promises and Async/Await
+
+```javascript
+// Promises
+function fetchData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const success = true;
+      if (success) {
+        resolve({ id: 1, name: 'Data' });
+      } else {
+        reject('Error fetching data');
+      }
+    }, 1000);
+  });
+}
+
+fetchData()
+  .then(data => console.log('Success:', data))
+  .catch(error => console.error('Error:', error));
+
+// Async/Await
+async function getData() {
+  try {
+    const data = await fetchData();
+    console.log('Success with async/await:', data);
+  } catch (error) {
+    console.error('Error with async/await:', error);
+  }
+}
+
+getData();
+```
+
+## Best Practices
+
+- Use `const` by default, and `let` when you need to reassign variables. Avoid `var`.
+- Follow a consistent naming convention (camelCase for variables and functions).
+- Comment your code, but focus on explaining "why" rather than "what".
+- Use strict mode (`'use strict';`) to catch common coding mistakes.
+- Handle errors properly with try/catch blocks.
+- Avoid global variables to prevent naming conflicts.
+- Use modern features like arrow functions, template literals, and destructuring.
+- Optimize performance by minimizing DOM manipulations.
+
+## Next Steps
+
+Now that you understand the basics of JavaScript, you can:
+
+- Explore [JavaScript Syntax](/javascript/syntax) in more detail
+- Learn about [Variables and Data Types](/javascript/variables)
+- Master [JavaScript Functions](/javascript/functions)
+- Study [DOM Manipulation](/javascript/dom-manipulation) for interactive web pages
+- Dive into [Asynchronous JavaScript](/javascript/async) for handling API calls and more

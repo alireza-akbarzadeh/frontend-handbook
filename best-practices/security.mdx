@@ -1,0 +1,1015 @@
+---
+title: "Frontend Security Best Practices"
+description: "Learn how to protect your web applications from common security vulnerabilities"
+---
+
+## Why Frontend Security Matters
+
+Frontend security is often overlooked, with many developers assuming that security concerns are primarily a backend responsibility. However, frontend code is directly exposed to users and can be a significant attack vector. Implementing proper security measures in your frontend code is essential for protecting:
+
+- User data and privacy
+- Application functionality
+- Backend systems
+- Your organization's reputation
+
+<Note>
+Security is a shared responsibility across the entire application stack. Even the most secure backend can be compromised if the frontend contains vulnerabilities.
+</Note>
+
+## Common Frontend Security Vulnerabilities
+
+<CardGroup cols={2}>
+  <Card title="Cross-Site Scripting (XSS)" icon="code">
+    Attackers inject malicious scripts that execute in users' browsers.
+    
+    **Impact:** Can steal cookies, session tokens, and sensitive data, or perform actions on behalf of the user.
+  </Card>
+  
+  <Card title="Cross-Site Request Forgery (CSRF)" icon="globe">
+    Forces authenticated users to perform unwanted actions on a web application.
+    
+    **Impact:** Can lead to unauthorized transactions, data changes, or account compromise.
+  </Card>
+  
+  <Card title="Clickjacking" icon="mouse-pointer">
+    Tricks users into clicking on something different from what they perceive.
+    
+    **Impact:** Can lead to unwanted actions, downloads, or data exposure.
+  </Card>
+  
+  <Card title="Sensitive Data Exposure" icon="eye">
+    Exposing sensitive data in frontend code or browser storage.
+    
+    **Impact:** Can lead to data breaches, identity theft, or account takeover.
+  </Card>
+  
+  <Card title="Insecure Dependencies" icon="box">
+    Using libraries or frameworks with known vulnerabilities.
+    
+    **Impact:** Can introduce various security issues depending on the vulnerability.
+  </Card>
+  
+  <Card title="Client-Side Logic Vulnerabilities" icon="bug">
+    Relying solely on client-side validation or exposing sensitive business logic.
+    
+    **Impact:** Can lead to data manipulation, bypassing restrictions, or business logic abuse.
+  </Card>
+</CardGroup>
+
+## Preventing Cross-Site Scripting (XSS)
+
+XSS remains one of the most common web application vulnerabilities. Here's how to prevent it:
+
+### Content Security Policy (CSP)
+
+CSP is a powerful defense against XSS attacks. It restricts the sources from which various types of content can be loaded.
+
+```html
+<!-- Example CSP header -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' https://trusted-cdn.com; img-src 'self' https://trusted-cdn.com data:; connect-src 'self' https://api.example.com">
+```
+
+You can also set CSP via HTTP headers (preferred method):
+
+```http
+Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' https://trusted-cdn.com; img-src 'self' https://trusted-cdn.com data:; connect-src 'self' https://api.example.com
+```
+
+<Note>
+Avoid using `unsafe-inline` and `unsafe-eval` in your CSP as they significantly reduce its effectiveness against XSS attacks.
+</Note>
+
+### Output Encoding
+
+Always encode user-generated content before inserting it into the DOM.
+
+```javascript
+// Unsafe: Direct insertion of user input
+const userName = getUserInput();
+document.getElementById('greeting').innerHTML = 'Hello, ' + userName;
+
+// Safe: Encode user input
+const userName = getUserInput();
+const encodedUserName = encodeHTML(userName);
+document.getElementById('greeting').innerHTML = 'Hello, ' + encodedUserName;
+
+// Simple HTML encoding function
+function encodeHTML(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+```
+
+Many frameworks provide built-in protection:
+
+<AccordionGroup>
+  <Accordion icon="react" title="React">
+    React automatically escapes values in JSX:
+    
+    ```jsx
+    // Safe in React - values in curly braces are automatically escaped
+    const userName = getUserInput();
+    return <div>Hello, {userName}</div>;
+    
+    // Dangerous - bypasses React's automatic escaping
+    const userName = getUserInput();
+    return <div dangerouslySetInnerHTML={{ __html: userName }} />;
+    ```
+    
+    Only use `dangerouslySetInnerHTML` when absolutely necessary and with proper sanitization.
+  </Accordion>
+  
+  <Accordion icon="vuejs" title="Vue.js">
+    Vue automatically escapes values in templates:
+    
+    ```vue
+    <!-- Safe in Vue - values in mustaches are automatically escaped -->
+    <div>Hello, {{ userName }}</div>
+    
+    <!-- Dangerous - bypasses Vue's automatic escaping -->
+    <div v-html="userName"></div>
+    ```
+    
+    Only use `v-html` when absolutely necessary and with proper sanitization.
+  </Accordion>
+  
+  <Accordion icon="angular" title="Angular">
+    Angular automatically escapes values in templates:
+    
+    ```html
+    <!-- Safe in Angular - values in interpolation are automatically escaped -->
+    <div>Hello, {{ userName }}</div>
+    
+    <!-- Dangerous - bypasses Angular's automatic escaping -->
+    <div [innerHTML]="userName"></div>
+    ```
+    
+    Only use `[innerHTML]` when absolutely necessary and with proper sanitization.
+  </Accordion>
+</AccordionGroup>
+
+### Input Validation
+
+Validate user input on both client and server sides.
+
+```javascript
+// Client-side validation example
+function validateUsername(username) {
+  // Only allow alphanumeric characters and underscores
+  const pattern = /^[a-zA-Z0-9_]+$/;
+  
+  if (!pattern.test(username)) {
+    throw new Error('Username can only contain letters, numbers, and underscores');
+  }
+  
+  return username;
+}
+
+// Usage
+try {
+  const validatedUsername = validateUsername(userInput);
+  // Proceed with the validated input
+} catch (error) {
+  // Handle validation error
+  displayError(error.message);
+}
+```
+
+### DOM XSS Prevention
+
+Be careful with DOM manipulation methods that can execute JavaScript.
+
+```javascript
+// Dangerous methods that can lead to XSS:
+document.write(userInput);
+element.innerHTML = userInput;
+element.outerHTML = userInput;
+element.insertAdjacentHTML('beforebegin', userInput);
+element.insertAdjacentHTML('afterbegin', userInput);
+element.insertAdjacentHTML('beforeend', userInput);
+element.insertAdjacentHTML('afterend', userInput);
+
+// Safer alternatives:
+element.textContent = userInput; // For text
+element.setAttribute('value', userInput); // For attributes (except event handlers)
+```
+
+### Using Sanitization Libraries
+
+When you need to allow some HTML, use a sanitization library.
+
+```javascript
+// Using DOMPurify
+import DOMPurify from 'dompurify';
+
+const userHtml = getUserGeneratedHtml();
+const sanitizedHtml = DOMPurify.sanitize(userHtml);
+
+// Now safe to insert
+element.innerHTML = sanitizedHtml;
+```
+
+## Preventing Cross-Site Request Forgery (CSRF)
+
+CSRF attacks trick users into performing unwanted actions on a site where they're authenticated.
+
+### CSRF Tokens
+
+Implement CSRF tokens for state-changing operations.
+
+```html
+<!-- Form with CSRF token -->
+<form action="/api/update-profile" method="POST">
+  <input type="hidden" name="csrf_token" value="random-token-value">
+  <!-- Other form fields -->
+  <button type="submit">Update Profile</button>
+</form>
+```
+
+```javascript
+// Including CSRF token in AJAX requests
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+fetch('/api/update-profile', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-Token': csrfToken
+  },
+  body: JSON.stringify(profileData)
+});
+```
+
+### SameSite Cookies
+
+Use SameSite cookie attribute to prevent CSRF attacks.
+
+```http
+Set-Cookie: sessionid=abc123; Path=/; Secure; HttpOnly; SameSite=Strict
+```
+
+SameSite values:
+- `Strict`: Cookies are only sent in a first-party context
+- `Lax`: Cookies are sent when navigating to the site (default in modern browsers)
+- `None`: Cookies are sent in all contexts (requires Secure attribute)
+
+### Custom Headers
+
+Add custom headers to AJAX requests that browsers won't include in cross-site requests.
+
+```javascript
+fetch('/api/update-profile', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest' // Custom header
+  },
+  body: JSON.stringify(profileData)
+});
+```
+
+## Preventing Clickjacking
+
+Clickjacking attacks use transparent or disguised UI elements to trick users into clicking on something different from what they perceive.
+
+### X-Frame-Options Header
+
+Prevent your site from being embedded in frames on other sites.
+
+```http
+X-Frame-Options: DENY
+```
+
+Or allow only specific origins:
+
+```http
+X-Frame-Options: ALLOW-FROM https://trusted-site.com
+```
+
+### Content Security Policy (CSP) frame-ancestors
+
+Modern alternative to X-Frame-Options with more flexibility.
+
+```http
+Content-Security-Policy: frame-ancestors 'none';
+```
+
+Or allow specific origins:
+
+```http
+Content-Security-Policy: frame-ancestors 'self' https://trusted-site.com;
+```
+
+### Frame-busting Code
+
+As a fallback for older browsers, include frame-busting code.
+
+```javascript
+// Basic frame-busting
+if (window !== window.top) {
+  window.top.location = window.location;
+}
+```
+
+More robust version:
+
+```javascript
+// Advanced frame-busting
+(function() {
+  // If we're in a frame
+  if (window !== window.top) {
+    // Try to break out
+    window.top.location = window.location;
+    
+    // If we're still in a frame after attempting to break out
+    // (can happen if the parent page uses security measures)
+    setTimeout(function() {
+      if (window !== window.top) {
+        // Make the UI unusable
+        document.body.innerHTML = 'This site cannot be displayed in a frame.';
+        document.body.style.backgroundColor = '#FFF';
+        document.body.style.color = '#000';
+        document.body.style.padding = '20px';
+        document.body.style.position = 'fixed';
+        document.body.style.top = '0';
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.bottom = '0';
+        document.body.style.zIndex = '9999999';
+      }
+    }, 1);
+  }
+})();
+```
+
+## Protecting Sensitive Data
+
+Frontend code should never expose sensitive data or secrets.
+
+### Avoid Storing Sensitive Data in JavaScript
+
+```javascript
+// BAD: Hardcoded API key
+const apiKey = 'sk_live_abcdef123456';
+
+// GOOD: Get API key from backend
+async function fetchDataWithAuth() {
+  // Get a short-lived token from your backend
+  const { token } = await fetch('/api/get-auth-token').then(r => r.json());
+  
+  // Use the token
+  return fetch('/api/data', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+}
+```
+
+### Secure Local Storage Usage
+
+Browser storage mechanisms (localStorage, sessionStorage) are not secure for sensitive data.
+
+```javascript
+// BAD: Storing sensitive data in localStorage
+localStorage.setItem('creditCard', '1234-5678-9012-3456');
+
+// BETTER: Store only non-sensitive data
+localStorage.setItem('userPreferences', JSON.stringify({ theme: 'dark', fontSize: 'large' }));
+
+// For sensitive data that must be persisted client-side, consider encrypting it
+// (though this has limitations and should be used carefully)
+import CryptoJS from 'crypto-js';
+
+function secureStore(key, data, secretKey) {
+  const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
+  sessionStorage.setItem(key, encrypted);
+}
+
+function secureRetrieve(key, secretKey) {
+  const encrypted = sessionStorage.getItem(key);
+  if (!encrypted) return null;
+  
+  const decrypted = CryptoJS.AES.decrypt(encrypted, secretKey).toString(CryptoJS.enc.Utf8);
+  return JSON.parse(decrypted);
+}
+```
+
+### Secure Cookie Usage
+
+When using cookies, set appropriate security flags.
+
+```http
+Set-Cookie: sessionid=abc123; Path=/; Secure; HttpOnly; SameSite=Strict
+```
+
+- `Secure`: Only send cookie over HTTPS
+- `HttpOnly`: Prevent JavaScript access to the cookie
+- `SameSite`: Control when cookies are sent with cross-site requests
+- Set appropriate expiration times
+
+## Managing Dependencies Securely
+
+Third-party dependencies can introduce security vulnerabilities.
+
+### Regular Dependency Auditing
+
+Regularly check for vulnerabilities in your dependencies.
+
+```bash
+# npm
+npm audit
+
+# yarn
+yarn audit
+
+# To fix vulnerabilities
+npm audit fix
+yarn audit fix
+```
+
+### Subresource Integrity (SRI)
+
+When loading scripts from CDNs, use SRI to ensure they haven't been tampered with.
+
+```html
+<script 
+  src="https://cdn.example.com/library.js" 
+  integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC" 
+  crossorigin="anonymous">
+</script>
+```
+
+### Minimize Dependencies
+
+Each dependency increases your attack surface.
+
+```javascript
+// Instead of importing a large library for a simple function
+// BAD
+import _ from 'lodash';
+const reversed = _.reverse([1, 2, 3]);
+
+// GOOD: Use native methods when possible
+const reversed = [1, 2, 3].reverse();
+
+// If you need specific functions, import only what you need
+// BETTER than importing the whole library
+import reverse from 'lodash/reverse';
+const reversed = reverse([1, 2, 3]);
+```
+
+## Secure Authentication Practices
+
+Authentication is a critical security component.
+
+### Implement Proper Token Handling
+
+```javascript
+// Store tokens securely
+function storeAuthToken(token) {
+  // For SPA, store in memory when possible
+  // This token will be lost on page refresh, but that's often acceptable
+  // for better security
+  const authState = {
+    token,
+    expiresAt: calculateExpiry(token)
+  };
+  
+  // Store in a closure instead of global variable
+  return {
+    getToken: () => {
+      // Check if token is expired
+      if (Date.now() >= authState.expiresAt) {
+        return null;
+      }
+      return authState.token;
+    },
+    clearToken: () => {
+      authState.token = null;
+      authState.expiresAt = 0;
+    }
+  };
+}
+
+// Usage
+const auth = storeAuthToken(receivedToken);
+
+// When making authenticated requests
+fetch('/api/data', {
+  headers: {
+    'Authorization': `Bearer ${auth.getToken()}`
+  }
+});
+
+// On logout
+auth.clearToken();
+```
+
+### Implement Proper Logout
+
+```javascript
+async function logout() {
+  try {
+    // 1. Invalidate the token on the server
+    await fetch('/api/logout', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${auth.getToken()}`
+      }
+    });
+    
+    // 2. Clear client-side auth state
+    auth.clearToken();
+    
+    // 3. Clear any sensitive application state
+    store.dispatch({ type: 'RESET_STATE' });
+    
+    // 4. Redirect to login page
+    window.location.href = '/login';
+  } catch (error) {
+    console.error('Logout failed', error);
+    // Still clear client-side state even if server logout fails
+    auth.clearToken();
+    store.dispatch({ type: 'RESET_STATE' });
+    window.location.href = '/login';
+  }
+}
+```
+
+## Protecting Against Other Common Attacks
+
+### JSON Hijacking Protection
+
+Prevent sensitive data in JSON responses from being stolen via script tags.
+
+```javascript
+// Server-side: Prefix JSON responses with a character that makes it invalid JavaScript
+app.get('/api/user-data', (req, res) => {
+  const userData = { /* sensitive user data */ };
+  res.send(`)]}',\n${JSON.stringify(userData)}`);
+});
+
+// Client-side: Strip the prefix before parsing
+fetch('/api/user-data')
+  .then(response => response.text())
+  .then(text => {
+    // Remove the anti-hijacking prefix
+    const json = text.replace(/^\)\]\}',\n/, '');
+    return JSON.parse(json);
+  })
+  .then(data => {
+    // Use the data safely
+  });
+```
+
+### Preventing Prototype Pollution
+
+Prototype pollution can lead to security vulnerabilities in JavaScript applications.
+
+```javascript
+// Unsafe object merging
+function mergeUnsafe(target, source) {
+  for (const key in source) {
+    if (typeof source[key] === 'object') {
+      target[key] = target[key] || {};
+      mergeUnsafe(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+
+// Safer object merging with prototype pollution protection
+function mergeSafe(target, source) {
+  for (const key in source) {
+    // Skip __proto__ and constructor to prevent prototype pollution
+    if (key === '__proto__' || key === 'constructor') continue;
+    
+    if (source[key] && typeof source[key] === 'object') {
+      target[key] = target[key] || {};
+      mergeSafe(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+```
+
+### Preventing DOM-based Vulnerabilities
+
+Be careful with DOM APIs that can lead to security issues.
+
+```javascript
+// Dangerous: Using location.href with user input
+const userInput = document.getElementById('search').value;
+window.location.href = '/search?q=' + userInput; // Vulnerable to JavaScript injection
+
+// Safe: Encode parameters properly
+const userInput = document.getElementById('search').value;
+window.location.href = '/search?q=' + encodeURIComponent(userInput);
+
+// Dangerous: Using eval or new Function
+const userInput = document.getElementById('expression').value;
+const result = eval(userInput); // Never do this!
+
+// Safe: Use alternatives to eval
+// For JSON parsing:
+const jsonString = getJsonString();
+const data = JSON.parse(jsonString);
+
+// For dynamic math calculations:
+const expression = document.getElementById('expression').value;
+// Use a math expression parser library instead of eval
+```
+
+## Security Headers
+
+Implement security headers to enhance your application's security posture.
+
+```http
+# Content-Security-Policy: Restricts resource loading
+Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' https://trusted-cdn.com; img-src 'self' https://trusted-cdn.com data:; connect-src 'self' https://api.example.com
+
+# X-Content-Type-Options: Prevents MIME type sniffing
+X-Content-Type-Options: nosniff
+
+# X-Frame-Options: Prevents clickjacking
+X-Frame-Options: DENY
+
+# Strict-Transport-Security: Enforces HTTPS
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# X-XSS-Protection: Additional XSS protection for older browsers
+X-XSS-Protection: 1; mode=block
+
+# Referrer-Policy: Controls the Referer header
+Referrer-Policy: strict-origin-when-cross-origin
+
+# Permissions-Policy: Controls browser features
+Permissions-Policy: camera=(), microphone=(), geolocation=(self), payment=()
+```
+
+## Security in Modern Frontend Frameworks
+
+### React Security Best Practices
+
+```jsx
+// 1. Prevent XSS by avoiding dangerouslySetInnerHTML
+// Bad
+function Comment({ comment }) {
+  return <div dangerouslySetInnerHTML={{ __html: comment }} />;
+}
+
+// Good
+function Comment({ comment }) {
+  return <div>{comment}</div>; // React automatically escapes this
+}
+
+// 2. Use React's built-in protection against injection attacks
+function SearchQuery({ query }) {
+  // Safe - React escapes variables in JSX
+  return <div>You searched for: {query}</div>;
+}
+
+// 3. Sanitize HTML when you must use dangerouslySetInnerHTML
+import DOMPurify from 'dompurify';
+
+function RichTextComment({ comment }) {
+  const sanitizedComment = DOMPurify.sanitize(comment);
+  return <div dangerouslySetInnerHTML={{ __html: sanitizedComment }} />;
+}
+
+// 4. Protect against CSRF in forms
+function ProfileForm() {
+  const csrfToken = useCsrfToken(); // Custom hook to get token
+  
+  return (
+    <form action="/api/update-profile" method="POST">
+      <input type="hidden" name="csrf_token" value={csrfToken} />
+      {/* Form fields */}
+      <button type="submit">Update Profile</button>
+    </form>
+  );
+}
+```
+
+### Vue.js Security Best Practices
+
+```vue
+<template>
+  <!-- 1. Prevent XSS by avoiding v-html -->
+  <!-- Bad -->
+  <div v-html="comment"></div>
+  
+  <!-- Good -->
+  <div>{{ comment }}</div> <!-- Vue automatically escapes this -->
+  
+  <!-- 2. Sanitize HTML when you must use v-html -->
+  <div v-html="sanitizedComment"></div>
+  
+  <!-- 3. Protect against CSRF in forms -->
+  <form action="/api/update-profile" method="POST">
+    <input type="hidden" name="csrf_token" :value="csrfToken">
+    <!-- Form fields -->
+    <button type="submit">Update Profile</button>
+  </form>
+</template>
+
+<script>
+import DOMPurify from 'dompurify';
+
+export default {
+  props: ['comment'],
+  data() {
+    return {
+      csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    };
+  },
+  computed: {
+    sanitizedComment() {
+      return DOMPurify.sanitize(this.comment);
+    }
+  }
+};
+</script>
+```
+
+### Angular Security Best Practices
+
+```typescript
+import { Component, Input } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
+@Component({
+  selector: 'app-comment',
+  template: `
+    <!-- 1. Prevent XSS by avoiding [innerHTML] -->
+    <!-- Bad -->
+    <div [innerHTML]="comment"></div>
+    
+    <!-- Good -->
+    <div>{{ comment }}</div> <!-- Angular automatically escapes this -->
+    
+    <!-- 2. Use Angular's built-in sanitization when needed -->
+    <div [innerHTML]="sanitizedComment"></div>
+    
+    <!-- 3. Protect against CSRF in forms -->
+    <form action="/api/update-profile" method="POST">
+      <input type="hidden" name="csrf_token" [value]="csrfToken">
+      <!-- Form fields -->
+      <button type="submit">Update Profile</button>
+    </form>
+  `
+})
+export class CommentComponent {
+  @Input() comment: string;
+  csrfToken: string;
+  sanitizedComment: SafeHtml;
+  
+  constructor(private sanitizer: DomSanitizer) {
+    this.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  }
+  
+  ngOnChanges() {
+    // Angular's built-in sanitizer helps protect against XSS
+    this.sanitizedComment = this.sanitizer.bypassSecurityTrustHtml(this.comment);
+    
+    // For more control, you can use DOMPurify before Angular's sanitizer
+    // this.sanitizedComment = this.sanitizer.bypassSecurityTrustHtml(
+    //   DOMPurify.sanitize(this.comment)
+    // );
+  }
+}
+```
+
+## Security Testing for Frontend Applications
+
+### Automated Security Testing
+
+<Steps>
+  <Step title="Static Application Security Testing (SAST)">
+    Use tools to analyze your code for security vulnerabilities.
+    
+    ```bash
+    # ESLint with security plugins
+    npm install --save-dev eslint eslint-plugin-security
+    
+    # Add to your .eslintrc.json
+    {
+      "plugins": ["security"],
+      "extends": ["plugin:security/recommended"]
+    }
+    
+    # Run ESLint
+    npx eslint src/
+    ```
+  </Step>
+  
+  <Step title="Dependency scanning">
+    Regularly scan dependencies for known vulnerabilities.
+    
+    ```bash
+    # npm audit
+    npm audit
+    
+    # Snyk
+    npm install -g snyk
+    snyk test
+    
+    # OWASP Dependency-Check
+    # (Requires Java)
+    npm install -g dependency-check
+    dependency-check --project "My Project" --scan node_modules
+    ```
+  </Step>
+  
+  <Step title="Dynamic Application Security Testing (DAST)">
+    Test your running application for security issues.
+    
+    Tools:
+    - OWASP ZAP (Zed Attack Proxy)
+    - Burp Suite
+    - Arachni
+    
+    ```bash
+    # Example using OWASP ZAP CLI
+    zap-cli quick-scan --self-contained --start-options "-config api.disablekey=true" https://your-app.com
+    ```
+  </Step>
+</Steps>
+
+### Manual Security Testing
+
+<AccordionGroup>
+  <Accordion icon="code" title="XSS Testing">
+    Test your application for XSS vulnerabilities by trying to inject script tags and other malicious content into all input fields.
+    
+    Common test payloads:
+    ```
+    <script>alert('XSS')</script>
+    <img src="x" onerror="alert('XSS')">
+    <a href="javascript:alert('XSS')">Click me</a>
+    ```
+    
+    Test in different contexts:
+    - URL parameters
+    - Form inputs
+    - Headers
+    - File uploads (especially names and metadata)
+    - JSON payloads
+  </Accordion>
+  
+  <Accordion icon="globe" title="CSRF Testing">
+    Test if your application is vulnerable to CSRF by creating a simple HTML page that submits a form to your application.
+    
+    ```html
+    <!-- test-csrf.html -->
+    <!DOCTYPE html>
+    <html>
+    <body onload="document.forms[0].submit()">
+      <form action="https://your-app.com/api/update-profile" method="POST">
+        <input type="hidden" name="name" value="Hacked Name">
+        <!-- Other form fields with malicious values -->
+      </form>
+    </body>
+    </html>
+    ```
+    
+    If this form successfully updates the profile when opened in a browser where the user is logged in to your application, you have a CSRF vulnerability.
+  </Accordion>
+  
+  <Accordion icon="eye" title="Sensitive Data Exposure Testing">
+    Check your application for exposed sensitive data:
+    
+    1. Inspect the browser's local storage and session storage
+    2. Check cookies for sensitive information
+    3. Examine the network tab in developer tools for sensitive data in responses
+    4. View the page source and JavaScript files for hardcoded secrets
+    5. Check browser cache for sensitive information
+    
+    Tools like Retire.js can help identify JavaScript libraries with known vulnerabilities:
+    ```bash
+    npm install -g retire
+    retire .
+    ```
+  </Accordion>
+  
+  <Accordion icon="shield-check" title="Security Headers Testing">
+    Test your application's HTTP security headers.
+    
+    Online tools:
+    - [Security Headers](https://securityheaders.com)
+    - [Mozilla Observatory](https://observatory.mozilla.org)
+    
+    Command line:
+    ```bash
+    curl -I https://your-app.com
+    ```
+    
+    Check for these important headers:
+    - Content-Security-Policy
+    - X-Content-Type-Options
+    - X-Frame-Options
+    - Strict-Transport-Security
+    - Referrer-Policy
+    - Permissions-Policy
+  </Accordion>
+</AccordionGroup>
+
+## Security Checklist
+
+Use this checklist to ensure your frontend application follows security best practices:
+
+<Steps>
+  <Step title="XSS Prevention">
+    - [ ] Implement Content Security Policy (CSP)
+    - [ ] Encode user-generated content before inserting into the DOM
+    - [ ] Use framework's built-in XSS protections
+    - [ ] Sanitize HTML when allowing rich text
+    - [ ] Validate user input on both client and server sides
+    - [ ] Avoid dangerous DOM methods with user input
+  </Step>
+  
+  <Step title="CSRF Protection">
+    - [ ] Implement CSRF tokens for state-changing operations
+    - [ ] Use SameSite cookie attribute
+    - [ ] Add custom headers to AJAX requests
+    - [ ] Validate the origin and referrer headers on the server
+  </Step>
+  
+  <Step title="Clickjacking Protection">
+    - [ ] Set X-Frame-Options header
+    - [ ] Use CSP frame-ancestors directive
+    - [ ] Implement frame-busting code as a fallback
+  </Step>
+  
+  <Step title="Sensitive Data Protection">
+    - [ ] Avoid storing sensitive data in JavaScript
+    - [ ] Use secure cookie flags (HttpOnly, Secure, SameSite)
+    - [ ] Don't store sensitive data in localStorage or sessionStorage
+    - [ ] Implement proper token handling
+    - [ ] Implement proper logout functionality
+  </Step>
+  
+  <Step title="Dependency Management">
+    - [ ] Regularly audit dependencies for vulnerabilities
+    - [ ] Use Subresource Integrity (SRI) for CDN resources
+    - [ ] Minimize dependencies
+    - [ ] Keep dependencies updated
+  </Step>
+  
+  <Step title="Security Headers">
+    - [ ] Implement Content-Security-Policy
+    - [ ] Set X-Content-Type-Options: nosniff
+    - [ ] Configure X-Frame-Options
+    - [ ] Enable Strict-Transport-Security
+    - [ ] Set appropriate Referrer-Policy
+    - [ ] Configure Permissions-Policy
+  </Step>
+  
+  <Step title="Security Testing">
+    - [ ] Perform static code analysis
+    - [ ] Scan dependencies for vulnerabilities
+    - [ ] Conduct dynamic application security testing
+    - [ ] Perform manual security testing
+    - [ ] Test security headers
+  </Step>
+</Steps>
+
+## Resources
+
+### Security Guidelines and Standards
+
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [OWASP Frontend Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Frontend_Security_Cheat_Sheet.html)
+- [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+- [Web Security Guidelines by Mozilla](https://infosec.mozilla.org/guidelines/web_security)
+
+### Security Testing Tools
+
+- [OWASP ZAP (Zed Attack Proxy)](https://www.zaproxy.org/)
+- [Snyk](https://snyk.io/)
+- [ESLint Security Plugin](https://github.com/nodesecurity/eslint-plugin-security)
+- [DOMPurify](https://github.com/cure53/DOMPurify)
+- [Security Headers](https://securityheaders.com/)
+
+### Learning Resources
+
+- [Web Security Academy by PortSwigger](https://portswigger.net/web-security)
+- [Frontend Security - The OWASP Top 10 for Frontend Developers](https://frontendmasters.com/courses/web-security/)
+- [MDN Web Security](https://developer.mozilla.org/en-US/docs/Web/Security)
+
+## Next Steps
+
+Now that you understand frontend security best practices, you can:
+
+- Learn about [Performance Optimization](/best-practices/performance) to make your sites faster
+- Explore [Accessibility](/best-practices/accessibility) best practices to make your sites usable by everyone
+- Study [Testing](/best-practices/testing) strategies to ensure your applications work correctly

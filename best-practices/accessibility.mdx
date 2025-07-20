@@ -1,0 +1,1103 @@
+---
+title: 'Web Accessibility (a11y)'
+description: 'Learn how to build inclusive web applications that work for everyone'
+---
+
+## Why Accessibility Matters
+
+Web accessibility (often abbreviated as a11y) ensures that websites and applications are designed and developed so that people with disabilities can use them. Beyond being a legal requirement in many jurisdictions, accessibility is a fundamental aspect of inclusive design that benefits all users.
+
+<Note>
+  Accessibility isn't just about accommodating users with permanent
+  disabilities. It also helps users with temporary limitations (like a broken
+  arm) or situational constraints (like bright sunlight on a screen).
+</Note>
+
+## Understanding Disabilities and Assistive Technologies
+
+To build accessible websites, it's important to understand different types of disabilities and the assistive technologies people use.
+
+<CardGroup cols={2}>
+  <Card title="Visual Impairments" icon="eye">
+    Includes blindness, low vision, and color blindness.
+
+    **Assistive Technologies:**
+    - Screen readers (JAWS, NVDA, VoiceOver)
+    - Screen magnifiers
+    - Braille displays
+    - High contrast modes
+
+  </Card>
+
+  <Card title="Auditory Impairments" icon="ear-listen">
+    Includes deafness and hard of hearing.
+
+    **Assistive Technologies:**
+    - Captions and transcripts
+    - Visual alternatives for audio cues
+
+  </Card>
+
+  <Card title="Motor Impairments" icon="hand">
+    Includes limited fine motor control, tremors, and paralysis.
+
+    **Assistive Technologies:**
+    - Keyboard-only navigation
+    - Switch devices
+    - Voice recognition
+    - Eye tracking
+
+  </Card>
+
+  <Card title="Cognitive Impairments" icon="brain">
+    Includes learning disabilities, attention deficits, and memory issues.
+
+    **Assistive Technologies:**
+    - Simple layouts
+    - Reading tools
+    - Text-to-speech
+    - Predictive text
+
+  </Card>
+</CardGroup>
+
+## Accessibility Standards and Guidelines
+
+### Web Content Accessibility Guidelines (WCAG)
+
+WCAG is the most widely recognized set of accessibility guidelines, organized around four principles:
+
+<AccordionGroup>
+  <Accordion icon="eye" title="Perceivable">
+    Information and user interface components must be presentable to users in ways they can perceive.
+
+    **Key Guidelines:**
+    - Provide text alternatives for non-text content
+    - Provide captions and alternatives for multimedia
+    - Create content that can be presented in different ways
+    - Make it easier for users to see and hear content
+
+  </Accordion>
+
+  <Accordion icon="hand-point-up" title="Operable">
+    User interface components and navigation must be operable.
+
+    **Key Guidelines:**
+    - Make all functionality available from a keyboard
+    - Give users enough time to read and use content
+    - Do not use content that causes seizures or physical reactions
+    - Provide ways to help users navigate and find content
+
+  </Accordion>
+
+  <Accordion icon="lightbulb" title="Understandable">
+    Information and the operation of the user interface must be understandable.
+
+    **Key Guidelines:**
+    - Make text readable and understandable
+    - Make content appear and operate in predictable ways
+    - Help users avoid and correct mistakes
+
+  </Accordion>
+
+  <Accordion icon="shield-check" title="Robust">
+    Content must be robust enough to be interpreted by a wide variety of user agents, including assistive technologies.
+
+    **Key Guidelines:**
+    - Maximize compatibility with current and future user tools
+
+  </Accordion>
+</AccordionGroup>
+
+WCAG defines three levels of conformance:
+
+- **Level A:** Minimum level of accessibility (must satisfy)
+- **Level AA:** Addresses the major barriers (commonly required by regulations)
+- **Level AAA:** Highest level of accessibility (ideal goal)
+
+### Accessibility Regulations
+
+Many countries have laws requiring digital accessibility:
+
+- **United States:** Americans with Disabilities Act (ADA) and Section 508
+- **European Union:** European Accessibility Act and EN 301 549
+- **United Kingdom:** Equality Act 2010
+- **Canada:** Accessible Canada Act
+- **Australia:** Disability Discrimination Act
+
+## HTML Accessibility Techniques
+
+### Semantic HTML
+
+Using semantic HTML elements is one of the most important accessibility practices.
+
+```html
+<!-- Bad: Divs with no semantic meaning -->
+<div class="header">
+  <div class="nav">
+    <div class="nav-item">Home</div>
+  </div>
+</div>
+<div class="main">
+  <div class="section">
+    <div class="heading">Welcome</div>
+    <div class="text">Content goes here</div>
+  </div>
+</div>
+
+<!-- Good: Semantic HTML -->
+<header>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <section>
+    <h1>Welcome</h1>
+    <p>Content goes here</p>
+  </section>
+</main>
+```
+
+### Accessible Forms
+
+Forms are often challenging for users with disabilities. Here's how to make them accessible:
+
+```html
+<!-- Bad: Form without proper labels and structure -->
+<form>
+  Name: <input type="text" />
+  <span class="error">Required field</span>
+
+  <div><input type="checkbox" /> Subscribe to newsletter</div>
+
+  <button>Submit</button>
+</form>
+
+<!-- Good: Accessible form -->
+<form>
+  <div>
+    <label for="name">Name</label>
+    <input
+      id="name"
+      type="text"
+      aria-required="true"
+      aria-describedby="name-error"
+    />
+    <p id="name-error" class="error" role="alert">Required field</p>
+  </div>
+
+  <div>
+    <input id="newsletter" type="checkbox" />
+    <label for="newsletter">Subscribe to newsletter</label>
+  </div>
+
+  <button type="submit">Submit</button>
+</form>
+```
+
+### ARIA (Accessible Rich Internet Applications)
+
+ARIA attributes enhance accessibility when HTML alone isn't sufficient.
+
+```html
+<!-- Using ARIA roles -->
+<div role="alert">Your form has been submitted successfully.</div>
+
+<!-- Using ARIA states -->
+<button aria-expanded="false" aria-controls="dropdown-menu">Menu</button>
+<ul id="dropdown-menu" hidden>
+  <li><a href="#">Option 1</a></li>
+  <li><a href="#">Option 2</a></li>
+</ul>
+
+<!-- Using ARIA properties -->
+<div id="tooltip" role="tooltip">Additional information</div>
+<button aria-describedby="tooltip">Help</button>
+```
+
+<Note>
+  Follow the first rule of ARIA: "No ARIA is better than bad ARIA." Only use
+  ARIA when necessary, and prefer native HTML elements with built-in
+  accessibility features whenever possible.
+</Note>
+
+### Accessible Images
+
+Images need proper alternative text to be accessible to screen reader users.
+
+```html
+<!-- Informative image with alt text -->
+<img src="chart.png" alt="Bar chart showing sales growth of 25% in Q1 2023" />
+
+<!-- Decorative image that should be ignored by screen readers -->
+<img src="decorative-divider.png" alt="" />
+
+<!-- Complex image with extended description -->
+<figure>
+  <img
+    src="complex-diagram.png"
+    alt="System architecture diagram"
+    aria-describedby="diagram-desc"
+  />
+  <figcaption id="diagram-desc">
+    The diagram shows the three-tier architecture with a presentation layer,
+    business logic layer, and data access layer, connected by APIs.
+  </figcaption>
+</figure>
+```
+
+### Keyboard Navigation
+
+Ensure all interactive elements are keyboard accessible.
+
+```html
+<!-- Custom button with keyboard support -->
+<div
+  role="button"
+  tabindex="0"
+  onclick="handleClick()"
+  onkeydown="if(event.key === 'Enter' || event.key === ' ') handleClick()"
+>
+  Click me
+</div>
+
+<!-- Skip link for keyboard users -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- CSS for skip link -->
+<style>
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    padding: 8px;
+    background: #000;
+    color: #fff;
+    z-index: 100;
+  }
+
+  .skip-link:focus {
+    top: 0;
+  }
+</style>
+```
+
+## CSS Accessibility Techniques
+
+### Focus Styles
+
+Never remove focus outlines without providing an alternative.
+
+```css
+/* Bad: Removing focus outline without alternative */
+:focus {
+  outline: none;
+}
+
+/* Good: Enhanced focus styles */
+:focus {
+  outline: 2px solid #4d90fe;
+  outline-offset: 2px;
+}
+
+/* Better: Only modify for non-keyboard focus */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid #4d90fe;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(77, 144, 254, 0.3);
+}
+```
+
+### Color and Contrast
+
+Ensure sufficient color contrast and don't rely solely on color to convey information.
+
+```css
+/* Bad: Low contrast text */
+.low-contrast {
+  color: #999;
+  background-color: #777;
+}
+
+/* Good: High contrast text (4.5:1 ratio for normal text) */
+.high-contrast {
+  color: #222;
+  background-color: #fff;
+}
+
+/* Don't rely solely on color for state indication */
+.error {
+  color: #d50000; /* Red for color users */
+  border: 2px solid #d50000; /* Border for colorblind users */
+}
+
+.error::before {
+  content: '⚠️ '; /* Symbol for additional indication */
+}
+```
+
+### Responsive Design
+
+Ensure your site works at different zoom levels and viewport sizes.
+
+```css
+/* Use relative units for better scaling */
+body {
+  font-size: 100%; /* Base font size */
+}
+
+h1 {
+  font-size: 2em; /* Relative to base font size */
+}
+
+/* Ensure text can be resized up to 200% without breaking layout */
+.container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* Support both portrait and landscape orientations */
+@media screen and (orientation: portrait) {
+  .gallery {
+    flex-direction: column;
+  }
+}
+
+@media screen and (orientation: landscape) {
+  .gallery {
+    flex-direction: row;
+  }
+}
+```
+
+### Reduced Motion
+
+Respect user preferences for reduced motion.
+
+```css
+/* Default animation */
+.animated {
+  transition: transform 0.5s ease;
+}
+
+.animated:hover {
+  transform: scale(1.1);
+}
+
+/* Respect prefers-reduced-motion setting */
+@media (prefers-reduced-motion: reduce) {
+  .animated {
+    transition: none;
+  }
+
+  .animated:hover {
+    transform: none;
+  }
+}
+```
+
+## JavaScript Accessibility Techniques
+
+### Managing Focus
+
+Manage keyboard focus when content changes dynamically.
+
+```javascript
+// Focus management for modals
+const openModal = () => {
+  const modal = document.getElementById('modal');
+  const closeButton = modal.querySelector('.close-button');
+
+  // Show the modal
+  modal.hidden = false;
+
+  // Save the element that had focus before opening the modal
+  modal.previousFocus = document.activeElement;
+
+  // Set focus to the close button
+  closeButton.focus();
+
+  // Trap focus inside modal
+  modal.addEventListener('keydown', trapFocus);
+};
+
+const closeModal = () => {
+  const modal = document.getElementById('modal');
+
+  // Hide the modal
+  modal.hidden = true;
+
+  // Restore focus to the element that had focus before the modal opened
+  if (modal.previousFocus) {
+    modal.previousFocus.focus();
+  }
+
+  // Remove focus trap
+  modal.removeEventListener('keydown', trapFocus);
+};
+
+const trapFocus = (event) => {
+  const modal = document.getElementById('modal');
+  const focusableElements = modal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  // If Tab is pressed and Shift is not pressed and the active element is the last focusable element
+  if (
+    event.key === 'Tab' &&
+    !event.shiftKey &&
+    document.activeElement === lastElement
+  ) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+
+  // If Tab and Shift are pressed and the active element is the first focusable element
+  if (
+    event.key === 'Tab' &&
+    event.shiftKey &&
+    document.activeElement === firstElement
+  ) {
+    event.preventDefault();
+    lastElement.focus();
+  }
+
+  // Close on Escape
+  if (event.key === 'Escape') {
+    closeModal();
+  }
+};
+```
+
+### Accessible Custom Components
+
+Implement accessibility patterns for custom UI components.
+
+```javascript
+// Accessible dropdown menu
+class Dropdown {
+  constructor(element) {
+    this.dropdown = element;
+    this.button = element.querySelector('[aria-haspopup="true"]');
+    this.menu = element.querySelector('[role="menu"]');
+    this.menuItems = element.querySelectorAll('[role="menuitem"]');
+    this.activeIndex = 0;
+
+    this.button.addEventListener('click', () => this.toggleMenu());
+    this.button.addEventListener('keydown', (e) => this.handleButtonKeyDown(e));
+    this.menu.addEventListener('keydown', (e) => this.handleMenuKeyDown(e));
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!this.dropdown.contains(e.target)) {
+        this.closeMenu();
+      }
+    });
+  }
+
+  toggleMenu() {
+    const isExpanded = this.button.getAttribute('aria-expanded') === 'true';
+
+    if (isExpanded) {
+      this.closeMenu();
+    } else {
+      this.openMenu();
+    }
+  }
+
+  openMenu() {
+    this.button.setAttribute('aria-expanded', 'true');
+    this.menu.hidden = false;
+
+    // Set focus on first menu item
+    this.activeIndex = 0;
+    this.menuItems[this.activeIndex].focus();
+  }
+
+  closeMenu() {
+    this.button.setAttribute('aria-expanded', 'false');
+    this.menu.hidden = true;
+    this.button.focus();
+  }
+
+  handleButtonKeyDown(event) {
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'Down': // For IE/Edge
+        event.preventDefault();
+        this.openMenu();
+        break;
+      case 'Escape':
+        this.closeMenu();
+        break;
+    }
+  }
+
+  handleMenuKeyDown(event) {
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'Down': // For IE/Edge
+        event.preventDefault();
+        this.activeIndex = (this.activeIndex + 1) % this.menuItems.length;
+        this.menuItems[this.activeIndex].focus();
+        break;
+      case 'ArrowUp':
+      case 'Up': // For IE/Edge
+        event.preventDefault();
+        this.activeIndex =
+          (this.activeIndex - 1 + this.menuItems.length) %
+          this.menuItems.length;
+        this.menuItems[this.activeIndex].focus();
+        break;
+      case 'Home':
+        event.preventDefault();
+        this.activeIndex = 0;
+        this.menuItems[this.activeIndex].focus();
+        break;
+      case 'End':
+        event.preventDefault();
+        this.activeIndex = this.menuItems.length - 1;
+        this.menuItems[this.activeIndex].focus();
+        break;
+      case 'Escape':
+        this.closeMenu();
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        this.menuItems[this.activeIndex].click();
+        break;
+    }
+  }
+}
+
+// Initialize all dropdowns
+document.querySelectorAll('.dropdown').forEach((dropdown) => {
+  new Dropdown(dropdown);
+});
+```
+
+### Accessible Notifications
+
+Implement accessible notifications for dynamic content changes.
+
+```javascript
+// Function to create an accessible notification
+function notify(message, type = 'polite') {
+  // Create or get the live region
+  let liveRegion = document.getElementById('notifications');
+
+  if (!liveRegion) {
+    liveRegion = document.createElement('div');
+    liveRegion.id = 'notifications';
+    liveRegion.setAttribute('aria-live', type); // 'polite' or 'assertive'
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.style.position = 'absolute';
+    liveRegion.style.width = '1px';
+    liveRegion.style.height = '1px';
+    liveRegion.style.overflow = 'hidden';
+    liveRegion.style.clip = 'rect(0, 0, 0, 0)';
+    document.body.appendChild(liveRegion);
+  }
+
+  // Clear previous messages
+  liveRegion.textContent = '';
+
+  // Set a small timeout to ensure the screen reader notices the change
+  setTimeout(() => {
+    liveRegion.textContent = message;
+  }, 50);
+}
+
+// Example usage
+document.querySelector('form').addEventListener('submit', (event) => {
+  event.preventDefault();
+  // Process form submission
+  notify('Your form has been submitted successfully', 'assertive');
+});
+```
+
+## Testing for Accessibility
+
+### Automated Testing
+
+Automated tools can catch many common accessibility issues.
+
+<Steps>
+  <Step title="Use browser extensions">
+    - [axe DevTools](https://www.deque.com/axe/devtools/)
+    - [WAVE Evaluation Tool](https://wave.webaim.org/extension/)
+    - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
+  </Step>
+
+  <Step title="Integrate accessibility testing in your build process">
+    ```bash
+    # Using axe-core with Jest
+    npm install --save-dev jest-axe
+    ```
+
+    ```javascript
+    // Example Jest test with axe
+    import { axe } from 'jest-axe';
+
+    test('Component should not have accessibility violations', async () => {
+      const html = document.body.innerHTML;
+      const results = await axe(html);
+      expect(results).toHaveNoViolations();
+    });
+    ```
+
+  </Step>
+
+  <Step title="Use linting tools">
+    ```bash
+    # Install eslint-plugin-jsx-a11y for React projects
+    npm install --save-dev eslint-plugin-jsx-a11y
+    ```
+
+    ```json
+    // .eslintrc
+    {
+      "plugins": ["jsx-a11y"],
+      "extends": ["plugin:jsx-a11y/recommended"]
+    }
+    ```
+
+  </Step>
+</Steps>
+
+### Manual Testing
+
+Automated tests can't catch everything. Manual testing is essential.
+
+<AccordionGroup>
+  <Accordion icon="keyboard" title="Keyboard testing">
+    Test your site using only the keyboard:
+
+    1. Start by pressing Tab to navigate through interactive elements
+    2. Check if the focus order is logical and follows the visual layout
+    3. Ensure all interactive elements can be activated with Enter or Space
+    4. Verify that you don't get trapped in any part of the page
+    5. Make sure focus is managed properly for modals and dynamic content
+    6. Test keyboard shortcuts if your application provides them
+
+  </Accordion>
+
+  <Accordion icon="volume-high" title="Screen reader testing">
+    Test with at least one screen reader:
+
+    - **Windows:** NVDA (free) or JAWS
+    - **macOS:** VoiceOver (built-in)
+    - **Linux:** Orca
+    - **Mobile:** VoiceOver (iOS) or TalkBack (Android)
+
+    Basic screen reader commands:
+
+    **NVDA:**
+    - Navigate: Tab, arrow keys
+    - Read current item: Insert + Down arrow
+    - Stop reading: Control
+
+    **VoiceOver (macOS):**
+    - Turn on/off: Command + F5
+    - Navigate: Control + Option + arrow keys
+    - Read current item: Control + Option + Space
+    - Stop reading: Control
+
+  </Accordion>
+
+  <Accordion icon="magnifying-glass-plus" title="Zoom testing">
+    Test your site at different zoom levels:
+
+    1. Zoom to 200% (browser zoom, not just text zoom)
+    2. Check if all content is still visible and usable
+    3. Ensure no horizontal scrolling is required on standard screen sizes
+    4. Verify that text doesn't overflow containers
+    5. Check that interactive elements remain clickable
+
+  </Accordion>
+
+  <Accordion icon="palette" title="Color and contrast testing">
+    Test for color and contrast issues:
+
+    1. View your site in grayscale (use browser extensions or OS settings)
+    2. Check if all information is still distinguishable
+    3. Use contrast checkers to verify text contrast ratios
+    4. Test with color blindness simulators
+    5. Ensure focus indicators are visible in all color schemes
+
+  </Accordion>
+</AccordionGroup>
+
+### User Testing
+
+The most valuable accessibility testing involves real users with disabilities.
+
+- Partner with accessibility consultants or organizations
+- Recruit users with different disabilities for usability testing
+- Consider different assistive technologies and usage patterns
+- Document and prioritize issues discovered during testing
+
+## Accessibility in Popular Frameworks
+
+### React
+
+```jsx
+// Accessible React component example
+import React, { useState, useRef, useEffect } from 'react';
+
+function Modal({ isOpen, onClose, title, children }) {
+  const [isVisible, setIsVisible] = useState(isOpen);
+  const closeButtonRef = useRef(null);
+  const modalRef = useRef(null);
+  const previousFocusRef = useRef(null);
+
+  // Sync with props
+  useEffect(() => {
+    setIsVisible(isOpen);
+  }, [isOpen]);
+
+  // Focus management
+  useEffect(() => {
+    if (isVisible) {
+      // Store the current active element
+      previousFocusRef.current = document.activeElement;
+      // Focus the close button when modal opens
+      closeButtonRef.current.focus();
+    } else if (previousFocusRef.current) {
+      // Restore focus when modal closes
+      previousFocusRef.current.focus();
+    }
+  }, [isVisible]);
+
+  // Close on escape key
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && isVisible) {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isVisible, onClose]);
+
+  if (!isVisible) return null;
+
+  return (
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div
+        className="modal-content"
+        ref={modalRef}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-header">
+          <h2 id="modal-title">{title}</h2>
+          <button
+            ref={closeButtonRef}
+            className="close-button"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+export default Modal;
+```
+
+### Vue.js
+
+```vue
+<!-- Accessible Vue component example -->
+<template>
+  <div>
+    <button @click="isOpen = true" aria-haspopup="dialog">Open Modal</button>
+
+    <div
+      v-if="isOpen"
+      class="modal-overlay"
+      @click="closeModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="modal-content" @click.stop ref="modalContent">
+        <div class="modal-header">
+          <h2 id="modal-title">{{ title }}</h2>
+          <button
+            ref="closeButton"
+            class="close-button"
+            @click="closeModal"
+            aria-label="Close modal"
+          >
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <slot></slot>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    title: {
+      type: String,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      isOpen: false,
+      previousFocus: null,
+    };
+  },
+  watch: {
+    isOpen(newValue) {
+      if (newValue) {
+        this.$nextTick(() => {
+          // Store previous focus
+          this.previousFocus = document.activeElement;
+          // Focus the close button
+          this.$refs.closeButton.focus();
+          // Add event listeners
+          document.addEventListener('keydown', this.handleKeyDown);
+        });
+      } else {
+        // Remove event listeners
+        document.removeEventListener('keydown', this.handleKeyDown);
+        // Restore focus
+        if (this.previousFocus) {
+          this.previousFocus.focus();
+        }
+      }
+    },
+  },
+  methods: {
+    closeModal() {
+      this.isOpen = false;
+    },
+    handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        this.closeModal();
+      }
+    },
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+  },
+};
+</script>
+```
+
+### Angular
+
+```typescript
+// modal.component.ts
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
+
+@Component({
+  selector: 'app-modal',
+  template: `
+    <div
+      *ngIf="isOpen"
+      class="modal-overlay"
+      (click)="close()"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'modal-title-' + id"
+    >
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 [id]="'modal-title-' + id">{{ title }}</h2>
+          <button
+            #closeButton
+            class="close-button"
+            (click)="close()"
+            aria-label="Close modal"
+          >
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <ng-content></ng-content>
+        </div>
+      </div>
+    </div>
+  `,
+})
+export class ModalComponent implements OnInit, OnDestroy {
+  @Input() isOpen = false;
+  @Input() title = '';
+  @Input() id = 'modal';
+  @Output() closed = new EventEmitter<void>();
+  @ViewChild('closeButton') closeButton: ElementRef;
+
+  private previousFocus: HTMLElement | null = null;
+  private keydownListener: (event: KeyboardEvent) => void;
+
+  constructor(private elementRef: ElementRef) {
+    this.keydownListener = this.handleKeyDown.bind(this);
+  }
+
+  ngOnInit() {
+    document.addEventListener('keydown', this.keydownListener);
+  }
+
+  ngOnChanges(changes) {
+    if (changes.isOpen) {
+      if (changes.isOpen.currentValue) {
+        // Modal opened
+        this.previousFocus = document.activeElement as HTMLElement;
+        setTimeout(() => {
+          this.closeButton.nativeElement.focus();
+        });
+      } else if (this.previousFocus) {
+        // Modal closed
+        this.previousFocus.focus();
+      }
+    }
+  }
+
+  close() {
+    this.closed.emit();
+  }
+
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape' && this.isOpen) {
+      this.close();
+    }
+  }
+
+  ngOnDestroy() {
+    document.removeEventListener('keydown', this.keydownListener);
+  }
+}
+```
+
+## Accessibility Checklist
+
+Use this checklist to ensure your website meets basic accessibility requirements:
+
+<Steps>
+  <Step title="Document Structure">
+    - [ ] Use semantic HTML elements (`<header>`, `<nav>`, `<main>`, `<section>`, etc.)
+    - [ ] Ensure proper heading hierarchy (`<h1>` through `<h6>`)
+    - [ ] Include a page `<title>` that describes the page content
+    - [ ] Provide a skip link to bypass navigation
+    - [ ] Use landmarks appropriately (header, nav, main, footer)
+  </Step>
+
+{' '}
+<Step title="Text and Typography">
+  - [ ] Ensure sufficient color contrast (4.5:1 for normal text, 3:1 for large
+  text) - [ ] Don't use color alone to convey information - [ ] Use relative
+  units for font sizes (em, rem) - [ ] Ensure text can be resized up to 200%
+  without loss of content - [ ] Maintain line spacing of at least 1.5 within
+  paragraphs
+</Step>
+
+{' '}
+<Step title="Images and Media">
+  - [ ] Provide alternative text for all informative images - [ ] Use empty alt
+  text for decorative images - [ ] Include captions and transcripts for
+  audio/video content - [ ] Ensure media doesn't autoplay - [ ] Provide controls
+  for media playback
+</Step>
+
+{' '}
+<Step title="Keyboard and Focus">
+  - [ ] Ensure all functionality is keyboard accessible - [ ] Maintain a logical
+  tab order - [ ] Provide visible focus indicators - [ ] Ensure no keyboard
+  traps - [ ] Manage focus for interactive components
+</Step>
+
+{' '}
+<Step title="Forms and Inputs">
+  - [ ] Associate labels with form controls - [ ] Group related form elements
+  with fieldset and legend - [ ] Provide clear error messages and validation - [
+  ] Use appropriate input types (email, tel, etc.) - [ ] Ensure form controls
+  have accessible names
+</Step>
+
+{' '}
+<Step title="Dynamic Content">
+  - [ ] Use ARIA attributes appropriately - [ ] Announce dynamic content changes
+  - [ ] Ensure custom widgets follow WAI-ARIA patterns - [ ] Provide status
+  messages for operations - [ ] Allow sufficient time for users to read content
+</Step>
+
+  <Step title="Testing">
+    - [ ] Test with keyboard navigation
+    - [ ] Test with screen readers
+    - [ ] Test at different zoom levels
+    - [ ] Validate HTML
+    - [ ] Run automated accessibility tests
+  </Step>
+</Steps>
+
+## Resources
+
+### Tools and Testing
+
+- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
+- [WAVE Web Accessibility Evaluation Tool](https://wave.webaim.org/)
+- [axe DevTools](https://www.deque.com/axe/)
+- [Lighthouse](https://developers.google.com/web/tools/lighthouse)
+- [Color Oracle](https://colororacle.org/) (color blindness simulator)
+
+### Guidelines and Documentation
+
+- [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/standards-guidelines/wcag/)
+- [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
+- [MDN Web Docs: Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
+- [A11y Project](https://www.a11yproject.com/)
+- [Inclusive Components](https://inclusive-components.design/)
+
+### Learning Resources
+
+- [Web Accessibility by Google (Udacity)](https://www.udacity.com/course/web-accessibility--ud891)
+- [Digital Accessibility Foundations (W3C)](https://www.w3.org/WAI/fundamentals/foundations-course/)
+- [Deque University](https://dequeuniversity.com/)
+
+## Next Steps
+
+Now that you understand web accessibility, you can:
+
+- Learn about [Performance Optimization](/best-practices/performance) to make your sites faster
+- Explore [Security](/best-practices/security) best practices to protect your applications
+- Study [Testing](/best-practices/testing) strategies to ensure your sites work for everyone

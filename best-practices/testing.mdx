@@ -1,0 +1,1547 @@
+---
+title: "Frontend Testing Best Practices"
+description: "Learn how to implement effective testing strategies for your frontend applications"
+---
+
+## Why Testing Matters
+
+Testing is a critical part of frontend development that ensures your applications work correctly, remain maintainable, and provide a good user experience. Effective testing:
+
+- Catches bugs early in the development process
+- Provides confidence when refactoring or adding new features
+- Serves as living documentation for how your code should behave
+- Improves code quality and architecture
+- Reduces the cost of fixing issues in production
+
+<Note>
+While testing requires an upfront investment of time, it saves significant time and resources in the long run by preventing regressions and making your codebase more maintainable.
+</Note>
+
+## Types of Frontend Tests
+
+<CardGroup cols={2}>
+  <Card title="Unit Tests" icon="cube">
+    Test individual functions, components, or modules in isolation.
+    
+    **Characteristics:**
+    - Fast execution
+    - High specificity
+    - Easy to write and maintain
+    - Typically mock dependencies
+    
+    **Coverage:** 70-80% of your codebase
+  </Card>
+  
+  <Card title="Integration Tests" icon="cubes">
+    Test how multiple units work together.
+    
+    **Characteristics:**
+    - Medium execution speed
+    - Test interactions between components
+    - Fewer mocks than unit tests
+    - More realistic scenarios
+    
+    **Coverage:** 20-30% of your codebase
+  </Card>
+  
+  <Card title="End-to-End Tests" icon="sitemap">
+    Test complete user flows through your application.
+    
+    **Characteristics:**
+    - Slower execution
+    - Test the application as users experience it
+    - Minimal or no mocking
+    - Most realistic scenarios
+    
+    **Coverage:** 5-10% of your codebase
+  </Card>
+  
+  <Card title="Visual Regression Tests" icon="eye">
+    Detect unwanted changes in UI appearance.
+    
+    **Characteristics:**
+    - Compare screenshots to detect visual changes
+    - Catch CSS and layout issues
+    - Complement functional tests
+    - Useful for design systems
+    
+    **Coverage:** Key UI components and pages
+  </Card>
+  
+  <Card title="Accessibility Tests" icon="universal-access">
+    Verify your application is usable by everyone.
+    
+    **Characteristics:**
+    - Check ARIA attributes
+    - Test keyboard navigation
+    - Verify color contrast
+    - Ensure screen reader compatibility
+    
+    **Coverage:** All user-facing components
+  </Card>
+  
+  <Card title="Performance Tests" icon="gauge-high">
+    Measure and optimize application performance.
+    
+    **Characteristics:**
+    - Measure load times
+    - Check bundle sizes
+    - Test rendering performance
+    - Identify bottlenecks
+    
+    **Coverage:** Critical user paths
+  </Card>
+</CardGroup>
+
+## The Testing Pyramid
+
+The testing pyramid is a concept that helps visualize the ideal distribution of test types in your application:
+
+```
+    /\
+   /  \
+  /    \     E2E Tests (Few)
+ /------\
+/        \   Integration Tests (Some)
+----------
+            Unit Tests (Many)
+```
+
+This approach emphasizes having:
+- Many unit tests (the base of the pyramid)
+- Some integration tests (the middle)
+- Few end-to-end tests (the top)
+
+This distribution provides the best balance between:
+- Test execution speed
+- Maintenance cost
+- Confidence in your application
+
+## Unit Testing
+
+Unit tests focus on testing individual functions, components, or modules in isolation.
+
+### Unit Testing Principles
+
+<AccordionGroup>
+  <Accordion icon="arrows-to-dot" title="Test in isolation">
+    Each unit test should focus on a single unit of code and isolate it from its dependencies.
+    
+    ```javascript
+    // Function to test
+    function calculateTotal(items, discount) {
+      const subtotal = items.reduce((sum, item) => sum + item.price, 0);
+      return subtotal * (1 - discount);
+    }
+    
+    // Unit test
+    test('calculateTotal applies discount correctly', () => {
+      // Arrange
+      const items = [
+        { name: 'Item 1', price: 100 },
+        { name: 'Item 2', price: 50 }
+      ];
+      const discount = 0.1; // 10% discount
+      
+      // Act
+      const total = calculateTotal(items, discount);
+      
+      // Assert
+      expect(total).toBe(135); // (100 + 50) * 0.9 = 135
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="shuffle" title="Use mocks for dependencies">
+    Replace external dependencies with test doubles to isolate the unit being tested.
+    
+    ```javascript
+    // Service with external dependency
+    class UserService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async getUserName(userId) {
+        const user = await this.apiClient.fetchUser(userId);
+        return user ? `${user.firstName} ${user.lastName}` : 'Unknown User';
+      }
+    }
+    
+    // Unit test with mock
+    test('getUserName returns formatted name when user exists', async () => {
+      // Arrange
+      const mockApiClient = {
+        fetchUser: jest.fn().mockResolvedValue({
+          firstName: 'John',
+          lastName: 'Doe'
+        })
+      };
+      
+      const userService = new UserService(mockApiClient);
+      
+      // Act
+      const result = await userService.getUserName(123);
+      
+      // Assert
+      expect(result).toBe('John Doe');
+      expect(mockApiClient.fetchUser).toHaveBeenCalledWith(123);
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="list-check" title="Follow AAA pattern">
+    Structure tests using the Arrange-Act-Assert pattern for clarity.
+    
+    ```javascript
+    test('addToCart adds item to cart', () => {
+      // Arrange
+      const cart = new ShoppingCart();
+      const item = { id: 1, name: 'Product', price: 29.99 };
+      
+      // Act
+      cart.addItem(item);
+      
+      // Assert
+      expect(cart.items).toContain(item);
+      expect(cart.count).toBe(1);
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="code-branch" title="Test edge cases">
+    Include tests for boundary conditions and error scenarios.
+    
+    ```javascript
+    // Function to test
+    function divideNumbers(a, b) {
+      if (b === 0) {
+        throw new Error('Cannot divide by zero');
+      }
+      return a / b;
+    }
+    
+    // Unit tests including edge cases
+    describe('divideNumbers', () => {
+      test('divides two positive numbers', () => {
+        expect(divideNumbers(10, 2)).toBe(5);
+      });
+      
+      test('divides a positive and negative number', () => {
+        expect(divideNumbers(10, -2)).toBe(-5);
+      });
+      
+      test('divides zero by a number', () => {
+        expect(divideNumbers(0, 5)).toBe(0);
+      });
+      
+      test('throws error when dividing by zero', () => {
+        expect(() => divideNumbers(10, 0)).toThrow('Cannot divide by zero');
+      });
+    });
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Unit Testing React Components
+
+```jsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import Counter from './Counter';
+
+describe('Counter component', () => {
+  test('renders with initial count of 0', () => {
+    // Arrange & Act
+    render(<Counter />);
+    
+    // Assert
+    expect(screen.getByText('Count: 0')).toBeInTheDocument();
+  });
+  
+  test('increments count when increment button is clicked', () => {
+    // Arrange
+    render(<Counter />);
+    
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: /increment/i }));
+    
+    // Assert
+    expect(screen.getByText('Count: 1')).toBeInTheDocument();
+  });
+  
+  test('decrements count when decrement button is clicked', () => {
+    // Arrange
+    render(<Counter />);
+    
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: /decrement/i }));
+    
+    // Assert
+    expect(screen.getByText('Count: -1')).toBeInTheDocument();
+  });
+});
+```
+
+### Unit Testing Vue Components
+
+```javascript
+import { mount } from '@vue/test-utils';
+import Counter from './Counter.vue';
+
+describe('Counter component', () => {
+  test('renders with initial count of 0', () => {
+    // Arrange & Act
+    const wrapper = mount(Counter);
+    
+    // Assert
+    expect(wrapper.text()).toContain('Count: 0');
+  });
+  
+  test('increments count when increment button is clicked', async () => {
+    // Arrange
+    const wrapper = mount(Counter);
+    
+    // Act
+    await wrapper.find('button[data-testid="increment"]').trigger('click');
+    
+    // Assert
+    expect(wrapper.text()).toContain('Count: 1');
+  });
+  
+  test('decrements count when decrement button is clicked', async () => {
+    // Arrange
+    const wrapper = mount(Counter);
+    
+    // Act
+    await wrapper.find('button[data-testid="decrement"]').trigger('click');
+    
+    // Assert
+    expect(wrapper.text()).toContain('Count: -1');
+  });
+});
+```
+
+### Unit Testing Angular Components
+
+```typescript
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CounterComponent } from './counter.component';
+
+describe('CounterComponent', () => {
+  let component: CounterComponent;
+  let fixture: ComponentFixture<CounterComponent>;
+  let compiled: HTMLElement;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ CounterComponent ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(CounterComponent);
+    component = fixture.componentInstance;
+    compiled = fixture.nativeElement;
+    fixture.detectChanges();
+  });
+
+  it('renders with initial count of 0', () => {
+    expect(compiled.textContent).toContain('Count: 0');
+  });
+
+  it('increments count when increment button is clicked', () => {
+    // Arrange
+    const incrementButton = compiled.querySelector('[data-testid="increment"]');
+    
+    // Act
+    incrementButton.click();
+    fixture.detectChanges();
+    
+    // Assert
+    expect(compiled.textContent).toContain('Count: 1');
+  });
+
+  it('decrements count when decrement button is clicked', () => {
+    // Arrange
+    const decrementButton = compiled.querySelector('[data-testid="decrement"]');
+    
+    // Act
+    decrementButton.click();
+    fixture.detectChanges();
+    
+    // Assert
+    expect(compiled.textContent).toContain('Count: -1');
+  });
+});
+```
+
+## Integration Testing
+
+Integration tests verify that multiple units work together correctly.
+
+### Integration Testing Principles
+
+<AccordionGroup>
+  <Accordion icon="puzzle-piece" title="Test component interactions">
+    Focus on how components communicate and work together.
+    
+    ```jsx
+    // Integration test for a form and its submission handler
+    import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+    import UserForm from './UserForm';
+    import UserService from './UserService';
+    
+    // Mock the service module but not its implementation
+    jest.mock('./UserService');
+    
+    test('submitting the form calls the create user service', async () => {
+      // Arrange
+      UserService.createUser = jest.fn().mockResolvedValue({ id: 1 });
+      
+      render(<UserForm />);
+      
+      // Act - Fill out the form
+      fireEvent.change(screen.getByLabelText(/name/i), {
+        target: { value: 'John Doe' }
+      });
+      
+      fireEvent.change(screen.getByLabelText(/email/i), {
+        target: { value: 'john@example.com' }
+      });
+      
+      // Submit the form
+      fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+      
+      // Assert
+      await waitFor(() => {
+        expect(UserService.createUser).toHaveBeenCalledWith({
+          name: 'John Doe',
+          email: 'john@example.com'
+        });
+      });
+      
+      expect(screen.getByText(/user created successfully/i)).toBeInTheDocument();
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="minimize" title="Minimize mocking">
+    Use real implementations where possible, only mock external dependencies.
+    
+    ```jsx
+    // Integration test with minimal mocking
+    import { render, screen, fireEvent } from '@testing-library/react';
+    import { BrowserRouter } from 'react-router-dom';
+    import ShoppingCart from './ShoppingCart';
+    import CartContext from './CartContext';
+    
+    // Only mock the API call, not the context or components
+    jest.mock('./api', () => ({
+      checkout: jest.fn().mockResolvedValue({ orderId: '12345' })
+    }));
+    
+    test('checkout process works end-to-end', async () => {
+      // Arrange - Use real context with test data
+      const cartItems = [
+        { id: 1, name: 'Product 1', price: 10, quantity: 2 },
+        { id: 2, name: 'Product 2', price: 15, quantity: 1 }
+      ];
+      
+      render(
+        <BrowserRouter>
+          <CartContext.Provider value={{ items: cartItems, total: 35 }}>
+            <ShoppingCart />
+          </CartContext.Provider>
+        </BrowserRouter>
+      );
+      
+      // Act
+      expect(screen.getByText('Total: $35')).toBeInTheDocument();
+      expect(screen.getByText('Product 1')).toBeInTheDocument();
+      expect(screen.getByText('Product 2')).toBeInTheDocument();
+      
+      fireEvent.click(screen.getByRole('button', { name: /checkout/i }));
+      
+      // Assert
+      await waitFor(() => {
+        expect(screen.getByText(/order confirmed/i)).toBeInTheDocument();
+        expect(screen.getByText(/order id: 12345/i)).toBeInTheDocument();
+      });
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="route" title="Test user flows">
+    Focus on common paths users take through your application.
+    
+    ```jsx
+    // Integration test for a user flow
+    import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+    import { BrowserRouter } from 'react-router-dom';
+    import App from './App';
+    import * as api from './api';
+    
+    jest.mock('./api');
+    
+    test('user can log in and view their profile', async () => {
+      // Arrange
+      api.login = jest.fn().mockResolvedValue({ token: 'fake-token', user: { id: 1, name: 'John' } });
+      api.getUserProfile = jest.fn().mockResolvedValue({ id: 1, name: 'John', email: 'john@example.com' });
+      
+      render(
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      );
+      
+      // Act - Log in
+      fireEvent.change(screen.getByLabelText(/username/i), {
+        target: { value: 'john' }
+      });
+      
+      fireEvent.change(screen.getByLabelText(/password/i), {
+        target: { value: 'password123' }
+      });
+      
+      fireEvent.click(screen.getByRole('button', { name: /log in/i }));
+      
+      // Wait for login to complete
+      await waitFor(() => {
+        expect(screen.getByText(/welcome, john/i)).toBeInTheDocument();
+      });
+      
+      // Navigate to profile
+      fireEvent.click(screen.getByRole('link', { name: /profile/i }));
+      
+      // Assert profile page shows correct data
+      await waitFor(() => {
+        expect(screen.getByText(/john@example.com/i)).toBeInTheDocument();
+      });
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="database" title="Test data flow">
+    Verify that data flows correctly between components and services.
+    
+    ```jsx
+    // Integration test for data flow
+    import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+    import { QueryClient, QueryClientProvider } from 'react-query';
+    import ProductList from './ProductList';
+    import ProductDetail from './ProductDetail';
+    import * as api from './api';
+    
+    jest.mock('./api');
+    
+    test('selecting a product shows its details', async () => {
+      // Arrange
+      const products = [
+        { id: 1, name: 'Product 1', price: 10 },
+        { id: 2, name: 'Product 2', price: 20 }
+      ];
+      
+      const productDetails = {
+        id: 1,
+        name: 'Product 1',
+        price: 10,
+        description: 'Detailed description',
+        features: ['Feature 1', 'Feature 2']
+      };
+      
+      api.getProducts = jest.fn().mockResolvedValue(products);
+      api.getProductDetails = jest.fn().mockResolvedValue(productDetails);
+      
+      const queryClient = new QueryClient();
+      
+      render(
+        <QueryClientProvider client={queryClient}>
+          <div>
+            <ProductList />
+            <ProductDetail />
+          </div>
+        </QueryClientProvider>
+      );
+      
+      // Wait for product list to load
+      await waitFor(() => {
+        expect(screen.getByText('Product 1')).toBeInTheDocument();
+      });
+      
+      // Act - Select a product
+      fireEvent.click(screen.getByText('Product 1'));
+      
+      // Assert - Product details are displayed
+      await waitFor(() => {
+        expect(screen.getByText('Detailed description')).toBeInTheDocument();
+        expect(screen.getByText('Feature 1')).toBeInTheDocument();
+        expect(screen.getByText('Feature 2')).toBeInTheDocument();
+      });
+      
+      expect(api.getProductDetails).toHaveBeenCalledWith(1);
+    });
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## End-to-End Testing
+
+End-to-end (E2E) tests verify that your application works correctly from a user's perspective, testing complete user flows through your application.
+
+### E2E Testing with Cypress
+
+```javascript
+// cypress/integration/authentication.spec.js
+describe('Authentication', () => {
+  beforeEach(() => {
+    // Reset the database or use test fixtures
+    cy.task('db:reset');
+    
+    // Visit the home page
+    cy.visit('/');
+  });
+  
+  it('allows a user to sign up, log out, and log in', () => {
+    // Sign up
+    cy.contains('Sign Up').click();
+    cy.url().should('include', '/signup');
+    
+    cy.get('input[name="username"]').type('testuser');
+    cy.get('input[name="email"]').type('test@example.com');
+    cy.get('input[name="password"]').type('password123');
+    cy.get('input[name="confirmPassword"]').type('password123');
+    
+    cy.get('button[type="submit"]').click();
+    
+    // Verify successful signup
+    cy.url().should('include', '/dashboard');
+    cy.contains('Welcome, testuser');
+    
+    // Log out
+    cy.contains('Log Out').click();
+    cy.url().should('equal', 'http://localhost:3000/');
+    
+    // Log in
+    cy.contains('Log In').click();
+    cy.url().should('include', '/login');
+    
+    cy.get('input[name="email"]').type('test@example.com');
+    cy.get('input[name="password"]').type('password123');
+    cy.get('button[type="submit"]').click();
+    
+    // Verify successful login
+    cy.url().should('include', '/dashboard');
+    cy.contains('Welcome, testuser');
+  });
+});
+```
+
+### E2E Testing with Playwright
+
+```javascript
+// tests/e2e/shopping-cart.spec.js
+const { test, expect } = require('@playwright/test');
+
+test.describe('Shopping Cart', () => {
+  test.beforeEach(async ({ page }) => {
+    // Go to the application
+    await page.goto('https://example.com');
+  });
+
+  test('allows adding items to cart and checking out', async ({ page }) => {
+    // Add first product to cart
+    await page.click('.product-card:first-child .add-to-cart');
+    
+    // Verify cart badge updates
+    await expect(page.locator('.cart-badge')).toHaveText('1');
+    
+    // Go to cart
+    await page.click('.cart-icon');
+    
+    // Verify product is in cart
+    await expect(page.locator('.cart-item')).toHaveCount(1);
+    
+    // Proceed to checkout
+    await page.click('button:has-text("Checkout")');
+    
+    // Fill shipping information
+    await page.fill('input[name="name"]', 'John Doe');
+    await page.fill('input[name="address"]', '123 Main St');
+    await page.fill('input[name="city"]', 'Anytown');
+    await page.fill('input[name="zip"]', '12345');
+    await page.fill('input[name="email"]', 'john@example.com');
+    
+    // Complete order
+    await page.click('button:has-text("Complete Order")');
+    
+    // Verify order confirmation
+    await expect(page.locator('h1')).toHaveText('Order Confirmed');
+    await expect(page.locator('.order-number')).toBeVisible();
+  });
+});
+```
+
+### E2E Testing Best Practices
+
+<Steps>
+  <Step title="Focus on critical user paths">
+    Prioritize testing the most important user journeys:
+    - Authentication flows
+    - Core business processes
+    - Payment or checkout flows
+    - Data entry and submission
+  </Step>
+  
+  <Step title="Use stable selectors">
+    Avoid brittle selectors that break with UI changes:
+    
+    ```javascript
+    // Bad - brittle selectors
+    cy.get('div > p > span').click();
+    cy.get('.menu-item:nth-child(3)').click();
+    
+    // Good - stable selectors
+    cy.get('[data-testid="submit-button"]').click();
+    cy.contains('Submit').click();
+    ```
+    
+    Add dedicated test attributes when needed:
+    ```html
+    <button data-testid="checkout-button">Proceed to Checkout</button>
+    ```
+  </Step>
+  
+  <Step title="Handle asynchronous operations">
+    Account for loading states and async operations:
+    
+    ```javascript
+    // Cypress example
+    cy.intercept('GET', '/api/products').as('getProducts');
+    cy.visit('/products');
+    cy.wait('@getProducts');
+    cy.get('.product-card').should('have.length.greaterThan', 0);
+    
+    // Playwright example
+    await page.goto('/products');
+    await page.waitForResponse('**/api/products');
+    await expect(page.locator('.product-card')).toHaveCount({ min: 1 });
+    ```
+  </Step>
+  
+  <Step title="Manage test data">
+    Control the test environment for reliable tests:
+    
+    ```javascript
+    // Cypress example with custom command
+    // In cypress/support/commands.js
+    Cypress.Commands.add('seedDatabase', (fixture) => {
+      cy.task('db:seed', { fixture });
+    });
+    
+    // In test
+    cy.seedDatabase('products');
+    cy.visit('/products');
+    ```
+  </Step>
+</Steps>
+
+## Visual Regression Testing
+
+Visual regression tests capture screenshots of your UI and compare them to baseline images to detect unwanted visual changes.
+
+### Visual Testing with Storybook and Chromatic
+
+```javascript
+// Button.stories.js
+import { Button } from './Button';
+
+export default {
+  title: 'Components/Button',
+  component: Button,
+  argTypes: {
+    variant: {
+      control: { type: 'select', options: ['primary', 'secondary', 'danger'] }
+    }
+  }
+};
+
+const Template = (args) => <Button {...args} />;
+
+export const Primary = Template.bind({});
+Primary.args = {
+  variant: 'primary',
+  children: 'Primary Button'
+};
+
+export const Secondary = Template.bind({});
+Secondary.args = {
+  variant: 'secondary',
+  children: 'Secondary Button'
+};
+
+export const Danger = Template.bind({});
+Danger.args = {
+  variant: 'danger',
+  children: 'Danger Button'
+};
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  variant: 'primary',
+  children: 'Disabled Button',
+  disabled: true
+};
+```
+
+### Visual Testing with Cypress and Percy
+
+```javascript
+// cypress/integration/visual.spec.js
+describe('Visual Regression', () => {
+  it('homepage looks correct', () => {
+    cy.visit('/');
+    cy.wait(1000); // Wait for animations to complete
+    cy.percySnapshot('Homepage');
+  });
+  
+  it('product page looks correct', () => {
+    cy.visit('/products/1');
+    cy.wait(1000);
+    cy.percySnapshot('Product Detail');
+  });
+  
+  it('responsive design works correctly', () => {
+    cy.visit('/');
+    
+    // Mobile view
+    cy.viewport('iphone-x');
+    cy.wait(500);
+    cy.percySnapshot('Homepage - Mobile');
+    
+    // Tablet view
+    cy.viewport('ipad-2');
+    cy.wait(500);
+    cy.percySnapshot('Homepage - Tablet');
+    
+    // Desktop view
+    cy.viewport(1200, 800);
+    cy.wait(500);
+    cy.percySnapshot('Homepage - Desktop');
+  });
+});
+```
+
+## Accessibility Testing
+
+Accessibility tests ensure your application is usable by people with disabilities.
+
+### Automated Accessibility Testing
+
+```javascript
+// Using jest-axe with React Testing Library
+import { render } from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import Form from './Form';
+
+expect.extend(toHaveNoViolations);
+
+describe('Form accessibility', () => {
+  it('should not have accessibility violations', async () => {
+    const { container } = render(<Form />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+});
+```
+
+### Accessibility Testing with Cypress and axe
+
+```javascript
+// cypress/integration/accessibility.spec.js
+describe('Accessibility Tests', () => {
+  beforeEach(() => {
+    cy.visit('/');
+    cy.injectAxe();
+  });
+  
+  it('homepage has no detectable accessibility violations', () => {
+    cy.checkA11y();
+  });
+  
+  it('login form has no accessibility violations', () => {
+    cy.contains('Log In').click();
+    cy.checkA11y();
+  });
+  
+  it('product page has no accessibility violations', () => {
+    cy.visit('/products/1');
+    cy.checkA11y();
+  });
+  
+  it('has no violations when using keyboard navigation', () => {
+    cy.get('body').tab();
+    cy.focused().should('have.attr', 'href').and('include', '/home');
+    cy.tab();
+    cy.focused().should('have.attr', 'href').and('include', '/products');
+    cy.checkA11y();
+  });
+});
+```
+
+## Performance Testing
+
+Performance tests measure and optimize your application's speed and resource usage.
+
+### Lighthouse Performance Testing
+
+```javascript
+// Using Lighthouse CI
+// lighthouserc.js
+module.exports = {
+  ci: {
+    collect: {
+      url: ['http://localhost:3000', 'http://localhost:3000/products'],
+      numberOfRuns: 3,
+    },
+    assert: {
+      assertions: {
+        'categories:performance': ['error', { minScore: 0.9 }],
+        'first-contentful-paint': ['error', { maxNumericValue: 2000 }],
+        'interactive': ['error', { maxNumericValue: 3500 }],
+        'max-potential-fid': ['error', { maxNumericValue: 100 }],
+        'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
+        'largest-contentful-paint': ['error', { maxNumericValue: 2500 }],
+      },
+    },
+    upload: {
+      target: 'temporary-public-storage',
+    },
+  },
+};
+```
+
+### Bundle Size Monitoring
+
+```javascript
+// Using bundlesize
+// package.json
+{
+  "bundlesize": [
+    {
+      "path": "./dist/main.*.js",
+      "maxSize": "100 kB"
+    },
+    {
+      "path": "./dist/vendor.*.js",
+      "maxSize": "250 kB"
+    },
+    {
+      "path": "./dist/*.css",
+      "maxSize": "50 kB"
+    }
+  ]
+}
+```
+
+## Test-Driven Development (TDD)
+
+Test-Driven Development is a development approach where you write tests before implementing the code.
+
+### TDD Workflow
+
+<Steps>
+  <Step title="Write a failing test">
+    Start by writing a test that defines the functionality you want to implement.
+    
+    ```javascript
+    // calculator.test.js
+    import { add } from './calculator';
+    
+    test('add function adds two numbers correctly', () => {
+      expect(add(2, 3)).toBe(5);
+    });
+    ```
+    
+    This test will fail because the `add` function doesn't exist yet.
+  </Step>
+  
+  <Step title="Write the minimal implementation">
+    Implement just enough code to make the test pass.
+    
+    ```javascript
+    // calculator.js
+    export function add(a, b) {
+      return a + b;
+    }
+    ```
+  </Step>
+  
+  <Step title="Refactor the code">
+    Improve the code while keeping the tests passing.
+    
+    ```javascript
+    // calculator.js
+    export function add(a, b) {
+      // Ensure we're working with numbers
+      return Number(a) + Number(b);
+    }
+    ```
+  </Step>
+  
+  <Step title="Repeat for new functionality">
+    Add a new test for the next piece of functionality.
+    
+    ```javascript
+    // calculator.test.js
+    import { add, subtract } from './calculator';
+    
+    test('add function adds two numbers correctly', () => {
+      expect(add(2, 3)).toBe(5);
+    });
+    
+    test('subtract function subtracts two numbers correctly', () => {
+      expect(subtract(5, 2)).toBe(3);
+    });
+    ```
+    
+    Then implement the new function:
+    
+    ```javascript
+    // calculator.js
+    export function add(a, b) {
+      return Number(a) + Number(b);
+    }
+    
+    export function subtract(a, b) {
+      return Number(a) - Number(b);
+    }
+    ```
+  </Step>
+</Steps>
+
+## Testing Best Practices
+
+### Writing Maintainable Tests
+
+<AccordionGroup>
+  <Accordion icon="broom" title="Keep tests clean and readable">
+    Write tests that are easy to understand and maintain.
+    
+    ```javascript
+    // Bad - hard to understand what's being tested
+    test('it works', () => {
+      const wrapper = mount(Component);
+      wrapper.find('button').at(2).simulate('click');
+      expect(wrapper.find('div').at(4).text()).toBe('Success');
+    });
+    
+    // Good - clear and descriptive
+    test('displays success message when submit button is clicked', () => {
+      // Arrange
+      const wrapper = mount(Component);
+      const submitButton = wrapper.find('[data-testid="submit-button"]');
+      
+      // Act
+      submitButton.simulate('click');
+      
+      // Assert
+      const successMessage = wrapper.find('[data-testid="success-message"]');
+      expect(successMessage.text()).toBe('Success');
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="file-code" title="Use test helpers and utilities">
+    Create reusable helpers to reduce duplication and simplify tests.
+    
+    ```javascript
+    // test-utils.js
+    import { render } from '@testing-library/react';
+    import { ThemeProvider } from './ThemeContext';
+    import { UserProvider } from './UserContext';
+    
+    // Custom render function that includes providers
+    function renderWithProviders(ui, options = {}) {
+      const { theme = 'light', user = null, ...renderOptions } = options;
+      
+      return render(
+        <ThemeProvider initialTheme={theme}>
+          <UserProvider initialUser={user}>
+            {ui}
+          </UserProvider>
+        </ThemeProvider>,
+        renderOptions
+      );
+    }
+    
+    // Helper to simulate user login
+    function loginUser(user = { id: 1, name: 'Test User' }) {
+      localStorage.setItem('user', JSON.stringify(user));
+      return user;
+    }
+    
+    export { renderWithProviders, loginUser };
+    ```
+    
+    Usage in tests:
+    
+    ```javascript
+    import { renderWithProviders, loginUser } from './test-utils';
+    import UserProfile from './UserProfile';
+    
+    test('displays user name when logged in', () => {
+      const user = loginUser({ id: 1, name: 'John Doe' });
+      const { getByText } = renderWithProviders(<UserProfile />, { user });
+      
+      expect(getByText('John Doe')).toBeInTheDocument();
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="layer-group" title="Organize tests logically">
+    Structure your tests in a way that mirrors your code organization.
+    
+    ```
+    src/
+    ├── components/
+    │   ├── Button/
+    │   │   ├── Button.js
+    │   │   ├── Button.test.js
+    │   │   └── index.js
+    │   └── Form/
+    │       ├── Form.js
+    │       ├── Form.test.js
+    │       └── index.js
+    ├── hooks/
+    │   ├── useAuth.js
+    │   └── useAuth.test.js
+    └── utils/
+        ├── validation.js
+        └── validation.test.js
+    ```
+    
+    Group related tests using `describe` blocks:
+    
+    ```javascript
+    describe('Form component', () => {
+      describe('validation', () => {
+        test('shows error when email is invalid', () => {
+          // Test code
+        });
+        
+        test('shows error when password is too short', () => {
+          // Test code
+        });
+      });
+      
+      describe('submission', () => {
+        test('calls onSubmit with form data when valid', () => {
+          // Test code
+        });
+        
+        test('shows loading state while submitting', () => {
+          // Test code
+        });
+      });
+    });
+    ```
+  </Accordion>
+  
+  <Accordion icon="bug" title="Test for regressions">
+    When fixing a bug, write a test that would have caught it.
+    
+    ```javascript
+    // Bug: The search function was case-sensitive when it shouldn't be
+    
+    // Write a regression test
+    test('search is case-insensitive', () => {
+      const items = [
+        { id: 1, name: 'Apple' },
+        { id: 2, name: 'Banana' },
+        { id: 3, name: 'Orange' }
+      ];
+      
+      const results = search(items, 'apple');
+      
+      expect(results).toHaveLength(1);
+      expect(results[0].id).toBe(1);
+    });
+    
+    // Fix the bug
+    function search(items, query) {
+      if (!query) return items;
+      
+      const lowerCaseQuery = query.toLowerCase();
+      return items.filter(item => 
+        item.name.toLowerCase().includes(lowerCaseQuery)
+      );
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Test Coverage
+
+Test coverage measures how much of your code is executed during tests.
+
+```javascript
+// jest.config.js
+module.exports = {
+  collectCoverage: true,
+  coverageReporters: ['text', 'lcov', 'html'],
+  coverageThreshold: {
+    global: {
+      statements: 80,
+      branches: 70,
+      functions: 80,
+      lines: 80
+    },
+    './src/components/': {
+      statements: 90,
+      branches: 90,
+      functions: 90,
+      lines: 90
+    }
+  }
+};
+```
+
+<Note>
+High test coverage doesn't guarantee high-quality tests. Focus on testing behavior and edge cases rather than just increasing coverage numbers.
+</Note>
+
+## Testing in CI/CD Pipelines
+
+Integrating tests into your CI/CD pipeline ensures code quality before deployment.
+
+### GitHub Actions Example
+
+```yaml
+# .github/workflows/test.yml
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Lint
+      run: npm run lint
+    
+    - name: Unit and integration tests
+      run: npm test -- --coverage
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+    
+    - name: Build
+      run: npm run build
+    
+    - name: E2E tests
+      uses: cypress-io/github-action@v2
+      with:
+        start: npm start
+        wait-on: 'http://localhost:3000'
+    
+    - name: Performance tests
+      run: npm run lighthouse
+```
+
+## Testing Tools and Libraries
+
+### Unit and Integration Testing
+
+<CardGroup cols={2}>
+  <Card title="Jest" icon="jest">
+    A comprehensive JavaScript testing framework.
+    
+    ```bash
+    npm install --save-dev jest
+    ```
+    
+    Features:
+    - Test runner
+    - Assertion library
+    - Mocking capabilities
+    - Snapshot testing
+    - Code coverage
+  </Card>
+  
+  <Card title="React Testing Library" icon="react">
+    Testing utilities for React that encourage good testing practices.
+    
+    ```bash
+    npm install --save-dev @testing-library/react
+    ```
+    
+    Features:
+    - DOM testing utilities
+    - User-centric testing approach
+    - Query methods that mimic user behavior
+    - Works well with Jest
+  </Card>
+  
+  <Card title="Vue Test Utils" icon="vuejs">
+    Official testing utility library for Vue.js.
+    
+    ```bash
+    npm install --save-dev @vue/test-utils
+    ```
+    
+    Features:
+    - Mount Vue components
+    - Interact with the component
+    - Assert component state
+    - Shallow and full mounting
+  </Card>
+  
+  <Card title="Angular Testing Utilities" icon="angular">
+    Built-in testing utilities for Angular applications.
+    
+    ```bash
+    # Included with Angular
+    ng test
+    ```
+    
+    Features:
+    - TestBed for component testing
+    - Component fixture API
+    - Service testing utilities
+    - HTTP testing utilities
+  </Card>
+</CardGroup>
+
+### End-to-End Testing
+
+<CardGroup cols={2}>
+  <Card title="Cypress" icon="cypress">
+    Fast, easy and reliable testing for anything that runs in a browser.
+    
+    ```bash
+    npm install --save-dev cypress
+    ```
+    
+    Features:
+    - Real browser testing
+    - Time travel debugging
+    - Automatic waiting
+    - Network traffic control
+    - Visual testing capabilities
+  </Card>
+  
+  <Card title="Playwright" icon="browser">
+    Reliable end-to-end testing for modern web apps.
+    
+    ```bash
+    npm install --save-dev @playwright/test
+    ```
+    
+    Features:
+    - Multi-browser support
+    - Auto-wait capabilities
+    - Mobile emulation
+    - Network interception
+    - Parallel execution
+  </Card>
+  
+  <Card title="Selenium WebDriver" icon="selenium">
+    The original browser automation tool.
+    
+    ```bash
+    npm install --save-dev selenium-webdriver
+    ```
+    
+    Features:
+    - Cross-browser support
+    - Mature ecosystem
+    - Language-agnostic
+    - Extensive API
+  </Card>
+  
+  <Card title="WebdriverIO" icon="webdriverio">
+    Next-gen browser and mobile automation test framework.
+    
+    ```bash
+    npm install --save-dev webdriverio
+    ```
+    
+    Features:
+    - Concise API
+    - Mobile testing
+    - Visual regression
+    - Parallel execution
+    - Custom reporter
+  </Card>
+</CardGroup>
+
+### Visual and Accessibility Testing
+
+<CardGroup cols={2}>
+  <Card title="Percy" icon="eye">
+    Visual testing platform for web apps.
+    
+    ```bash
+    npm install --save-dev @percy/cli
+    ```
+    
+    Features:
+    - Visual regression testing
+    - Cross-browser testing
+    - Responsive testing
+    - Integration with CI/CD
+  </Card>
+  
+  <Card title="Chromatic" icon="storybook">
+    Visual testing for Storybook.
+    
+    ```bash
+    npm install --save-dev chromatic
+    ```
+    
+    Features:
+    - UI component testing
+    - Visual regression
+    - Component documentation
+    - Review workflow
+  </Card>
+  
+  <Card title="Axe" icon="universal-access">
+    Accessibility testing engine for websites and applications.
+    
+    ```bash
+    npm install --save-dev axe-core
+    ```
+    
+    Features:
+    - WCAG compliance testing
+    - Integration with testing frameworks
+    - Browser extensions
+    - CI/CD integration
+  </Card>
+  
+  <Card title="Lighthouse" icon="lighthouse">
+    Automated tool for improving web page quality.
+    
+    ```bash
+    npm install --save-dev lighthouse
+    ```
+    
+    Features:
+    - Performance testing
+    - Accessibility audits
+    - Best practices checks
+    - SEO audits
+    - Progressive Web App validation
+  </Card>
+</CardGroup>
+
+## Testing Checklist
+
+Use this checklist to ensure your testing strategy is comprehensive:
+
+<Steps>
+  <Step title="Unit Testing">
+    - [ ] Test individual functions and components
+    - [ ] Mock dependencies appropriately
+    - [ ] Test edge cases and error handling
+    - [ ] Achieve good code coverage (70-80%)
+    - [ ] Keep tests fast and focused
+  </Step>
+  
+  <Step title="Integration Testing">
+    - [ ] Test component interactions
+    - [ ] Test data flow between components
+    - [ ] Test API integrations
+    - [ ] Test form submissions and validations
+    - [ ] Test state management
+  </Step>
+  
+  <Step title="End-to-End Testing">
+    - [ ] Test critical user flows
+    - [ ] Test authentication and authorization
+    - [ ] Test navigation and routing
+    - [ ] Test responsive behavior
+    - [ ] Test error states and recovery
+  </Step>
+  
+  <Step title="Visual Testing">
+    - [ ] Test UI components appearance
+    - [ ] Test responsive layouts
+    - [ ] Test theme variations
+    - [ ] Test loading and error states
+    - [ ] Test animations and transitions
+  </Step>
+  
+  <Step title="Accessibility Testing">
+    - [ ] Test keyboard navigation
+    - [ ] Test screen reader compatibility
+    - [ ] Test color contrast
+    - [ ] Test form accessibility
+    - [ ] Test focus management
+  </Step>
+  
+  <Step title="Performance Testing">
+    - [ ] Test page load performance
+    - [ ] Test rendering performance
+    - [ ] Monitor bundle sizes
+    - [ ] Test memory usage
+    - [ ] Test network request efficiency
+  </Step>
+  
+  <Step title="CI/CD Integration">
+    - [ ] Run tests on every pull request
+    - [ ] Block merges on test failures
+    - [ ] Monitor test coverage
+    - [ ] Run performance tests before deployment
+    - [ ] Generate and publish test reports
+  </Step>
+</Steps>
+
+## Resources
+
+### Testing Documentation and Guides
+
+- [Jest Documentation](https://jestjs.io/docs/getting-started)
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+- [Vue Test Utils](https://vue-test-utils.vuejs.org/)
+- [Angular Testing Guide](https://angular.io/guide/testing)
+- [Cypress Documentation](https://docs.cypress.io/)
+- [Playwright Documentation](https://playwright.dev/docs/intro)
+
+### Books and Courses
+
+- "Testing JavaScript Applications" by Lucas da Costa
+- "React Testing Library and Jest" by Bonnie Schulkin
+- "JavaScript Testing Best Practices" by Yoni Goldberg
+- "Test-Driven Development with JavaScript" by Saleem Siddiqui
+
+### Tools and Services
+
+- [Codecov](https://codecov.io/) - Code coverage reporting
+- [BrowserStack](https://www.browserstack.com/) - Cross-browser testing
+- [Percy](https://percy.io/) - Visual testing
+- [Chromatic](https://www.chromatic.com/) - Visual testing for Storybook
+- [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) - Performance testing
+
+## Next Steps
+
+Now that you understand frontend testing best practices, you can:
+
+- Learn about [Performance Optimization](/best-practices/performance) to make your sites faster
+- Explore [Accessibility](/best-practices/accessibility) best practices to make your sites usable by everyone
+- Study [Security](/best-practices/security) best practices to protect your applications
