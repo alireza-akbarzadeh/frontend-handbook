@@ -1,7 +1,3 @@
-# 🧠 Frontend Quick Tour – A Senior Developer’s Guide
-
-> 📚 A comprehensive, no-fluff guide to advanced frontend development practices — from semantic HTML to modern patterns.
-
 ---
 ## 📚 Semantic HTML for Senior Developers
 
