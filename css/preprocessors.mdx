@@ -1,0 +1,1055 @@
+---
+title: "CSS Preprocessors"
+description: "Learn about CSS preprocessors like Sass, Less, and PostCSS and how they enhance your styling workflow"
+---
+
+## Introduction to CSS Preprocessors
+
+CSS preprocessors are scripting languages that extend the default capabilities of CSS. They enable developers to use variables, nested rules, mixins, functions, and other programming constructs that make CSS code more maintainable, themeable, and extendable.
+
+<CardGroup cols={2}>
+  <Card title="Enhanced Maintainability" icon="screwdriver-wrench">
+    Preprocessors allow you to organize your CSS code better with features like variables, nesting, and modules.
+  </Card>
+  
+  <Card title="Increased Productivity" icon="bolt">
+    Write less code and work faster with reusable components, mixins, and functions.
+  </Card>
+  
+  <Card title="Better Organization" icon="folder-tree">
+    Split your styles into multiple files and import them without performance penalties.
+  </Card>
+  
+  <Card title="Advanced Features" icon="wand-magic-sparkles">
+    Gain access to features not available in plain CSS, like calculations, color manipulations, and conditionals.
+  </Card>
+</CardGroup>
+
+## Popular CSS Preprocessors
+
+### Sass/SCSS
+
+Sass (Syntactically Awesome Style Sheets) is the most mature, stable, and powerful professional-grade CSS preprocessor. It comes in two syntaxes: the original indented syntax (Sass) and the newer SCSS syntax that uses brackets and semicolons like CSS.
+
+#### Installation and Setup
+
+```bash
+# Install Sass globally
+npm install -g sass
+
+# Compile a Sass file to CSS
+sass input.scss output.css
+
+# Watch for changes
+sass --watch input.scss:output.css
+
+# Watch an entire directory
+sass --watch scss/:css/
+```
+
+#### Variables
+
+Variables allow you to store information that you can reuse throughout your stylesheet.
+
+```scss
+// SCSS Syntax
+$primary-color: #3498db;
+$secondary-color: #2ecc71;
+$font-stack: 'Helvetica', sans-serif;
+$base-spacing: 1rem;
+
+body {
+  font-family: $font-stack;
+  color: $primary-color;
+  margin: $base-spacing;
+}
+
+.button {
+  background-color: $secondary-color;
+  padding: $base-spacing;
+}
+```
+
+#### Nesting
+
+Nesting allows you to write selectors inside other selectors, creating a hierarchy that matches your HTML structure.
+
+```scss
+// SCSS Syntax
+nav {
+  background-color: #333;
+  
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  li {
+    display: inline-block;
+    
+    a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: white;
+      
+      &:hover {
+        background-color: #555;
+      }
+    }
+  }
+}
+```
+
+#### Partials and Imports
+
+Partials are Sass files that contain snippets of CSS that can be included in other Sass files. This helps modularize your CSS and keep things easier to maintain.
+
+```scss
+// _variables.scss
+$primary-color: #3498db;
+$secondary-color: #2ecc71;
+
+// _reset.scss
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// main.scss
+@import 'variables';
+@import 'reset';
+
+body {
+  font-family: sans-serif;
+  color: $primary-color;
+}
+```
+
+#### Mixins
+
+Mixins allow you to define reusable styles that can be included in other selectors.
+
+```scss
+// SCSS Syntax
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin box-shadow($x, $y, $blur, $color) {
+  -webkit-box-shadow: $x $y $blur $color;
+  -moz-box-shadow: $x $y $blur $color;
+  box-shadow: $x $y $blur $color;
+}
+
+.container {
+  @include flex-center;
+  @include box-shadow(0, 2px, 5px, rgba(0, 0, 0, 0.3));
+  height: 100vh;
+}
+
+.card {
+  @include flex-center;
+  @include box-shadow(0, 5px, 15px, rgba(0, 0, 0, 0.1));
+  flex-direction: column;
+}
+```
+
+#### Functions
+
+Functions allow you to define complex operations that can be reused throughout your stylesheets.
+
+```scss
+// SCSS Syntax
+@function calculate-width($col-span, $total-cols: 12, $container-width: 100%) {
+  @return ($col-span / $total-cols) * $container-width;
+}
+
+.sidebar {
+  width: calculate-width(3); // 25% of container width
+}
+
+.main-content {
+  width: calculate-width(9); // 75% of container width
+}
+```
+
+#### Control Directives
+
+Sass provides control directives like `@if`, `@for`, `@each`, and `@while` for more advanced logic.
+
+```scss
+// SCSS Syntax
+$theme: 'dark';
+
+body {
+  @if $theme == 'dark' {
+    background-color: #333;
+    color: white;
+  } @else {
+    background-color: white;
+    color: #333;
+  }
+}
+
+// Generate grid classes
+@for $i from 1 through 12 {
+  .col-#{$i} {
+    width: calculate-width($i);
+  }
+}
+
+// Loop through a list
+$social-colors: (
+  'facebook': #3b5998,
+  'twitter': #1da1f2,
+  'instagram': #e1306c,
+  'youtube': #ff0000
+);
+
+@each $platform, $color in $social-colors {
+  .btn-#{$platform} {
+    background-color: $color;
+    color: white;
+  }
+}
+```
+
+#### Extending/Inheritance
+
+The `@extend` directive lets you share a set of CSS properties from one selector to another.
+
+```scss
+// SCSS Syntax
+%button-base {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.primary-button {
+  @extend %button-base;
+  background-color: $primary-color;
+  color: white;
+}
+
+.secondary-button {
+  @extend %button-base;
+  background-color: $secondary-color;
+  color: white;
+}
+
+.outline-button {
+  @extend %button-base;
+  background-color: transparent;
+  border: 1px solid $primary-color;
+  color: $primary-color;
+}
+```
+
+### Less
+
+Less (Leaner Style Sheets) is a backwards-compatible language extension for CSS. It's similar to Sass but has a slightly different syntax and feature set.
+
+#### Installation and Setup
+
+```bash
+# Install Less globally
+npm install -g less
+
+# Compile a Less file to CSS
+lessc styles.less styles.css
+
+# Watch for changes (requires less-watch-compiler)
+npm install -g less-watch-compiler
+less-watch-compiler less css
+```
+
+#### Variables
+
+```less
+// Less Syntax
+@primary-color: #3498db;
+@secondary-color: #2ecc71;
+@font-stack: 'Helvetica', sans-serif;
+@base-spacing: 1rem;
+
+body {
+  font-family: @font-stack;
+  color: @primary-color;
+  margin: @base-spacing;
+}
+
+.button {
+  background-color: @secondary-color;
+  padding: @base-spacing;
+}
+```
+
+#### Nesting
+
+```less
+// Less Syntax
+nav {
+  background-color: #333;
+  
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  li {
+    display: inline-block;
+    
+    a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: white;
+      
+      &:hover {
+        background-color: #555;
+      }
+    }
+  }
+}
+```
+
+#### Mixins
+
+Less mixins can be used with or without parameters and can include selectors.
+
+```less
+// Less Syntax
+.flex-center() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box-shadow(@x, @y, @blur, @color) {
+  -webkit-box-shadow: @x @y @blur @color;
+  -moz-box-shadow: @x @y @blur @color;
+  box-shadow: @x @y @blur @color;
+}
+
+.container {
+  .flex-center();
+  .box-shadow(0, 2px, 5px, rgba(0, 0, 0, 0.3));
+  height: 100vh;
+}
+
+.card {
+  .flex-center();
+  .box-shadow(0, 5px, 15px, rgba(0, 0, 0, 0.1));
+  flex-direction: column;
+}
+```
+
+#### Operations
+
+Less allows you to perform calculations with variables.
+
+```less
+// Less Syntax
+@full-width: 960px;
+@sidebar-ratio: 0.25;
+@gutter: 20px;
+
+.sidebar {
+  width: @full-width * @sidebar-ratio - @gutter;
+}
+
+.main-content {
+  width: @full-width * (1 - @sidebar-ratio) - @gutter;
+}
+```
+
+#### Functions
+
+Less provides built-in functions for color manipulation, math operations, and more.
+
+```less
+// Less Syntax
+@base-color: #3498db;
+
+.darker-color {
+  color: darken(@base-color, 20%);
+}
+
+.lighter-color {
+  color: lighten(@base-color, 20%);
+}
+
+.desaturated-color {
+  color: desaturate(@base-color, 30%);
+}
+
+.transparent-color {
+  color: fade(@base-color, 50%);
+}
+```
+
+### Stylus
+
+Stylus is a dynamic stylesheet language that offers a more expressive and feature-rich syntax compared to CSS. It's known for its flexibility and optional use of colons, semicolons, and braces.
+
+#### Installation and Setup
+
+```bash
+# Install Stylus globally
+npm install -g stylus
+
+# Compile a Stylus file to CSS
+stylus input.styl -o output.css
+
+# Watch for changes
+stylus -w input.styl -o output.css
+```
+
+#### Variables
+
+```stylus
+// Stylus Syntax
+primary-color = #3498db
+secondary-color = #2ecc71
+font-stack = 'Helvetica', sans-serif
+base-spacing = 1rem
+
+body
+  font-family font-stack
+  color primary-color
+  margin base-spacing
+
+.button
+  background-color secondary-color
+  padding base-spacing
+```
+
+#### Nesting
+
+```stylus
+// Stylus Syntax
+nav
+  background-color #333
+  
+  ul
+    margin 0
+    padding 0
+    list-style none
+  
+  li
+    display inline-block
+    
+    a
+      display block
+      padding 10px 15px
+      text-decoration none
+      color white
+      
+      &:hover
+        background-color #555
+```
+
+#### Mixins
+
+```stylus
+// Stylus Syntax
+flex-center()
+  display flex
+  justify-content center
+  align-items center
+
+box-shadow(x, y, blur, color)
+  -webkit-box-shadow x y blur color
+  -moz-box-shadow x y blur color
+  box-shadow x y blur color
+
+.container
+  flex-center()
+  box-shadow(0, 2px, 5px, rgba(0, 0, 0, 0.3))
+  height 100vh
+
+.card
+  flex-center()
+  box-shadow(0, 5px, 15px, rgba(0, 0, 0, 0.1))
+  flex-direction column
+```
+
+## PostCSS: A Different Approach
+
+Unlike traditional preprocessors, PostCSS is a tool for transforming CSS with JavaScript plugins. It can be used for traditional preprocessing tasks, but also for modern CSS features, linting, and more.
+
+### Installation and Setup
+
+```bash
+# Install PostCSS CLI and some plugins
+npm install -g postcss-cli autoprefixer postcss-preset-env
+
+# Process a CSS file
+postcss input.css -o output.css -u autoprefixer postcss-preset-env
+```
+
+### Configuration
+
+```javascript
+// postcss.config.js
+module.exports = {
+  plugins: [
+    require('autoprefixer'),
+    require('postcss-preset-env')({ stage: 1 }),
+    require('postcss-nested'),
+    require('postcss-custom-properties'),
+    require('cssnano')
+  ]
+};
+```
+
+### Popular PostCSS Plugins
+
+#### Autoprefixer
+
+Automatically adds vendor prefixes to CSS properties.
+
+```css
+/* Input CSS */
+.box {
+  display: flex;
+  user-select: none;
+}
+
+/* Output CSS after Autoprefixer */
+.box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+```
+
+#### PostCSS Preset Env
+
+Lets you use future CSS features today by transforming them into compatible CSS.
+
+```css
+/* Input CSS with future features */
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  color: lab(53.2% -40.8 59.2);
+}
+
+/* Output CSS compatible with current browsers */
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  color: rgb(222, 49, 99);
+}
+```
+
+#### PostCSS Nested
+
+Provides nesting similar to Sass.
+
+```css
+/* Input CSS with nesting */
+.card {
+  background: white;
+  border-radius: 4px;
+  
+  & .title {
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  & .content {
+    padding: 1rem;
+    
+    & p {
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+/* Output CSS */
+.card {
+  background: white;
+  border-radius: 4px;
+}
+
+.card .title {
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.card .content {
+  padding: 1rem;
+}
+
+.card .content p {
+  margin-bottom: 0.5rem;
+}
+```
+
+#### CSSnano
+
+Optimizes and minifies CSS.
+
+```css
+/* Input CSS */
+.box {
+  margin: 0px 10px 0px 10px;
+  padding: 10px;
+  color: #ff0000;
+  background-color: #fafafa;
+}
+
+/* Output CSS after CSSnano */
+.box{margin:0 10px;padding:10px;color:red;background-color:#fafafa}
+```
+
+## Integrating Preprocessors with Build Tools
+
+### Webpack
+
+```javascript
+// webpack.config.js for Sass
+module.exports = {
+  // ...
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader', // Injects CSS into the DOM
+          'css-loader',    // Interprets @import and url()
+          'sass-loader'    // Compiles Sass to CSS
+        ]
+      }
+    ]
+  }
+};
+
+// webpack.config.js for PostCSS
+module.exports = {
+  // ...
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  require('autoprefixer'),
+                  require('postcss-preset-env')({ stage: 1 })
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+};
+```
+
+### Vite
+
+```javascript
+// vite.config.js
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Additional options for Sass
+        additionalData: `@import "./src/styles/variables.scss";`
+      }
+    },
+    postcss: {
+      plugins: [
+        require('autoprefixer'),
+        require('postcss-preset-env')({ stage: 1 })
+      ]
+    }
+  }
+});
+```
+
+## CSS Modules and Preprocessors
+
+CSS Modules provide local scoping of CSS by automatically creating unique class names. They work well with preprocessors.
+
+```scss
+// Button.module.scss
+.button {
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: bold;
+  
+  &.primary {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  &.secondary {
+    background-color: #2ecc71;
+    color: white;
+  }
+}
+```
+
+```jsx
+// React component using CSS Modules with Sass
+import React from 'react';
+import styles from './Button.module.scss';
+
+function Button({ variant = 'primary', children }) {
+  return (
+    <button className={`${styles.button} ${styles[variant]}`}>
+      {children}
+    </button>
+  );
+}
+
+export default Button;
+```
+
+## CSS-in-JS and Preprocessors
+
+Some CSS-in-JS libraries support preprocessor-like features natively.
+
+### Styled Components with Sass-like Syntax
+
+```jsx
+import styled from 'styled-components';
+
+// Variables (similar to Sass variables)
+const primaryColor = '#3498db';
+const secondaryColor = '#2ecc71';
+
+// Mixins (similar to Sass mixins)
+const flexCenter = `
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Button = styled.button`
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: bold;
+  ${flexCenter}
+  
+  /* Nesting (similar to Sass nesting) */
+  &.primary {
+    background-color: ${primaryColor};
+    color: white;
+    
+    &:hover {
+      background-color: darken(${primaryColor}, 10%);
+    }
+  }
+  
+  &.secondary {
+    background-color: ${secondaryColor};
+    color: white;
+    
+    &:hover {
+      background-color: darken(${secondaryColor}, 10%);
+    }
+  }
+`;
+```
+
+## Best Practices for Using Preprocessors
+
+### File Organization
+
+A common pattern for organizing Sass files:
+
+```
+styles/
+├── abstracts/
+│   ├── _variables.scss
+│   ├── _functions.scss
+│   ├── _mixins.scss
+│   └── _placeholders.scss
+├── base/
+│   ├── _reset.scss
+│   ├── _typography.scss
+│   └── _utilities.scss
+├── components/
+│   ├── _buttons.scss
+│   ├── _cards.scss
+│   └── _forms.scss
+├── layout/
+│   ├── _header.scss
+│   ├── _footer.scss
+│   └── _grid.scss
+├── pages/
+│   ├── _home.scss
+│   └── _about.scss
+└── main.scss
+```
+
+The main.scss file would import all other files:
+
+```scss
+// Abstracts
+@import 'abstracts/variables';
+@import 'abstracts/functions';
+@import 'abstracts/mixins';
+@import 'abstracts/placeholders';
+
+// Base
+@import 'base/reset';
+@import 'base/typography';
+@import 'base/utilities';
+
+// Components
+@import 'components/buttons';
+@import 'components/cards';
+@import 'components/forms';
+
+// Layout
+@import 'layout/header';
+@import 'layout/footer';
+@import 'layout/grid';
+
+// Pages
+@import 'pages/home';
+@import 'pages/about';
+```
+
+### Performance Considerations
+
+1. **Avoid Deep Nesting**: Limit nesting to 3-4 levels to prevent overly specific selectors.
+
+```scss
+// Bad - too deeply nested
+nav {
+  ul {
+    li {
+      a {
+        span {
+          color: red;
+        }
+      }
+    }
+  }
+}
+
+// Better
+nav {
+  ul {
+    list-style: none;
+  }
+}
+
+nav li {
+  display: inline-block;
+}
+
+nav a {
+  text-decoration: none;
+}
+
+nav a span {
+  color: red;
+}
+```
+
+2. **Use Extends Sparingly**: Overusing `@extend` can lead to large CSS files.
+
+3. **Optimize Imports**: Only import what you need.
+
+4. **Consider Using Modern CSS**: Many features that required preprocessors are now available in modern CSS (custom properties, calc(), etc.).
+
+### Maintainability Tips
+
+1. **Document Your Code**: Add comments to explain complex mixins, functions, or variables.
+
+```scss
+// Color palette
+// Primary colors used throughout the application
+$primary-color: #3498db;    // Blue
+$secondary-color: #2ecc71;  // Green
+$accent-color: #e74c3c;     // Red
+
+// Typography scale following a 1.25 ratio
+$base-font-size: 16px;
+$h1-size: $base-font-size * 1.25 * 1.25 * 1.25;  // ~31.25px
+$h2-size: $base-font-size * 1.25 * 1.25;         // ~25px
+$h3-size: $base-font-size * 1.25;                // ~20px
+```
+
+2. **Use Consistent Naming Conventions**: BEM (Block Element Modifier) works well with preprocessors.
+
+```scss
+// BEM with SCSS
+.card {
+  background: white;
+  border-radius: 4px;
+  
+  &__header {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  &__title {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  
+  &__content {
+    padding: 1rem;
+  }
+  
+  &--featured {
+    border: 2px solid gold;
+  }
+}
+```
+
+3. **Create a Style Guide**: Document your variables, mixins, and patterns for team reference.
+
+## Choosing the Right Preprocessor
+
+### Comparison
+
+<CardGroup cols={1}>
+  <Card title="Sass vs. Less vs. Stylus vs. PostCSS">
+    | Feature | Sass | Less | Stylus | PostCSS |
+    |---------|------|------|--------|--------|
+    | Syntax | Indented or SCSS | CSS-like | Flexible, optional punctuation | Plain CSS |
+    | Learning Curve | Moderate | Low | Moderate | Low |
+    | Variables | Yes | Yes | Yes | With plugins |
+    | Nesting | Yes | Yes | Yes | With plugins |
+    | Mixins | Yes | Yes | Yes | With plugins |
+    | Functions | Yes | Yes | Yes | With plugins |
+    | Conditionals | Yes | Yes | Yes | With plugins |
+    | Loops | Yes | Yes | Yes | With plugins |
+    | Extends | Yes | Yes | Yes | With plugins |
+    | Community | Very large | Large | Moderate | Very large |
+    | Customizability | Moderate | Moderate | High | Very high |
+    | Future-proofing | Good | Good | Good | Excellent |
+  </Card>
+</CardGroup>
+
+### When to Choose Each
+
+- **Sass/SCSS**: Best for large projects with complex styling needs. Great community support and extensive features.
+- **Less**: Good for simpler projects or when transitioning from plain CSS. JavaScript-based, which can be an advantage in some environments.
+- **Stylus**: Offers the most flexible syntax and powerful features. Good choice if you prefer a more programming-like approach to CSS.
+- **PostCSS**: Ideal for modern projects focused on future CSS features and performance. Highly customizable with a plugin-based architecture.
+
+## Transitioning from Preprocessors to Modern CSS
+
+As CSS evolves, many features that once required preprocessors are now available natively.
+
+### CSS Custom Properties (Variables)
+
+```css
+/* Modern CSS Variables */
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --base-spacing: 1rem;
+}
+
+body {
+  color: var(--primary-color);
+  margin: var(--base-spacing);
+}
+
+/* Dynamic changes not possible with preprocessor variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #5dade2;
+    --secondary-color: #58d68d;
+  }
+}
+```
+
+### CSS Nesting (Coming Soon)
+
+CSS nesting is part of the CSS Nesting Module, which is gaining browser support.
+
+```css
+/* Native CSS nesting (future CSS or with PostCSS) */
+nav {
+  background-color: #333;
+  
+  & ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  & li {
+    display: inline-block;
+  }
+}
+```
+
+### CSS Calculations
+
+```css
+/* Native CSS calculations */
+.sidebar {
+  width: calc(25% - 20px);
+}
+
+.main-content {
+  width: calc(75% - 20px);
+}
+```
+
+## Conclusion
+
+CSS preprocessors remain valuable tools in modern frontend development, offering features that enhance productivity and maintainability. While native CSS continues to evolve and incorporate many preprocessor features, tools like Sass, Less, and PostCSS still provide significant advantages for complex projects.
+
+When choosing a preprocessor, consider your project's specific needs, your team's familiarity with the tool, and how it integrates with your build process. Remember that you can also combine approaches—using a traditional preprocessor alongside PostCSS for the best of both worlds.
+
+As you become more comfortable with preprocessors, you'll develop your own patterns and practices that make your CSS more maintainable, reusable, and efficient.
+
+## Resources
+
+### Official Documentation
+
+- [Sass Documentation](https://sass-lang.com/documentation)
+- [Less Documentation](https://lesscss.org/)
+- [Stylus Documentation](https://stylus-lang.com/)
+- [PostCSS Documentation](https://postcss.org/)
+
+### Learning Resources
+
+- [Sass Guidelines](https://sass-guidelin.es/) - An opinionated styleguide for writing sane, maintainable and scalable Sass
+- [CSS-Tricks: Sass Style Guide](https://css-tricks.com/sass-style-guide/)
+- [PostCSS Deep Dive](https://webdesign.tutsplus.com/series/postcss-deep-dive--cms-889)
+
+### Tools
+
+- [Sassmeister](https://www.sassmeister.com/) - Online Sass playground
+- [Less2CSS](http://lesscss.org/less-preview/) - Online Less playground
+- [Stylus Online Compiler](https://stylus-lang.com/try.html) - Online Stylus playground
+- [CSS Modules Playground](https://css-modules.github.io/webpack-demo/)

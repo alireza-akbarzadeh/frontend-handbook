@@ -1,0 +1,1031 @@
+---
+title: "Frontend Security Best Practices"
+description: "Learn essential security practices to protect your frontend applications from common vulnerabilities and attacks"
+---
+
+## Introduction to Frontend Security
+
+Frontend security is a critical aspect of web development that is often overlooked. While backend security typically receives more attention, the frontend is equally vulnerable to various attacks that can compromise user data, application functionality, and overall system integrity.
+
+This guide covers essential security practices that every frontend developer should implement to protect their applications from common vulnerabilities and attacks.
+
+<CardGroup cols={2}>
+  <Card title="Protection Against Attacks" icon="shield-halved">
+    Learn how to defend your applications against XSS, CSRF, clickjacking, and other common frontend attacks.
+  </Card>
+  
+  <Card title="Secure Data Handling" icon="database-lock">
+    Implement proper techniques for handling sensitive data in the browser environment.
+  </Card>
+  
+  <Card title="Authentication & Authorization" icon="key">
+    Best practices for implementing secure user authentication and authorization flows.
+  </Card>
+  
+  <Card title="Modern Security Features" icon="browser">
+    Leverage modern browser security features and headers to enhance your application's security posture.
+  </Card>
+</CardGroup>
+
+## Common Frontend Security Vulnerabilities
+
+### Cross-Site Scripting (XSS)
+
+Cross-Site Scripting (XSS) attacks occur when malicious scripts are injected into trusted websites. These scripts execute in users' browsers and can steal sensitive information, manipulate page content, or redirect users to malicious sites.
+
+#### Types of XSS Attacks
+
+1. **Reflected XSS**: Malicious script is reflected off a web server, such as in search results or error messages.
+2. **Stored XSS**: Malicious script is stored on the target server, such as in a database, message forum, or comment field.
+3. **DOM-based XSS**: Vulnerability exists in client-side code rather than server-side code.
+
+#### Prevention Techniques
+
+**1. Output Encoding**
+
+Always encode user-generated content before rendering it in the browser.
+
+```javascript
+// Unsafe
+document.getElementById('userProfile').innerHTML = userData.bio;
+
+// Safe - using a library like DOMPurify
+import DOMPurify from 'dompurify';
+document.getElementById('userProfile').innerHTML = DOMPurify.sanitize(userData.bio);
+```
+
+**2. Content Security Policy (CSP)**
+
+Implement a Content Security Policy to restrict the sources from which content can be loaded.
+
+```html
+<!-- In your HTML header -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' https://trusted-cdn.com; img-src 'self' data: https://trusted-cdn.com">
+```
+
+Or via HTTP headers:
+
+```
+Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' https://trusted-cdn.com; img-src 'self' data: https://trusted-cdn.com
+```
+
+**3. Use Framework Protections**
+
+Modern frameworks like React, Angular, and Vue have built-in XSS protections.
+
+```jsx
+// React automatically escapes values in JSX
+function UserProfile({ user }) {
+  return <div>{user.bio}</div>; // Safe by default
+}
+```
+
+**4. Avoid Dangerous JavaScript Functions**
+
+Minimize the use of functions that can execute strings as code.
+
+```javascript
+// Dangerous functions to avoid or use with extreme caution:
+eval()
+document.write()
+innerHTML
+outHTML
+setAttribute()
+```
+
+**5. Use HttpOnly and Secure Cookies**
+
+Protect sensitive cookies from being accessed by JavaScript.
+
+```
+Set-Cookie: sessionId=abc123; HttpOnly; Secure; SameSite=Strict
+```
+
+### Cross-Site Request Forgery (CSRF)
+
+CSRF attacks trick users into performing unwanted actions on a site where they're authenticated. The attacker creates a malicious site that generates a request to the victim site, leveraging the user's authenticated session.
+
+#### Prevention Techniques
+
+**1. CSRF Tokens**
+
+Implement anti-CSRF tokens in forms and AJAX requests.
+
+```html
+<!-- In your form -->
+<form action="/api/update-profile" method="POST">
+  <input type="hidden" name="csrf_token" value="random-token-value">
+  <!-- other form fields -->
+</form>
+```
+
+```javascript
+// In your AJAX requests
+fetch('/api/update-profile', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-Token': csrfToken // Get this from a meta tag or other secure source
+  },
+  body: JSON.stringify(userData)
+});
+```
+
+**2. SameSite Cookie Attribute**
+
+Use the SameSite attribute to prevent cookies from being sent in cross-site requests.
+
+```
+Set-Cookie: sessionId=abc123; HttpOnly; Secure; SameSite=Strict
+```
+
+**3. Check Referrer and Origin Headers**
+
+Verify that requests come from your own domain.
+
+```javascript
+// Server-side code (example in Node.js/Express)
+app.use((req, res, next) => {
+  const origin = req.headers.origin || req.headers.referer;
+  if (!origin || !origin.startsWith('https://yourdomain.com')) {
+    return res.status(403).send('Forbidden');
+  }
+  next();
+});
+```
+
+### Clickjacking
+
+Clickjacking attacks use transparent or opaque layers to trick users into clicking on a button or link on another page when they intended to click on the top-level page.
+
+#### Prevention Techniques
+
+**1. X-Frame-Options Header**
+
+Prevent your site from being embedded in frames on other domains.
+
+```
+X-Frame-Options: DENY
+```
+
+or
+
+```
+X-Frame-Options: SAMEORIGIN
+```
+
+**2. Content Security Policy (CSP) frame-ancestors Directive**
+
+More flexible than X-Frame-Options and supported by modern browsers.
+
+```
+Content-Security-Policy: frame-ancestors 'self'
+```
+
+**3. JavaScript Frame-Busting Code**
+
+As a fallback for older browsers:
+
+```javascript
+// Place this in your main JavaScript file
+if (window.self !== window.top) {
+  window.top.location.href = window.self.location.href;
+}
+```
+
+### Man-in-the-Middle (MitM) Attacks
+
+MitM attacks occur when attackers position themselves between the user and the application to intercept or modify communications.
+
+#### Prevention Techniques
+
+**1. HTTPS Everywhere**
+
+Use HTTPS for all communications, including API calls and asset loading.
+
+**2. HTTP Strict Transport Security (HSTS)**
+
+Force browsers to use HTTPS for your domain.
+
+```
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+```
+
+**3. Subresource Integrity (SRI)**
+
+Ensure that resources loaded from external sources (like CDNs) haven't been tampered with.
+
+```html
+<script src="https://cdn.example.com/library.js" 
+        integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC" 
+        crossorigin="anonymous"></script>
+```
+
+## Secure Data Handling
+
+### Sensitive Data Exposure
+
+Frontend applications often handle sensitive user data that needs protection from unauthorized access.
+
+#### Prevention Techniques
+
+**1. Minimize Client-Side Data Storage**
+
+Only store what you absolutely need in the browser.
+
+```javascript
+// Instead of storing the entire user profile
+localStorage.setItem('user', JSON.stringify(userFullProfile)); // Bad practice
+
+// Only store what's needed for UI rendering
+localStorage.setItem('user', JSON.stringify({
+  id: user.id,
+  name: user.name,
+  preferences: user.preferences
+})); // Better practice
+```
+
+**2. Encrypt Sensitive Data**
+
+If you must store sensitive data client-side, encrypt it first.
+
+```javascript
+// Using the Web Crypto API
+async function encryptData(data, key) {
+  const encodedData = new TextEncoder().encode(JSON.stringify(data));
+  const encryptedData = await window.crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv: window.crypto.getRandomValues(new Uint8Array(12)) },
+    key,
+    encodedData
+  );
+  return encryptedData;
+}
+
+// Generate or retrieve encryption key securely
+const key = await window.crypto.subtle.generateKey(
+  { name: 'AES-GCM', length: 256 },
+  true,
+  ['encrypt', 'decrypt']
+);
+
+// Encrypt and store
+const encryptedData = await encryptData(sensitiveData, key);
+localStorage.setItem('protectedData', encryptedData);
+```
+
+**3. Use Session Storage for Temporary Data**
+
+Prefer `sessionStorage` over `localStorage` for sensitive data that's only needed for the current session.
+
+```javascript
+// Data is cleared when the tab is closed
+sessionStorage.setItem('temporaryAuthToken', token);
+```
+
+**4. Clear Sensitive Data When No Longer Needed**
+
+```javascript
+function logout() {
+  // Clear all stored data
+  sessionStorage.clear();
+  localStorage.removeItem('user');
+  
+  // Clear any in-memory sensitive data
+  userProfile = null;
+  authToken = null;
+  
+  // Redirect to login page
+  window.location.href = '/login';
+}
+```
+
+### Insecure Direct Object References (IDOR)
+
+IDOR vulnerabilities occur when an application provides direct access to objects based on user-supplied input, allowing attackers to bypass authorization.
+
+#### Prevention Techniques
+
+**1. Use Indirect References**
+
+Map internal object references to temporary, user-specific tokens.
+
+```javascript
+// Instead of exposing database IDs directly
+const userDocuments = [
+  { id: 'doc_temp_123', name: 'Tax Return' }, // 'doc_temp_123' maps to actual ID on server
+  { id: 'doc_temp_456', name: 'Medical Records' }
+];
+```
+
+**2. Verify Access on Every Request**
+
+Always check authorization on the server side, never rely on frontend checks alone.
+
+```javascript
+// Frontend request
+async function getDocument(documentId) {
+  try {
+    const response = await fetch(`/api/documents/${documentId}`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('Not authorized or document not found');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching document:', error);
+    return null;
+  }
+}
+```
+
+## Authentication and Authorization
+
+### Secure Authentication Practices
+
+**1. Implement Multi-Factor Authentication (MFA)**
+
+```javascript
+// Example of a two-factor authentication flow
+async function login(email, password) {
+  // First factor: username/password
+  const response = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  
+  const data = await response.json();
+  
+  if (data.requiresMFA) {
+    // Prompt for second factor
+    const mfaCode = promptUserForMFACode();
+    
+    const mfaResponse = await fetch('/api/verify-mfa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        sessionToken: data.sessionToken,
+        mfaCode 
+      })
+    });
+    
+    return await mfaResponse.json();
+  }
+  
+  return data;
+}
+```
+
+**2. Use OAuth and OpenID Connect Properly**
+
+When implementing OAuth flows, follow security best practices:
+
+```javascript
+// Authorization Code Flow with PKCE (Proof Key for Code Exchange)
+// Generate a code verifier and challenge
+function generateCodeVerifier() {
+  const array = new Uint8Array(32);
+  window.crypto.getRandomValues(array);
+  return base64UrlEncode(array);
+}
+
+async function generateCodeChallenge(codeVerifier) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const digest = await window.crypto.subtle.digest('SHA-256', data);
+  return base64UrlEncode(new Uint8Array(digest));
+}
+
+// Start OAuth flow
+async function startOAuthFlow() {
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  
+  // Store the code verifier for later use
+  sessionStorage.setItem('codeVerifier', codeVerifier);
+  
+  // Redirect to authorization server
+  const authUrl = new URL('https://auth.example.com/authorize');
+  authUrl.searchParams.append('client_id', 'your-client-id');
+  authUrl.searchParams.append('redirect_uri', 'https://your-app.com/callback');
+  authUrl.searchParams.append('response_type', 'code');
+  authUrl.searchParams.append('scope', 'openid profile email');
+  authUrl.searchParams.append('code_challenge', codeChallenge);
+  authUrl.searchParams.append('code_challenge_method', 'S256');
+  authUrl.searchParams.append('state', generateRandomState());
+  
+  window.location.href = authUrl.toString();
+}
+```
+
+**3. Implement Proper Session Management**
+
+```javascript
+// Set session timeout
+const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+let sessionTimeout;
+
+function resetSessionTimeout() {
+  clearTimeout(sessionTimeout);
+  sessionTimeout = setTimeout(logout, SESSION_DURATION);
+}
+
+// Reset timeout on user activity
+window.addEventListener('click', resetSessionTimeout);
+window.addEventListener('keypress', resetSessionTimeout);
+window.addEventListener('scroll', resetSessionTimeout);
+
+// Initialize session timeout when user logs in
+function initSession(userData) {
+  // Store user data and token
+  sessionStorage.setItem('user', JSON.stringify(userData));
+  
+  // Start session timeout
+  resetSessionTimeout();
+}
+```
+
+**4. Secure Password Reset Flows**
+
+Implement secure password reset mechanisms:
+
+- Use time-limited, single-use tokens
+- Send reset links to verified email addresses only
+- Require current password when changing to a new password
+- Notify users when password changes occur
+
+### JWT Security
+
+JSON Web Tokens (JWTs) are commonly used for authentication in modern web applications.
+
+**1. Secure JWT Storage**
+
+```javascript
+// Store JWT in HttpOnly cookie (set by server) rather than localStorage
+// Server response header:
+// Set-Cookie: authToken=xyz; HttpOnly; Secure; SameSite=Strict
+
+// Bad practice
+localStorage.setItem('token', jwt);
+
+// Better practice - store minimal information in memory during session
+let authToken; // In-memory storage, lost when page refreshes
+
+function setAuthToken(token) {
+  authToken = token;
+}
+
+function getAuthToken() {
+  return authToken;
+}
+```
+
+**2. JWT Validation**
+
+Always validate JWTs on the server side, but perform basic checks client-side:
+
+```javascript
+function isTokenExpired(token) {
+  if (!token) return true;
+  
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(window.atob(base64));
+    
+    return payload.exp * 1000 < Date.now();
+  } catch (error) {
+    return true;
+  }
+}
+
+// Check token before making API requests
+function fetchWithAuth(url, options = {}) {
+  const token = getAuthToken();
+  
+  if (!token || isTokenExpired(token)) {
+    // Redirect to login or refresh token
+    redirectToLogin();
+    return Promise.reject(new Error('Authentication required'));
+  }
+  
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`
+    }
+  });
+}
+```
+
+## Browser Security Features
+
+### Security Headers
+
+Implement these security headers to enhance your application's security posture:
+
+```
+# Content-Security-Policy: Restricts resource loading
+Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' https://trusted-cdn.com; img-src 'self' data: https://trusted-cdn.com
+
+# X-Content-Type-Options: Prevents MIME type sniffing
+X-Content-Type-Options: nosniff
+
+# X-Frame-Options: Prevents clickjacking
+X-Frame-Options: DENY
+
+# Strict-Transport-Security: Forces HTTPS
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# X-XSS-Protection: Enables browser's XSS filter (legacy)
+X-XSS-Protection: 1; mode=block
+
+# Referrer-Policy: Controls referrer information
+Referrer-Policy: strict-origin-when-cross-origin
+
+# Permissions-Policy: Controls browser features
+Permissions-Policy: geolocation=(), camera=(), microphone=()
+```
+
+### Feature Policy / Permissions Policy
+
+Control which browser features and APIs your application can use:
+
+```html
+<meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=()">
+```
+
+Or via HTTP header:
+
+```
+Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=()
+```
+
+### Subresource Integrity (SRI)
+
+Ensure that resources loaded from external sources haven't been tampered with:
+
+```html
+<link rel="stylesheet" href="https://cdn.example.com/styles.css" 
+      integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC" 
+      crossorigin="anonymous">
+
+<script src="https://cdn.example.com/library.js" 
+        integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC" 
+        crossorigin="anonymous"></script>
+```
+
+## Framework-Specific Security
+
+### React Security Best Practices
+
+**1. Prevent XSS with React's Automatic Escaping**
+
+React automatically escapes values in JSX, but be careful with certain APIs:
+
+```jsx
+// Safe - automatically escaped
+function UserProfile({ user }) {
+  return <div>{user.bio}</div>;
+}
+
+// Dangerous - bypasses React's auto-escaping
+function UserProfile({ user }) {
+  return <div dangerouslySetInnerHTML={{ __html: user.bio }} />;
+}
+
+// Safe alternative when HTML is needed
+import DOMPurify from 'dompurify';
+
+function UserProfile({ user }) {
+  return <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(user.bio) }} />;
+}
+```
+
+**2. Use React's Built-in Protections**
+
+```jsx
+// Use the jsx-no-script ESLint rule to prevent inline script tags
+// .eslintrc.json
+{
+  "extends": ["react-app"],
+  "rules": {
+    "jsx-a11y/no-script-url": "error"
+  }
+}
+```
+
+**3. Secure State Management**
+
+```jsx
+// Don't store sensitive data in Redux store or React state
+// Bad practice
+const [creditCard, setCreditCard] = useState('1234-5678-9012-3456');
+
+// Better practice
+const [hasPaymentMethod, setHasPaymentMethod] = useState(false);
+```
+
+### Angular Security Best Practices
+
+**1. Use Angular's Built-in Sanitization**
+
+Angular automatically sanitizes values used in templates, but be careful with bypassing this protection:
+
+```typescript
+// Safe - automatically sanitized
+@Component({
+  template: '<div>{{ userBio }}</div>'
+})
+
+// Dangerous - bypasses Angular's sanitization
+@Component({
+  template: '<div [innerHTML]="userBio"></div>'
+})
+
+// Safe alternative when HTML is needed
+import { DomSanitizer } from '@angular/platform-browser';
+
+@Component({
+  template: '<div [innerHTML]="sanitizedBio"></div>'
+})
+export class UserProfileComponent {
+  userBio: string;
+  sanitizedBio: SafeHtml;
+  
+  constructor(private sanitizer: DomSanitizer) {
+    this.sanitizedBio = this.sanitizer.bypassSecurityTrustHtml(this.userBio);
+  }
+}
+```
+
+**2. Use Angular's HttpClient with XSRF Protection**
+
+```typescript
+// app.module.ts
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+
+@NgModule({
+  imports: [
+    HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'XSRF-TOKEN',
+      headerName: 'X-XSRF-TOKEN'
+    })
+  ]
+})
+export class AppModule { }
+```
+
+### Vue.js Security Best Practices
+
+**1. Use Vue's Built-in Escaping**
+
+Vue automatically escapes values in templates, but be careful with certain directives:
+
+```vue
+<template>
+  <!-- Safe - automatically escaped -->
+  <div>{{ userBio }}</div>
+  
+  <!-- Dangerous - bypasses Vue's auto-escaping -->
+  <div v-html="userBio"></div>
+  
+  <!-- Safe alternative when HTML is needed -->
+  <div v-html="sanitizedBio"></div>
+</template>
+
+<script>
+import DOMPurify from 'dompurify';
+
+export default {
+  data() {
+    return {
+      userBio: '<p>User entered content</p>'
+    };
+  },
+  computed: {
+    sanitizedBio() {
+      return DOMPurify.sanitize(this.userBio);
+    }
+  }
+};
+</script>
+```
+
+**2. Avoid Using `v-bind` with Dynamic JavaScript**
+
+```vue
+<!-- Dangerous - can lead to XSS -->
+<a v-bind:href="userProvidedLink">Click me</a>
+
+<!-- Safe - validate and sanitize URLs -->
+<script>
+export default {
+  methods: {
+    sanitizeUrl(url) {
+      // Only allow http:// and https:// URLs
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+      }
+      return '#'; // Default safe URL
+    }
+  }
+};
+</script>
+
+<template>
+  <a v-bind:href="sanitizeUrl(userProvidedLink)">Click me</a>
+</template>
+```
+
+## Third-Party Dependencies Security
+
+### Dependency Management
+
+**1. Regular Security Audits**
+
+Regularly check for vulnerabilities in your dependencies:
+
+```bash
+# npm
+npm audit
+
+# yarn
+yarn audit
+
+# Fix vulnerabilities
+npm audit fix
+yarn audit fix
+```
+
+**2. Use Lock Files**
+
+Ensure consistent, audited dependencies:
+
+```bash
+# npm
+npm ci
+
+# yarn
+yarn install --frozen-lockfile
+```
+
+**3. Set Up Automated Dependency Updates**
+
+Use tools like Dependabot or Renovate to automatically update dependencies and receive security alerts.
+
+### Third-Party Scripts
+
+**1. Load Third-Party Scripts Securely**
+
+```html
+<!-- Use SRI for third-party scripts -->
+<script src="https://cdn.example.com/library.js" 
+        integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC" 
+        crossorigin="anonymous"></script>
+
+<!-- Load non-critical scripts asynchronously -->
+<script src="https://analytics.example.com/tracker.js" async></script>
+```
+
+**2. Sandbox Third-Party Content**
+
+```html
+<!-- Use iframes with sandbox attribute -->
+<iframe src="https://third-party-widget.com/widget" 
+        sandbox="allow-scripts allow-same-origin"
+        title="Third-party widget">
+</iframe>
+```
+
+**3. Use CSP to Restrict Script Sources**
+
+```
+Content-Security-Policy: script-src 'self' https://trusted-cdn.com;
+```
+
+## API Security
+
+### Secure API Communication
+
+**1. Use HTTPS for All API Calls**
+
+```javascript
+// Ensure all API URLs use HTTPS
+const API_BASE_URL = 'https://api.example.com';
+
+async function fetchData(endpoint) {
+  const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+    // Request options
+  });
+  return await response.json();
+}
+```
+
+**2. Implement Proper Error Handling**
+
+```javascript
+async function fetchData(endpoint) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+    
+    if (!response.ok) {
+      // Handle different error status codes appropriately
+      if (response.status === 401) {
+        // Unauthorized - redirect to login
+        redirectToLogin();
+        return null;
+      }
+      
+      if (response.status === 403) {
+        // Forbidden - show permission error
+        showPermissionError();
+        return null;
+      }
+      
+      // Generic error handling
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    // Log error but don't expose details to users
+    console.error('API request failed:', error);
+    showUserFriendlyError('Something went wrong. Please try again later.');
+    return null;
+  }
+}
+```
+
+**3. Validate API Responses**
+
+```javascript
+import { z } from 'zod';
+
+// Define schema for API response
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  role: z.enum(['user', 'admin']),
+  createdAt: z.string().datetime()
+});
+
+async function fetchUser(userId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Validate response against schema
+    const validatedUser = UserSchema.parse(data);
+    return validatedUser;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      // Handle validation error - potentially malicious response
+      console.error('API response validation failed:', error.errors);
+      securityAuditLog('Invalid API response format', { userId, error: error.errors });
+    } else {
+      // Handle other errors
+      console.error('API request failed:', error);
+    }
+    
+    showUserFriendlyError('Something went wrong. Please try again later.');
+    return null;
+  }
+}
+```
+
+## Security Testing
+
+### Automated Security Testing
+
+**1. Static Application Security Testing (SAST)**
+
+Integrate security linting into your development workflow:
+
+```bash
+# ESLint with security plugins
+npm install --save-dev eslint eslint-plugin-security
+```
+
+```javascript
+// .eslintrc.js
+module.exports = {
+  plugins: ['security'],
+  extends: ['plugin:security/recommended']
+};
+```
+
+**2. Dynamic Application Security Testing (DAST)**
+
+Use tools like OWASP ZAP to test your application for vulnerabilities.
+
+**3. Dependency Scanning**
+
+Integrate dependency scanning into your CI/CD pipeline:
+
+```yaml
+# GitHub Actions workflow example
+name: Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+```
+
+## Security Monitoring and Incident Response
+
+### Client-Side Monitoring
+
+**1. Implement Error Monitoring**
+
+Use services like Sentry or LogRocket to track and analyze frontend errors:
+
+```javascript
+// Sentry example
+import * as Sentry from '@sentry/browser';
+
+Sentry.init({
+  dsn: 'https://examplePublicKey@o0.ingest.sentry.io/0',
+  integrations: [new Sentry.BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
+
+// Capture exceptions
+try {
+  functionThatMightFail();
+} catch (error) {
+  Sentry.captureException(error);
+}
+```
+
+**2. Implement Content Security Policy Reporting**
+
+```
+Content-Security-Policy-Report-Only: default-src 'self'; report-uri https://example.com/csp-report
+```
+
+**3. Set Up a Security.txt File**
+
+Create a `/.well-known/security.txt` file to help security researchers report vulnerabilities:
+
+```
+Contact: mailto:security@example.com
+Encryption: https://example.com/pgp-key.txt
+Policy: https://example.com/security-policy
+Expires: 2023-12-31T23:59:59Z
+```
+
+## Conclusion
+
+Frontend security is a critical aspect of web development that requires ongoing attention and effort. By implementing the practices outlined in this guide, you can significantly reduce the risk of security vulnerabilities in your frontend applications.
+
+Remember that security is not a one-time task but a continuous process. Stay informed about new security threats and best practices, regularly update your dependencies, and conduct security audits to ensure your applications remain secure over time.
+
+## Resources
+
+### Official Guidelines
+
+- [OWASP Frontend Security Guide](https://cheatsheetseries.owasp.org/cheatsheets/Frontend_Security_Cheat_Sheet.html)
+- [Content Security Policy (CSP) Reference](https://content-security-policy.com/)
+- [Mozilla Web Security Guidelines](https://infosec.mozilla.org/guidelines/web_security)
+
+### Tools
+
+- [DOMPurify](https://github.com/cure53/DOMPurify) - XSS sanitizer for HTML, MathML and SVG
+- [Helmet](https://helmetjs.github.io/) - Express middleware to set security headers
+- [ESLint Security Plugin](https://github.com/nodesecurity/eslint-plugin-security)
+- [Snyk](https://snyk.io/) - Find and fix vulnerabilities in dependencies
+- [OWASP ZAP](https://www.zaproxy.org/) - Web application security scanner
+
+### Learning Resources
+
+- [Web Security Academy](https://portswigger.net/web-security) - Free online training from the creators of Burp Suite
+- [Google Web Fundamentals - Security](https://developers.google.com/web/fundamentals/security)
+- [Frontend Security - The OWASP Top 10 for Frontend Developers](https://frontendmasters.com/courses/web-security/)

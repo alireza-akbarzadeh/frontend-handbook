@@ -1,0 +1,1773 @@
+---
+title: "TypeScript"
+description: "Learn how TypeScript enhances JavaScript development with static typing and advanced features"
+---
+
+## Introduction to TypeScript
+
+TypeScript is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale. It adds static type definitions to JavaScript, helping catch errors early in development rather than at runtime. TypeScript is developed and maintained by Microsoft, and it compiles down to plain JavaScript that runs in any browser or JavaScript environment.
+
+<CardGroup cols={2}>
+  <Card title="Static Typing" icon="check-circle">
+    TypeScript's most prominent feature is its type system, which helps catch type-related errors during development rather than at runtime.
+  </Card>
+  
+  <Card title="JavaScript Superset" icon="code">
+    TypeScript is a superset of JavaScript, meaning any valid JavaScript code is also valid TypeScript code. This makes adoption gradual and flexible.
+  </Card>
+  
+  <Card title="Enhanced IDE Support" icon="lightbulb">
+    TypeScript provides rich IntelliSense, code navigation, and refactoring tools in modern IDEs like VS Code, significantly improving developer productivity.
+  </Card>
+  
+  <Card title="Enterprise-Ready" icon="building">
+    TypeScript was designed with large-scale applications in mind, offering features that help manage complexity in enterprise-level codebases.
+  </Card>
+</CardGroup>
+
+## Getting Started with TypeScript
+
+### Installation and Setup
+
+To start using TypeScript, you'll need to install it via npm or yarn:
+
+```bash
+# Using npm
+npm install -g typescript
+
+# Using yarn
+yarn global add typescript
+
+# Check installation
+tsc --version
+```
+
+### Creating a TypeScript Project
+
+Create a basic TypeScript project with a configuration file:
+
+```bash
+# Create a new directory
+mkdir my-ts-project
+cd my-ts-project
+
+# Initialize a new npm project
+npm init -y
+
+# Install TypeScript locally
+npm install --save-dev typescript
+
+# Create a TypeScript configuration file
+npx tsc --init
+```
+
+The generated `tsconfig.json` file contains compiler options for your TypeScript project. Here's a sample configuration with common settings:
+
+```json
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
+```
+
+### Your First TypeScript File
+
+Create a simple TypeScript file in the `src` directory:
+
+```typescript
+// src/index.ts
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+const user = "TypeScript User";
+console.log(greet(user));
+```
+
+### Compiling TypeScript
+
+Compile your TypeScript code to JavaScript:
+
+```bash
+# Compile once
+npx tsc
+
+# Watch mode (recompile on changes)
+npx tsc --watch
+```
+
+After compilation, you'll find the JavaScript output in the `dist` directory:
+
+```javascript
+// dist/index.js
+function greet(name) {
+    return "Hello, ".concat(name, "!");
+}
+var user = "TypeScript User";
+console.log(greet(user));
+```
+
+## TypeScript Fundamentals
+
+### Basic Types
+
+TypeScript provides several basic types to describe values:
+
+```typescript
+// Boolean
+let isDone: boolean = false;
+
+// Number (integers and floats)
+let decimal: number = 6;
+let hex: number = 0xf00d;
+let binary: number = 0b1010;
+
+// String
+let color: string = "blue";
+let greeting: string = `Hello, my name is ${name}`;
+
+// Array
+let list: number[] = [1, 2, 3];
+let fruits: Array<string> = ["apple", "banana", "orange"];
+
+// Tuple (fixed-length array where each element has a specific type)
+let person: [string, number] = ["Alice", 30];
+
+// Enum
+enum Direction {
+  North,
+  East,
+  South,
+  West
+}
+let dir: Direction = Direction.North;
+
+// Any (opt out of type checking)
+let notSure: any = 4;
+notSure = "maybe a string";
+notSure = false;
+
+// Void (absence of any type, commonly used for functions that don't return a value)
+function logMessage(message: string): void {
+  console.log(message);
+}
+
+// Null and Undefined
+let u: undefined = undefined;
+let n: null = null;
+
+// Never (represents values that never occur, like a function that always throws an error)
+function error(message: string): never {
+  throw new Error(message);
+}
+
+// Object (non-primitive type)
+let obj: object = { key: "value" };
+```
+
+### Type Annotations and Inference
+
+TypeScript allows you to explicitly annotate variables with types or let the compiler infer types:
+
+```typescript
+// Explicit type annotation
+let name: string = "John";
+
+// Type inference (TypeScript infers the type as string)
+let inferredName = "John";
+
+// Function parameter and return type annotations
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+// Function type inference
+function multiply(a: number, b: number) {
+  return a * b; // Return type is inferred as number
+}
+```
+
+### Interfaces
+
+Interfaces define the structure of objects, providing a way to define contracts within your code:
+
+```typescript
+// Basic interface
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+function createUser(user: User): User {
+  return user;
+}
+
+const newUser = createUser({
+  id: 1,
+  name: "John Doe",
+  email: "john@example.com"
+});
+
+// Optional properties
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  description?: string; // Optional property
+}
+
+// Readonly properties
+interface Point {
+  readonly x: number;
+  readonly y: number;
+}
+
+const point: Point = { x: 10, y: 20 };
+// point.x = 5; // Error: Cannot assign to 'x' because it is a read-only property
+
+// Extending interfaces
+interface Animal {
+  name: string;
+}
+
+interface Dog extends Animal {
+  breed: string;
+}
+
+const dog: Dog = {
+  name: "Rex",
+  breed: "German Shepherd"
+};
+
+// Implementing interfaces with classes
+class Person implements User {
+  id: number;
+  name: string;
+  email: string;
+  
+  constructor(id: number, name: string, email: string) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+  }
+}
+```
+
+### Type Aliases
+
+Type aliases create a new name for a type, similar to interfaces but with some differences:
+
+```typescript
+// Basic type alias
+type ID = string | number;
+
+function printID(id: ID) {
+  console.log(`ID: ${id}`);
+}
+
+printID(101);
+printID("A-101");
+
+// Object type alias
+type Person = {
+  name: string;
+  age: number;
+};
+
+const person: Person = {
+  name: "Alice",
+  age: 30
+};
+
+// Union types
+type Result = Success | Error;
+
+type Success = {
+  success: true;
+  value: string;
+};
+
+type Error = {
+  success: false;
+  error: string;
+};
+
+function handleResult(result: Result) {
+  if (result.success) {
+    console.log(`Success: ${result.value}`);
+  } else {
+    console.error(`Error: ${result.error}`);
+  }
+}
+
+// Intersection types
+type Employee = {
+  id: number;
+  name: string;
+};
+
+type Manager = Employee & {
+  subordinates: Employee[];
+};
+
+const manager: Manager = {
+  id: 1,
+  name: "John Smith",
+  subordinates: [
+    { id: 2, name: "Jane Doe" },
+    { id: 3, name: "Bob Johnson" }
+  ]
+};
+```
+
+### Functions in TypeScript
+
+TypeScript enhances JavaScript functions with parameter and return type annotations:
+
+```typescript
+// Function with parameter and return type annotations
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+// Optional parameters
+function buildName(firstName: string, lastName?: string): string {
+  if (lastName) {
+    return `${firstName} ${lastName}`;
+  }
+  return firstName;
+}
+
+// Default parameters
+function createGreeting(name: string, greeting: string = "Hello"): string {
+  return `${greeting}, ${name}!`;
+}
+
+// Rest parameters
+function sum(...numbers: number[]): number {
+  return numbers.reduce((total, num) => total + num, 0);
+}
+
+// Function overloads
+function processValue(value: number): number;
+function processValue(value: string): string;
+function processValue(value: number | string): number | string {
+  if (typeof value === "number") {
+    return value * 2;
+  } else {
+    return value.toUpperCase();
+  }
+}
+
+// Arrow functions
+const multiply = (a: number, b: number): number => a * b;
+
+// Function type
+type MathOperation = (a: number, b: number) => number;
+
+const add: MathOperation = (a, b) => a + b;
+const subtract: MathOperation = (a, b) => a - b;
+
+// Callback functions
+function fetchData(url: string, callback: (data: any) => void): void {
+  // Fetch data and call the callback
+  const data = { /* fetched data */ };
+  callback(data);
+}
+```
+
+### Classes in TypeScript
+
+TypeScript adds type annotations and other features to JavaScript classes:
+
+```typescript
+class Animal {
+  // Properties with type annotations
+  name: string;
+  private age: number;
+  protected species: string;
+  readonly category: string;
+  
+  // Constructor
+  constructor(name: string, age: number, species: string, category: string) {
+    this.name = name;
+    this.age = age;
+    this.species = species;
+    this.category = category;
+  }
+  
+  // Methods
+  public makeSound(): void {
+    console.log("Some generic sound");
+  }
+  
+  // Getter
+  get animalAge(): number {
+    return this.age;
+  }
+  
+  // Setter
+  set animalAge(age: number) {
+    if (age > 0) {
+      this.age = age;
+    }
+  }
+}
+
+// Inheritance
+class Dog extends Animal {
+  breed: string;
+  
+  constructor(name: string, age: number, breed: string) {
+    super(name, age, "Canis lupus", "Mammal");
+    this.breed = breed;
+  }
+  
+  // Override method
+  public makeSound(): void {
+    console.log("Woof! Woof!");
+  }
+  
+  // Additional method
+  public fetch(): void {
+    console.log(`${this.name} is fetching the ball!`);
+  }
+}
+
+// Using the classes
+const dog = new Dog("Rex", 3, "German Shepherd");
+console.log(dog.name); // Accessible
+// console.log(dog.age); // Error: Property 'age' is private
+// console.log(dog.species); // Error: Property 'species' is protected
+console.log(dog.category); // Accessible (readonly)
+dog.makeSound(); // "Woof! Woof!"
+dog.fetch(); // "Rex is fetching the ball!"
+
+// Abstract classes
+abstract class Shape {
+  color: string;
+  
+  constructor(color: string) {
+    this.color = color;
+  }
+  
+  abstract calculateArea(): number; // Abstract method must be implemented by subclasses
+  
+  displayColor(): void {
+    console.log(`This shape is ${this.color}`);
+  }
+}
+
+class Circle extends Shape {
+  radius: number;
+  
+  constructor(color: string, radius: number) {
+    super(color);
+    this.radius = radius;
+  }
+  
+  calculateArea(): number {
+    return Math.PI * this.radius * this.radius;
+  }
+}
+
+const circle = new Circle("red", 5);
+console.log(circle.calculateArea()); // ~78.54
+circle.displayColor(); // "This shape is red"
+```
+
+### Generics
+
+Generics allow you to create reusable components that work with a variety of types:
+
+```typescript
+// Generic function
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+const num = identity<number>(42); // Explicitly specify type
+const str = identity("hello"); // Type inferred as string
+
+// Generic interface
+interface Box<T> {
+  value: T;
+}
+
+const numberBox: Box<number> = { value: 42 };
+const stringBox: Box<string> = { value: "hello" };
+
+// Generic class
+class Queue<T> {
+  private items: T[] = [];
+  
+  enqueue(item: T): void {
+    this.items.push(item);
+  }
+  
+  dequeue(): T | undefined {
+    return this.items.shift();
+  }
+  
+  peek(): T | undefined {
+    return this.items[0];
+  }
+}
+
+const numberQueue = new Queue<number>();
+numberQueue.enqueue(1);
+numberQueue.enqueue(2);
+console.log(numberQueue.dequeue()); // 1
+
+const stringQueue = new Queue<string>();
+stringQueue.enqueue("hello");
+stringQueue.enqueue("world");
+console.log(stringQueue.peek()); // "hello"
+
+// Generic constraints
+interface Lengthwise {
+  length: number;
+}
+
+function logLength<T extends Lengthwise>(arg: T): T {
+  console.log(`Length: ${arg.length}`);
+  return arg;
+}
+
+logLength("hello"); // Length: 5
+logLength([1, 2, 3]); // Length: 3
+logLength({ length: 10, value: 3 }); // Length: 10
+// logLength(10); // Error: Argument of type 'number' is not assignable to parameter of type 'Lengthwise'
+
+// Generic type aliases
+type Pair<T, U> = {
+  first: T;
+  second: U;
+};
+
+const pair: Pair<number, string> = {
+  first: 1,
+  second: "two"
+};
+
+// Generic utility types
+type Nullable<T> = T | null | undefined;
+
+function process<T>(value: Nullable<T>): T | null {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  return value;
+}
+```
+
+## Advanced TypeScript Features
+
+### Union and Intersection Types
+
+Union and intersection types allow you to combine types in different ways:
+
+```typescript
+// Union types (OR)
+type ID = string | number;
+
+function printID(id: ID) {
+  console.log(`ID: ${id}`);
+  
+  // Type narrowing
+  if (typeof id === "string") {
+    console.log(id.toUpperCase());
+  } else {
+    console.log(id.toFixed(2));
+  }
+}
+
+printID(101);
+printID("A-101");
+
+// Intersection types (AND)
+type Employee = {
+  id: number;
+  name: string;
+};
+
+type Manager = {
+  subordinates: Employee[];
+  department: string;
+};
+
+type ManagerWithEmployeeInfo = Employee & Manager;
+
+const manager: ManagerWithEmployeeInfo = {
+  id: 1,
+  name: "John Smith",
+  subordinates: [
+    { id: 2, name: "Jane Doe" },
+    { id: 3, name: "Bob Johnson" }
+  ],
+  department: "Engineering"
+};
+```
+
+### Type Guards and Type Narrowing
+
+Type guards help narrow down types within conditional blocks:
+
+```typescript
+// typeof type guard
+function process(value: string | number) {
+  if (typeof value === "string") {
+    // TypeScript knows value is a string here
+    return value.toUpperCase();
+  } else {
+    // TypeScript knows value is a number here
+    return value.toFixed(2);
+  }
+}
+
+// instanceof type guard
+class Dog {
+  bark() {
+    console.log("Woof!");
+  }
+}
+
+class Cat {
+  meow() {
+    console.log("Meow!");
+  }
+}
+
+function makeSound(animal: Dog | Cat) {
+  if (animal instanceof Dog) {
+    // TypeScript knows animal is Dog here
+    animal.bark();
+  } else {
+    // TypeScript knows animal is Cat here
+    animal.meow();
+  }
+}
+
+// User-defined type guards
+interface Fish {
+  swim(): void;
+}
+
+interface Bird {
+  fly(): void;
+}
+
+function isFish(pet: Fish | Bird): pet is Fish {
+  return (pet as Fish).swim !== undefined;
+}
+
+function move(pet: Fish | Bird) {
+  if (isFish(pet)) {
+    // TypeScript knows pet is Fish here
+    pet.swim();
+  } else {
+    // TypeScript knows pet is Bird here
+    pet.fly();
+  }
+}
+
+// Discriminated unions
+type Shape =
+  | { kind: "circle"; radius: number }
+  | { kind: "rectangle"; width: number; height: number }
+  | { kind: "square"; size: number };
+
+function calculateArea(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle":
+      // TypeScript knows shape is the circle variant here
+      return Math.PI * shape.radius ** 2;
+    case "rectangle":
+      // TypeScript knows shape is the rectangle variant here
+      return shape.width * shape.height;
+    case "square":
+      // TypeScript knows shape is the square variant here
+      return shape.size ** 2;
+  }
+}
+```
+
+### Utility Types
+
+TypeScript provides several utility types to facilitate common type transformations:
+
+```typescript
+// Partial<T> - Makes all properties of T optional
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+}
+
+function updateUser(user: User, updates: Partial<User>): User {
+  return { ...user, ...updates };
+}
+
+const user: User = {
+  id: 1,
+  name: "John Doe",
+  email: "john@example.com",
+  phone: "555-1234"
+};
+
+const updatedUser = updateUser(user, { email: "john.doe@example.com" });
+
+// Required<T> - Makes all properties of T required
+interface Config {
+  host?: string;
+  port?: number;
+  protocol?: string;
+}
+
+function startServer(config: Required<Config>) {
+  console.log(`Starting server at ${config.protocol}://${config.host}:${config.port}`);
+}
+
+// Readonly<T> - Makes all properties of T readonly
+const frozenUser: Readonly<User> = {
+  id: 2,
+  name: "Jane Smith",
+  email: "jane@example.com",
+  phone: "555-5678"
+};
+
+// frozenUser.name = "Jane Doe"; // Error: Cannot assign to 'name' because it is a read-only property
+
+// Record<K, T> - Constructs a type with properties of type K and values of type T
+type UserRoles = Record<string, string[]>;
+
+const roles: UserRoles = {
+  admin: ["read", "write", "delete"],
+  editor: ["read", "write"],
+  viewer: ["read"]
+};
+
+// Pick<T, K> - Picks a set of properties K from T
+type UserBasicInfo = Pick<User, "id" | "name">;
+
+const basicInfo: UserBasicInfo = {
+  id: 1,
+  name: "John Doe"
+};
+
+// Omit<T, K> - Removes a set of properties K from T
+type UserContactInfo = Omit<User, "id">;
+
+const contactInfo: UserContactInfo = {
+  name: "John Doe",
+  email: "john@example.com",
+  phone: "555-1234"
+};
+
+// Exclude<T, U> - Excludes types in U from T
+type NumericId = Exclude<number | string | boolean, string | boolean>; // number
+
+// Extract<T, U> - Extracts types in U from T
+type StringOrBool = Extract<number | string | boolean, string | boolean>; // string | boolean
+
+// NonNullable<T> - Removes null and undefined from T
+type NotNullOrUndefined = NonNullable<string | null | undefined>; // string
+
+// ReturnType<T> - Extracts the return type of a function type
+function createUser(name: string, email: string): User {
+  return { id: Date.now(), name, email, phone: "" };
+}
+
+type CreateUserReturn = ReturnType<typeof createUser>; // User
+
+// Parameters<T> - Extracts the parameter types of a function type
+type CreateUserParams = Parameters<typeof createUser>; // [string, string]
+
+// InstanceType<T> - Extracts the instance type of a constructor function type
+class Person {
+  name: string;
+  
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+type PersonInstance = InstanceType<typeof Person>; // Person
+```
+
+### Mapped Types
+
+Mapped types allow you to create new types based on existing ones by transforming properties:
+
+```typescript
+// Basic mapped type
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+
+type Optional<T> = {
+  [P in keyof T]?: T[P];
+};
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+type ReadonlyUser = Readonly<User>;
+type OptionalUser = Optional<User>;
+
+// Mapped type with additional modifiers
+type Nullable<T> = {
+  [P in keyof T]: T[P] | null;
+};
+
+type NullableUser = Nullable<User>;
+const user: NullableUser = {
+  id: 1,
+  name: null,
+  email: "john@example.com"
+};
+
+// Removing modifiers
+type Mutable<T> = {
+  -readonly [P in keyof T]: T[P];
+};
+
+type Required<T> = {
+  [P in keyof T]-?: T[P];
+};
+
+// Remapping keys
+type Getters<T> = {
+  [P in keyof T as `get${Capitalize<string & P>}`]: () => T[P];
+};
+
+type UserGetters = Getters<User>;
+// Equivalent to:
+// {
+//   getId: () => number;
+//   getName: () => string;
+//   getEmail: () => string;
+// }
+
+// Filtering properties
+type PickByType<T, U> = {
+  [P in keyof T as T[P] extends U ? P : never]: T[P];
+};
+
+interface UserWithAge {
+  id: number;
+  name: string;
+  email: string;
+  age: number;
+  isActive: boolean;
+}
+
+type NumericProperties = PickByType<UserWithAge, number>; // { id: number; age: number; }
+```
+
+### Conditional Types
+
+Conditional types select one of two possible types based on a condition:
+
+```typescript
+// Basic conditional type
+type IsString<T> = T extends string ? true : false;
+
+type A = IsString<string>; // true
+type B = IsString<number>; // false
+
+// Conditional types with unions
+type ToArray<T> = T extends any ? T[] : never;
+
+type StringOrNumberArray = ToArray<string | number>; // string[] | number[]
+
+// Inferring types with infer
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
+
+function createUser(name: string, age: number) {
+  return { name, age };
+}
+
+type User = ReturnType<typeof createUser>; // { name: string; age: number; }
+
+// Distributive conditional types
+type Nullable<T> = T | null | undefined;
+type NonNullable<T> = T extends null | undefined ? never : T;
+
+type StringOrNull = Nullable<string>;
+type JustString = NonNullable<StringOrNull>; // string
+
+// Complex conditional types
+type Flatten<T> = T extends Array<infer U> ? U : T;
+
+type NumberArray = number[];
+type Number = Flatten<NumberArray>; // number
+
+type StringOrNumberArray = string | number[];
+type StringOrNumber = Flatten<StringOrNumberArray>; // string | number
+```
+
+### Declaration Merging
+
+TypeScript allows you to merge declarations with the same name:
+
+```typescript
+// Interface merging
+interface User {
+  name: string;
+}
+
+interface User {
+  age: number;
+}
+
+const user: User = {
+  name: "John",
+  age: 30
+}; // Both properties are required
+
+// Merging namespaces
+namespace Animals {
+  export class Dog {}
+}
+
+namespace Animals {
+  export interface Dog {
+    breed: string;
+  }
+  
+  export class Cat {}
+}
+
+// Equivalent to:
+// namespace Animals {
+//   export class Dog {}
+//   export interface Dog {
+//     breed: string;
+//   }
+//   export class Cat {}
+// }
+
+// Merging namespaces with classes
+class Album {
+  label: string;
+  
+  constructor(label: string) {
+    this.label = label;
+  }
+}
+
+namespace Album {
+  export function create(name: string) {
+    return new Album(name);
+  }
+}
+
+const album = Album.create("Blue Note");
+
+// Merging namespaces with functions
+function buildLabel(name: string): string {
+  return `${name} Label`;
+}
+
+namespace buildLabel {
+  export const prefix = "Hello, ";
+  export function createLabel(name: string): string {
+    return prefix + name;
+  }
+}
+
+console.log(buildLabel("TypeScript")); // "TypeScript Label"
+console.log(buildLabel.createLabel("TypeScript")); // "Hello, TypeScript"
+```
+
+### Module Augmentation
+
+Module augmentation allows you to extend existing modules with new features:
+
+```typescript
+// Original module (node_modules/some-library/index.d.ts)
+// declare module "some-library" {
+//   export function doSomething(): void;
+// }
+
+// Augmentation in your code
+declare module "some-library" {
+  // Add a new function to the existing module
+  export function doSomethingElse(): void;
+  
+  // Add a new interface
+  export interface Options {
+    delay: number;
+  }
+}
+
+// Usage
+import { doSomething, doSomethingElse } from "some-library";
+
+doSomething();
+doSomethingElse();
+
+// Augmenting global scope
+declare global {
+  interface Array<T> {
+    toReversed(): T[];
+  }
+  
+  interface Window {
+    myApp: {
+      version: string;
+    };
+  }
+}
+
+// Implementation
+Array.prototype.toReversed = function<T>() {
+  return [...this].reverse();
+};
+
+window.myApp = { version: "1.0.0" };
+
+// Usage
+const arr = [1, 2, 3];
+const reversed = arr.toReversed(); // [3, 2, 1]
+console.log(window.myApp.version); // "1.0.0"
+```
+
+## TypeScript with Frontend Frameworks
+
+### TypeScript with React
+
+TypeScript integrates well with React, providing type safety for props, state, and more:
+
+```tsx
+// Typing component props
+interface ButtonProps {
+  text: string;
+  onClick: () => void;
+  disabled?: boolean;
+  variant?: "primary" | "secondary" | "danger";
+}
+
+const Button: React.FC<ButtonProps> = ({ 
+  text, 
+  onClick, 
+  disabled = false, 
+  variant = "primary" 
+}) => {
+  return (
+    <button
+      className={`btn btn-${variant}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {text}
+    </button>
+  );
+};
+
+// Function component with children
+interface CardProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+const Card: React.FC<CardProps> = ({ title, children }) => {
+  return (
+    <div className="card">
+      <h2>{title}</h2>
+      <div className="card-content">{children}</div>
+    </div>
+  );
+};
+
+// Using useState with TypeScript
+import { useState } from "react";
+
+const Counter: React.FC = () => {
+  const [count, setCount] = useState<number>(0);
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+};
+
+// Using useReducer with TypeScript
+import { useReducer } from "react";
+
+type CounterState = {
+  count: number;
+};
+
+type CounterAction =
+  | { type: "INCREMENT" }
+  | { type: "DECREMENT" }
+  | { type: "RESET" }
+  | { type: "SET"; payload: number };
+
+function counterReducer(state: CounterState, action: CounterAction): CounterState {
+  switch (action.type) {
+    case "INCREMENT":
+      return { count: state.count + 1 };
+    case "DECREMENT":
+      return { count: state.count - 1 };
+    case "RESET":
+      return { count: 0 };
+    case "SET":
+      return { count: action.payload };
+    default:
+      return state;
+  }
+}
+
+const CounterWithReducer: React.FC = () => {
+  const [state, dispatch] = useReducer(counterReducer, { count: 0 });
+  
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <button onClick={() => dispatch({ type: "INCREMENT" })}>+</button>
+      <button onClick={() => dispatch({ type: "DECREMENT" })}>-</button>
+      <button onClick={() => dispatch({ type: "RESET" })}>Reset</button>
+      <button onClick={() => dispatch({ type: "SET", payload: 10 })}>Set to 10</button>
+    </div>
+  );
+};
+
+// Custom hooks with TypeScript
+import { useState, useEffect } from "react";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+function useUser(userId: number): {
+  user: User | null;
+  loading: boolean;
+  error: Error | null;
+} {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/users/${userId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setUser(data);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error(String(err)));
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUser();
+  }, [userId]);
+  
+  return { user, loading, error };
+}
+
+// Using the custom hook
+const UserProfile: React.FC<{ userId: number }> = ({ userId }) => {
+  const { user, loading, error } = useUser(userId);
+  
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+  if (!user) return <p>No user found</p>;
+  
+  return (
+    <div>
+      <h2>{user.name}</h2>
+      <p>Email: {user.email}</p>
+    </div>
+  );
+};
+```
+
+### TypeScript with Vue.js
+
+TypeScript can be used with Vue.js for type-safe components:
+
+```typescript
+// Vue 3 with TypeScript using Options API
+import { defineComponent } from "vue";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export default defineComponent({
+  name: "UserProfile",
+  props: {
+    userId: {
+      type: Number,
+      required: true
+    }
+  },
+  data() {
+    return {
+      user: null as User | null,
+      loading: true,
+      error: null as Error | null
+    };
+  },
+  methods: {
+    async fetchUser() {
+      this.loading = true;
+      try {
+        const response = await fetch(`/api/users/${this.userId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        this.user = await response.json();
+        this.error = null;
+      } catch (err) {
+        this.error = err instanceof Error ? err : new Error(String(err));
+        this.user = null;
+      } finally {
+        this.loading = false;
+      }
+    }
+  },
+  created() {
+    this.fetchUser();
+  },
+  watch: {
+    userId() {
+      this.fetchUser();
+    }
+  }
+});
+
+// Vue 3 with TypeScript using Composition API
+import { defineComponent, ref, computed, onMounted, watch, PropType } from "vue";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export default defineComponent({
+  name: "UserProfile",
+  props: {
+    userId: {
+      type: Number as PropType<number>,
+      required: true
+    }
+  },
+  setup(props) {
+    const user = ref<User | null>(null);
+    const loading = ref<boolean>(true);
+    const error = ref<Error | null>(null);
+    
+    const fullName = computed(() => {
+      return user.value ? `${user.value.name} (ID: ${user.value.id})` : "";
+    });
+    
+    const fetchUser = async () => {
+      loading.value = true;
+      try {
+        const response = await fetch(`/api/users/${props.userId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        user.value = await response.json();
+        error.value = null;
+      } catch (err) {
+        error.value = err instanceof Error ? err : new Error(String(err));
+        user.value = null;
+      } finally {
+        loading.value = false;
+      }
+    };
+    
+    onMounted(fetchUser);
+    
+    watch(() => props.userId, fetchUser);
+    
+    return {
+      user,
+      loading,
+      error,
+      fullName
+    };
+  }
+});
+
+// Vue 3 with <script setup> and TypeScript
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from "vue";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const props = defineProps<{
+  userId: number;
+}>();
+
+const user = ref<User | null>(null);
+const loading = ref<boolean>(true);
+const error = ref<Error | null>(null);
+
+const fullName = computed(() => {
+  return user.value ? `${user.value.name} (ID: ${user.value.id})` : "";
+});
+
+const fetchUser = async () => {
+  loading.value = true;
+  try {
+    const response = await fetch(`/api/users/${props.userId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    user.value = await response.json();
+    error.value = null;
+  } catch (err) {
+    error.value = err instanceof Error ? err : new Error(String(err));
+    user.value = null;
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(fetchUser);
+
+watch(() => props.userId, fetchUser);
+</script>
+
+<template>
+  <div>
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="error">Error: {{ error.message }}</div>
+    <div v-else-if="user">
+      <h2>{{ fullName }}</h2>
+      <p>Email: {{ user.email }}</p>
+    </div>
+    <div v-else>No user found</div>
+  </div>
+</template>
+```
+
+### TypeScript with Angular
+
+Angular is built with TypeScript, making it a natural fit:
+
+```typescript
+// Component with TypeScript
+import { Component, Input, OnInit } from '@angular/core';
+import { UserService } from '../services/user.service';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+@Component({
+  selector: 'app-user-profile',
+  template: `
+    <div *ngIf="loading">Loading...</div>
+    <div *ngIf="error">Error: {{ error.message }}</div>
+    <div *ngIf="user">
+      <h2>{{ user.name }}</h2>
+      <p>Email: {{ user.email }}</p>
+    </div>
+  `
+})
+export class UserProfileComponent implements OnInit {
+  @Input() userId!: number;
+  
+  user: User | null = null;
+  loading = true;
+  error: Error | null = null;
+  
+  constructor(private userService: UserService) {}
+  
+  ngOnInit(): void {
+    this.fetchUser();
+  }
+  
+  ngOnChanges(): void {
+    if (this.userId) {
+      this.fetchUser();
+    }
+  }
+  
+  private fetchUser(): void {
+    this.loading = true;
+    this.userService.getUser(this.userId).subscribe({
+      next: (user) => {
+        this.user = user;
+        this.error = null;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = err;
+        this.user = null;
+        this.loading = false;
+      }
+    });
+  }
+}
+
+// Service with TypeScript
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+  private apiUrl = '/api/users';
+  
+  constructor(private http: HttpClient) {}
+  
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl)
+      .pipe(catchError(this.handleError));
+  }
+  
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+  
+  createUser(user: Omit<User, 'id'>): Observable<User> {
+    return this.http.post<User>(this.apiUrl, user)
+      .pipe(catchError(this.handleError));
+  }
+  
+  updateUser(id: number, user: Partial<User>): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}`, user)
+      .pipe(catchError(this.handleError));
+  }
+  
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+  
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    
+    return throwError(() => new Error(errorMessage));
+  }
+}
+```
+
+## TypeScript Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Strict Mode" icon="check-double">
+    Always enable the `strict` flag in your `tsconfig.json` to catch more potential errors and enforce better typing.
+    
+    ```json
+    {
+      "compilerOptions": {
+        "strict": true
+      }
+    }
+    ```
+  </Card>
+  
+  <Card title="Avoid any" icon="ban">
+    Minimize the use of `any` type as it defeats the purpose of TypeScript's type checking. Use more specific types or `unknown` when the type is truly not known.
+    
+    ```typescript
+    // Bad
+    function process(data: any) {
+      return data.length; // No type safety
+    }
+    
+    // Good
+    function process(data: string | string[]) {
+      return Array.isArray(data) ? data.length : data.length;
+    }
+    ```
+  </Card>
+  
+  <Card title="Use Type Inference" icon="magic">
+    Let TypeScript infer types when possible to reduce verbosity, but add explicit types for function parameters and return types.
+    
+    ```typescript
+    // Let TypeScript infer the variable type
+    const numbers = [1, 2, 3]; // inferred as number[]
+    
+    // Add explicit types for functions
+    function sum(a: number, b: number): number {
+      return a + b;
+    }
+    ```
+  </Card>
+  
+  <Card title="Prefer Interfaces for Objects" icon="sitemap">
+    Use interfaces for object types when possible, especially for public APIs. Use type aliases for unions, intersections, and more complex types.
+    
+    ```typescript
+    // Interface for object structure
+    interface User {
+      id: number;
+      name: string;
+    }
+    
+    // Type alias for union
+    type ID = string | number;
+    ```
+  </Card>
+  
+  <Card title="Use Discriminated Unions" icon="code-branch">
+    For complex type hierarchies, use discriminated unions with a common property that differentiates between types.
+    
+    ```typescript
+    type Result<T> =
+      | { status: "success"; data: T }
+      | { status: "error"; error: Error };
+    
+    function handleResult<T>(result: Result<T>) {
+      if (result.status === "success") {
+        // TypeScript knows result has data property
+        console.log(result.data);
+      } else {
+        // TypeScript knows result has error property
+        console.error(result.error);
+      }
+    }
+    ```
+  </Card>
+  
+  <Card title="Nullability" icon="circle-exclamation">
+    Be explicit about null and undefined values using union types, and handle them appropriately.
+    
+    ```typescript
+    function getUser(id: number): User | null {
+      // Implementation might return null
+      return id > 0 ? { id, name: "User" } : null;
+    }
+    
+    const user = getUser(1);
+    // Check before accessing properties
+    if (user) {
+      console.log(user.name);
+    }
+    ```
+  </Card>
+  
+  <Card title="Use Readonly" icon="lock">
+    Use `readonly` for properties and arrays that shouldn't be modified after initialization.
+    
+    ```typescript
+    interface Config {
+      readonly apiKey: string;
+      readonly endpoints: readonly string[];
+    }
+    
+    const config: Config = {
+      apiKey: "abc123",
+      endpoints: ["users", "posts"]
+    };
+    
+    // Error: Cannot assign to 'apiKey' because it is a read-only property
+    // config.apiKey = "xyz789";
+    
+    // Error: Property 'push' does not exist on type 'readonly string[]'
+    // config.endpoints.push("comments");
+    ```
+  </Card>
+  
+  <Card title="Organize Types" icon="folder-tree">
+    Keep types organized and reusable by creating separate type definition files or grouping related types together.
+    
+    ```typescript
+    // types.ts
+    export interface User {
+      id: number;
+      name: string;
+      email: string;
+    }
+    
+    export interface Post {
+      id: number;
+      title: string;
+      content: string;
+      authorId: number;
+    }
+    
+    export type UserWithPosts = User & {
+      posts: Post[];
+    };
+    ```
+  </Card>
+</CardGroup>
+
+## TypeScript and JavaScript Interoperability
+
+TypeScript is designed to work seamlessly with JavaScript, allowing gradual adoption:
+
+### Using JavaScript in TypeScript
+
+```typescript
+// Importing a JavaScript module in TypeScript
+import { someFunction } from "./utils.js";
+
+// TypeScript will try to infer types, but you can also provide type definitions
+declare function someOtherFunction(param: string): number;
+
+// Using JavaScript libraries without type definitions
+declare const myLibrary: any;
+
+// Better: Create a declaration file for the library
+// myLibrary.d.ts
+declare module "my-library" {
+  export function doSomething(param: string): void;
+  export const version: string;
+}
+```
+
+### Using TypeScript in JavaScript
+
+```javascript
+// Using TypeScript-generated JavaScript
+const { User } = require("./models");
+
+// JSDoc comments can provide TypeScript-like type checking in JavaScript files
+/**
+ * @param {string} name - The user's name
+ * @param {number} age - The user's age
+ * @returns {Object} The created user
+ */
+function createUser(name, age) {
+  return { name, age };
+}
+
+// Using TypeScript features with JSDoc and // @ts-check
+// @ts-check
+
+/**
+ * @template T
+ * @param {T[]} array - The array to get the first element from
+ * @returns {T|undefined} The first element or undefined
+ */
+function getFirst(array) {
+  return array.length > 0 ? array[0] : undefined;
+}
+
+// TypeScript will catch this error with // @ts-check
+// const first = getFirst("not an array");
+```
+
+### Declaration Files
+
+Declaration files (`.d.ts`) provide type information for JavaScript code:
+
+```typescript
+// jquery.d.ts
+declare namespace $ {
+  function ajax(settings: AjaxSettings): Promise<any>;
+  
+  interface AjaxSettings {
+    url: string;
+    method?: "GET" | "POST" | "PUT" | "DELETE";
+    data?: any;
+    dataType?: string;
+  }
+}
+
+declare function $(selector: string): JQuery;
+declare function $(readyCallback: () => void): void;
+
+interface JQuery {
+  text(content?: string): JQuery | string;
+  html(content?: string): JQuery | string;
+  css(property: string, value?: string): JQuery | string;
+  on(event: string, handler: (event: any) => void): JQuery;
+  // ... more methods
+}
+
+// Using the declaration file
+$(document).ready(() => {
+  $("#button").on("click", () => {
+    $.ajax({
+      url: "/api/data",
+      method: "GET"
+    }).then(data => {
+      $("#result").text(JSON.stringify(data));
+    });
+  });
+});
+```
+
+## Conclusion
+
+TypeScript enhances JavaScript development by adding static typing and other features that help catch errors early, improve code quality, and boost developer productivity. Its gradual typing system allows for incremental adoption, making it suitable for both new projects and existing JavaScript codebases.
+
+By leveraging TypeScript's powerful type system, you can write more robust code with better tooling support, making it an excellent choice for frontend development, especially for larger applications or teams.
+
+## Resources
+
+### Official Documentation
+
+- [TypeScript Official Website](https://www.typescriptlang.org/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+- [TypeScript Playground](https://www.typescriptlang.org/play)
+
+### Learning Resources
+
+- [TypeScript Deep Dive](https://basarat.gitbook.io/typescript/)
+- [TypeScript Exercises](https://typescript-exercises.github.io/)
+- [Type Challenges](https://github.com/type-challenges/type-challenges)
+
+### Tools and Utilities
+
+- [TSConfig Reference](https://www.typescriptlang.org/tsconfig)
+- [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped) - Type definitions for JavaScript libraries
+- [TypeScript ESLint](https://github.com/typescript-eslint/typescript-eslint) - ESLint rules for TypeScript
